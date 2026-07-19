@@ -55,7 +55,7 @@ def extract_iframes(video_path: str | Path, timestamps: list[float], log=None) -
             "-y",
             frame_path,
         ]
-        result = subprocess.run(cmd, capture_output=True, timeout=30)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
             log.warning("iframe_extract_failed", timestamp=ts, stderr=result.stderr[:200])
             continue

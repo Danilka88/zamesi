@@ -1,7 +1,7 @@
 import base64
-import json
 
 from src.core.exceptions import JSONParseError
+from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger
 from src.core.metrics import json_errors_total
 from src.core.timeout_manager import timeout_manager
@@ -24,7 +24,7 @@ async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=Non
         call_name="pass1_text",
         log=log,
     )
-    return _extract_json(raw)
+    return _extract_json_checked(raw)
 
 
 async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> str:
@@ -59,19 +59,12 @@ async def generate_frontmatter(full_transcript: str, log=None) -> str:
         call_name="frontmatter",
         log=log,
     )
-    return _extract_json(raw)
+    return _extract_json_checked(raw)
 
 
-def _extract_json(raw: str) -> str:
-    start = raw.find("{")
-    end = raw.rfind("}")
-    if start == -1 or end == -1:
-        json_errors_total.inc()
-        raise JSONParseError(f"No JSON found in response: {raw[:200]}")
-    candidate = raw[start : end + 1]
+def _extract_json_checked(raw: str) -> str:
     try:
-        json.loads(candidate)
-    except json.JSONDecodeError as e:
+        return extract_json(raw)
+    except ValueError as e:
         json_errors_total.inc()
-        raise JSONParseError(f"Invalid JSON: {e}") from e
-    return candidate
+        raise JSONParseError(str(e)) from e

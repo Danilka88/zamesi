@@ -184,6 +184,13 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
             vlm_pct=metrics.vlm_percent,
         )
 
+    except asyncio.CancelledError:
+        log.warning("pipeline_cancelled")
+        _jobs[job_id].status = JobStatus.error
+        _jobs[job_id].error = "Pipeline cancelled"
+        jobs_total.labels(status="error").inc()
+        raise
+
     except Exception as e:
         log.error("pipeline_failed", error=str(e))
         _jobs[job_id].status = JobStatus.error

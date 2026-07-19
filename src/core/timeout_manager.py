@@ -1,5 +1,4 @@
 import asyncio
-import re
 import time
 from enum import Enum
 
@@ -13,19 +12,9 @@ from src.core.exceptions import (
     RetryExhaustedError,
     TimeoutError,
 )
+from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger
 from src.core.metrics import fallbacks_total, timeouts_total
-
-
-def _extract_json(text: str) -> str:
-    text = text.strip()
-    # Remove markdown code fence (```json ... ```)
-    if text.startswith("```"):
-        first_newline = text.find("\n")
-        if first_newline != -1:
-            text = text[first_newline + 1 :]
-        text = re.sub(r"```\s*$", "", text).strip()
-    return text
 
 
 class CircuitState(str, Enum):
@@ -225,7 +214,7 @@ class TimeoutManager:
             response.raise_for_status()
             data = response.json()
             raw = data.get("response", "")
-            return _extract_json(raw)
+            return extract_json(raw)
 
 
 timeout_manager = TimeoutManager()

@@ -5,6 +5,7 @@ from src.core.schemas import PassportFrontmatter
 from src.semantic_analyzer.qwen_client import generate_frontmatter
 
 
+# START_BLOCK: M-PASSPORT/FRONTMATTER/BUILD
 async def build_frontmatter(video_id: str, full_transcript: str, log=None) -> PassportFrontmatter:
     log = log or get_logger()
     try:
@@ -28,3 +29,4 @@ async def build_frontmatter(video_id: str, full_transcript: str, log=None) -> Pa
             domain_type="unknown",
             seo_title=full_transcript[:100],
         )
+# END_BLOCK: M-PASSPORT/FRONTMATTER/BUILD

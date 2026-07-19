@@ -69,7 +69,7 @@
             <command>pytest tests/audio_engine/test_timeline_merger.py -v</command>
           </commands>
           <evidence>
-            <marker required="true">[M-AUDIO][MERGE][SPEAKER_ASSIGNED]</marker>
+            <marker required="true">[M-AUDIO][MERGER][DONE]</marker>
             <assert>ASR-сегмент получает speaker из диаризации; fallback на 'unknown'</assert>
           </evidence>
         </Scenario>
@@ -88,7 +88,7 @@
             <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_keyword_fallback"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-VISION][ROUTER][KEYWORD_FALLBACK]</marker>
+            <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
             <assert>Для подкастов/лекций domain_router возвращает соответствующий жанр</assert>
           </evidence>
         </Scenario>
@@ -98,7 +98,7 @@
             <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_is_vision_blocked"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-VISION][ROUTER][VISION_BLOCKED]</marker>
+            <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
             <assert>is_vision_blocked возвращает True для podcast/lecture, False для how_to</assert>
           </evidence>
         </Scenario>
@@ -108,7 +108,7 @@
             <command>pytest tests/vision_scanner/test_ocr_buffer.py -v</command>
           </commands>
           <evidence>
-            <marker required="true">[M-VISION][OCR_BUFFER][WINDOW_CHECK]</marker>
+            <marker required="true">[M-VISION][OCR][DONE]</marker>
             <assert>Текст в окне ±5с возвращается; вне окна — None; множественные результаты объединяются</assert>
           </evidence>
         </Scenario>
@@ -127,7 +127,7 @@
             <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_analyze_text_segment or test_analyze_vision_segment or test_generate_frontmatter"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][QWEN][TEXT_ANALYSIS]</marker>
+            <marker required="true">[M-CORE][TIMEOUT][LLM_SUCCESS]</marker>
             <assert>analyze_text_segment возвращает JSON с action_is_clear; analyze_vision_segment обрабатывает base64; generate_frontmatter работает</assert>
           </evidence>
         </Scenario>
@@ -137,7 +137,7 @@
             <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_extract_json_checked_raises"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][QWEN][EXTRACT_FAILED]</marker>
+            <marker required="true">[M-SEMANTIC][QWEN][VISION_FILE_MISSING]</marker>
             <assert>Пустой ответ → JSONParseError; невалидный JSON → JSONParseError; markdown fences стрипаются</assert>
           </evidence>
         </Scenario>
@@ -147,7 +147,7 @@
             <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_basic"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][SCENE][BASIC]</marker>
+            <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
             <assert>1 сегмент → 1 SceneAnalysisResult с action_is_clear=True</assert>
           </evidence>
         </Scenario>
@@ -157,7 +157,7 @@
             <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_llm_error"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][SCENE][LLM_FAILED]</marker>
+            <marker required="true">[M-SEMANTIC][SCENE][ANALYSIS_FAILED]</marker>
             <assert>При ошибке LLM возвращается результат с fallback_used=llm_failed, пустой monetization</assert>
           </evidence>
         </Scenario>
@@ -167,7 +167,7 @@
             <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_gate"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][SCENE][VLM_CALLED]</marker>
+            <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
             <assert>requires_vision=True + vision_blocked=False → vlm_calls=1, [Видео: …] в summary</assert>
           </evidence>
         </Scenario>
@@ -177,7 +177,7 @@
             <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_blocked_suppresses_vlm"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][SCENE][VLM_BLOCKED]</marker>
+            <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
             <assert>vision_blocked=True → vlm_calls=0, [Видео: …] отсутствует</assert>
           </evidence>
         </Scenario>
@@ -196,7 +196,7 @@
             <command>pytest tests/passport_builder/test_validator.py -v -k "test_valid_passport"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-PASSPORT][VALIDATE][PASS]</marker>
+            <marker required="true">[M-PASSPORT][VALIDATOR][PASSED]</marker>
             <assert>Паспорт с video_id и корректными таймкодами — 0 ошибок</assert>
           </evidence>
         </Scenario>
@@ -206,7 +206,7 @@
             <command>pytest tests/passport_builder/test_validator.py -v -k "test_missing_video_id"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-PASSPORT][VALIDATE][MISSING_ID]</marker>
+            <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
             <assert>Пустой video_id → ошибка валидации</assert>
           </evidence>
         </Scenario>
@@ -216,7 +216,7 @@
             <command>pytest tests/passport_builder/test_validator.py -v -k "test_ecom_without"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-PASSPORT][VALIDATE][ECOM_NO_QUERY]</marker>
+            <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
             <assert>ECOM_ITEM без search_query → ошибка валидации</assert>
           </evidence>
         </Scenario>
@@ -226,7 +226,7 @@
             <command>pytest tests/passport_builder/test_validator.py -v -k "test_strict_mode_raises"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-PASSPORT][VALIDATE][STRICT]</marker>
+            <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
             <assert>strict=True с ошибками → ValidationError</assert>
           </evidence>
         </Scenario>
@@ -245,7 +245,7 @@
             <command>pytest tests/api/test_endpoints.py -v -k "test_health"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-API][HEALTH][OK]</marker>
+            <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
             <assert>Статус 200; тело содержит status: ok</assert>
           </evidence>
         </Scenario>
@@ -255,7 +255,7 @@
             <command>pytest tests/api/test_endpoints.py -v -k "test_metrics_endpoint"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-API][METRICS][PROMETHEUS]</marker>
+            <marker required="true">[M-API][ROUTES][VIDEO_SAVED]</marker>
             <assert>Статус 200; тело содержит pipeline_ префикс метрик</assert>
           </evidence>
         </Scenario>
@@ -265,7 +265,7 @@
             <command>pytest tests/api/test_endpoints.py -v -k "test_get_unknown_job or test_get_unknown_status"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-API][GET][JOB_NOT_FOUND]</marker>
+            <marker required="true">[M-API][PIPELINE][FAILED]</marker>
             <assert>Статус 404 для несуществующего job_id</assert>
           </evidence>
         </Scenario>

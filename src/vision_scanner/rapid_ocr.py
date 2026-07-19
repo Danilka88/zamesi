@@ -9,13 +9,16 @@ from src.core.schemas import OCRResult
 _engine = None
 
 
+# START_BLOCK: M-VISION/OCR/ENGINE
 def _get_engine() -> RapidOCR:
     global _engine
     if _engine is None:
         _engine = RapidOCR()
     return _engine
+# END_BLOCK: M-VISION/OCR/ENGINE
 
 
+# START_BLOCK: M-VISION/OCR/PROCESS
 def process_frames(frame_paths: list[dict], log=None) -> list[OCRResult]:
     log = log or get_logger()
     engine = _get_engine()
@@ -44,3 +47,4 @@ def process_frames(frame_paths: list[dict], log=None) -> list[OCRResult]:
 
     log.info("[M-VISION][OCR][DONE]", frames_processed=len(frame_paths), texts_found=len(results))
     return results
+# END_BLOCK: M-VISION/OCR/PROCESS

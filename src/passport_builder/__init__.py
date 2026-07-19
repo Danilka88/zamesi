@@ -1,3 +1,4 @@
+# MODULE_MAP: src/passport_builder/
 # MODULE_CONTRACT: M-PASSPORT
 # PURPOSE: YAML-frontmatter + Markdown-таймлайн с точками монетизации
 # SCOPE: build_frontmatter, build_passport, passport_to_markdown, validate. Passport, PassportFrontmatter.

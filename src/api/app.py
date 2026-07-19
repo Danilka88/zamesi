@@ -7,6 +7,7 @@ from src.core.logging_config import setup_logging
 
 setup_logging()
 
+# START_BLOCK: M-API/APP/CREATE
 app = FastAPI(
     title="RUTUBE Video Analyzer",
     version="0.1.0",
@@ -15,8 +16,11 @@ app = FastAPI(
 
 app.include_router(router)
 app.mount("/metrics", make_asgi_app())
+# END_BLOCK: M-API/APP/CREATE
 
 
+# START_BLOCK: M-API/APP/HEALTH
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "rutube-video-analyzer"}
+# END_BLOCK: M-API/APP/HEALTH

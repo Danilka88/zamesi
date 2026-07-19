@@ -2,6 +2,7 @@ from src.config import config
 from src.core.schemas import OCRResult
 
 
+# START_BLOCK: M-VISION/OCR/BUFFER
 class OCRBuffer:
     def __init__(self):
         self._window_sec = config.ocr_buffer_window_sec
@@ -23,3 +24,4 @@ class OCRBuffer:
 
     def clear(self) -> None:
         self._results.clear()
+# END_BLOCK: M-VISION/OCR/BUFFER

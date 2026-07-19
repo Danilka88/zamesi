@@ -1,3 +1,4 @@
+# MODULE_MAP: src/vision_scanner/
 # MODULE_CONTRACT: M-VISION
 # PURPOSE: OCR (RapidOCR v4), GenreClassifier (qwen3.5:0.8b), DomainRouter (жанровая блокировка VLM), I-frame extraction
 # SCOPE: detect_genre, is_vision_blocked, classify, process_frames, OCRBuffer. OCRResult, VideoGenre.

@@ -2,6 +2,7 @@ import json
 import re
 
 
+# START_BLOCK: M-CORE/JSON/EXTRACT
 def extract_json(text: str) -> str:
     text = text.strip()
     if text.startswith("`"):
@@ -16,3 +17,4 @@ def extract_json(text: str) -> str:
     candidate = text[start : end + 1]
     json.loads(candidate)
     return candidate
+# END_BLOCK: M-CORE/JSON/EXTRACT

@@ -1,3 +1,4 @@
+# MODULE_MAP: src/api/
 # MODULE_CONTRACT: M-API
 # PURPOSE: FastAPI endpoints, job queue, оркестрация пайплайна, Prometheus-метрики
 # SCOPE: POST /analyze, GET /analyze/{job_id}|/status|/markdown, GET /health, GET /metrics. JobResult, JobStatus.

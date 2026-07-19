@@ -40,7 +40,7 @@
             <command>pytest tests/core/test_timeout_manager.py -v</command>
           </commands>
           <evidence>
-            <marker required="true">[M-CORE][TIMEOUT][RETRY_FALLBACK]</marker>
+            <marker required="true">[M-CORE][TIMEOUT][RETRY]</marker>
             <assert>Timeout → retry → RetryExhaustedError; circuit breaker открывается после порога</assert>
           </evidence>
         </Scenario>
@@ -50,7 +50,7 @@
             <command>pytest tests/core/test_timeout_manager.py -v -k "circuit_breaker"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-CORE][CIRCUIT_BREAKER][OPEN]</marker>
+            <marker required="true">[M-CORE][CB][OPENED]</marker>
             <assert>CircuitBreakerOpenError после 3+ ошибок; восстанавливается в half-open</assert>
           </evidence>
         </Scenario>

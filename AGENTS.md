@@ -48,7 +48,7 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/vision_scanner/ocr_buffer.py` — OCR dedup buffer ±5s
 - `src/semantic_analyzer/qwen_client.py` — Ollama API calls
 - `src/semantic_analyzer/prompt_templates.py` — All LLM prompts
-- `src/semantic_analyzer/fallback_rules.py` — Rule-based monetization
+- `src/vision_scanner/genre_classifier.py` — LLM-driven genre classification
 - `src/semantic_analyzer/scene_analyzer.py` — Pass 1 + Pass 2, VLM Gatekeeper
 - `src/passport_builder/frontmatter_generator.py` — YAML frontmatter
 - `src/passport_builder/validator.py` — .md structure validation

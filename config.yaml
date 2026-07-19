@@ -1,7 +1,7 @@
 models:
   ollama:
     endpoint: "http://localhost:11434"
-    text_model: "qwen3.5:4b"
+    text_model: "gemma4:e4b"
     vision_model: "qwen3.5:9b"
     classifier_model: "qwen3.5:0.8b"
     classifier_max_tokens: 8192

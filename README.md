@@ -4,65 +4,70 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 ---
 
-## Executive Summary
+**До:** 45-минутное видео в MP4  
+**После:** Markdown-паспорт с 12 сценами, 3 `ECOM_ITEM`, 2 `AD_SLOT`, 1 `CLIP_CANDIDATE`
+
+---
+
+## О продукте
 
 Асинхронный пайплайн преобразует загруженное видео в структурированный Markdown-документ с YAML-frontmatter и таймлайном, аннотированным монетизационными точками. Все модели запускаются локально — данные не покидают машину.
 
-### Cost efficiency
+### Экономическая эффективность
 
-VLM Gatekeeper (трёхуровневая фильтрация перед вызовом vision-модели) сокращает число VLM-вызовов с 100% до ≤6% сегментов:
+VLM Gatekeeper (трёхуровневая фильтрация перед вызовом vision-модели) сокращает число VLM-вызовов со 100% до ≤6% сегментов:
 
 | Метрика | Без Gatekeeper | С Gatekeeper | Эффект |
 |---|---|---|---|
-| VLM calls / час видео | ~180 (100%) | ~10 (≤6%) | –94% |
+| VLM-вызовов / час видео | ~180 (100%) | ~10 (≤6%) | –94% |
 | Время CPU на VLM | ~180 мин | ~10 мин | –17× |
 
 Себестоимость на 1 час видео при локальном CPU (Mac M1, 50W, $0.12/kWh):
 
 | Компонент | Вызовов | Время CPU | Стоимость |
 |---|---|---|---|
-| Whisper large-v3 (ASR) | 1 | 1080с | $0.0018 |
-| Gemma4:e4b (SLM, текст) | ~180 | 7200с | $0.0120 |
-| Qwen3.5:0.8b (genre classifier) | 1 | 30с | $0.0001 |
-| Qwen3.5:9b (VLM, vision) | ≤10 | 600с | $0.0010 |
-| RapidOCR + PyAnnote + ffmpeg | — | 300с | $0.0005 |
-| **Итого** | | **~3210с** | **~$0.015** |
+| Whisper large-v3 (ASR) | 1 | 1080 с | $0.0018 |
+| Gemma4:e4b (SLM, текст) | ~180 | 7200 с | $0.0120 |
+| Qwen3.5:0.8b (классификатор жанров) | 1 | 30 с | $0.0001 |
+| Qwen3.5:9b (VLM, vision) | ≤10 | 600 с | $0.0010 |
+| RapidOCR + PyAnnote + ffmpeg | — | 300 с | $0.0005 |
+| **Итого** | | **~3210 с** | **~$0.015** |
 
-Порог NFR-2 (<$0.0025/ч) достижим при GPU-акселерации (Ollama через CUDA/Metal): скорость VLM и SLM растёт в 5–10×, стоимость электроэнергии остаётся <$0.002/ч.
+Целевой порог — <$0.0025/ч. Достижим при GPU-акселерации (Ollama через CUDA/Metal): скорость VLM и SLM растёт в 5–10×, стоимость электроэнергии остаётся <$0.002/ч.
 
-### Monetization tags
+### Типы монетизационных меток
 
 | Метка | Условие |
 |---|---|
 | `AD_SLOT` | Сегмент подходит для контекстной рекламной врезки |
 | `ECOM_ITEM` | Назван конкретный товар, бренд или инструмент |
-| `CLIP_CANDIDATE` | Сцена содержит лайфхак, ошибку или неожиданный поворот |
+| `CLIP_CANDIDATE` | Сцена содержит лайфхак, ошибку или неожиданный сюжетный поворот |
 
-### Соответствие критериям ТЗ
+### Соответствие критериям технического задания
 
-| Критерий ТЗ | Раздел в README |
+| Критерий | Раздел в README |
 |---|---|
-| 1. Влияние на монетизацию | Monetization tags, Data Flow |
-| 2. Юнит-экономика | Executive Summary — Cost efficiency |
-| 3. Воспроизводимость | Testing (81 тестов) |
-| 4. Чувствительные данные | Privacy & Security |
-| 5. Production-readiness | Reliability, Monitoring |
+| Влияние на метрики монетизации | Типы меток, схема работы |
+| Юнит-экономика | Экономическая эффективность |
+| Воспроизводимость | Тестирование (81 тест) |
+| Чувствительные данные | Приватность и безопасность |
+| Production-готовность | Отказоустойчивость, мониторинг |
 
 ---
 
-## Data Flow
+## Схема работы пайплайна
 
 ```
 MP4
-├── PyAV: extract_audio()  ──────────────► Whisper.cpp (large-v3) ──► ASR segments
+├── PyAV: extract_audio()  ──────────────► Whisper.cpp (large-v3) ──► сегменты ASR
 │                                              │
-│                                        PyAnnote 3.1 ──────────────► speaker segments
+│                                        PyAnnote 3.1 ──────────────► сегменты спикеров
 │                                              │
 │                                        TimelineMerger ────────────► timeline[]
 │
-├── PyAV: extract_iframes() ──► RapidOCR v4 (все кадры) ──► OCRBuffer (±5с window)
+├── PyAV: extract_iframes() ──► RapidOCR v4 (все кадры) ──► OCRBuffer (окно ±5 с)
 │                                  │
-│                             Genre Classifier (Qwen3.5:0.8b) ──► genre + vision_blocked
+│                             Genre Classifier (Qwen3.5:0.8b) ──► жанр + vision_blocked
 │
 └── Анализ каждого сегмента timeline[] в цикле analyze_scenes():
 
@@ -73,45 +78,45 @@ MP4
         │
         ├── action_is_clear=true  ─────────────────────────────► .md passport
         │
-        └── requires_vision=true AND !vision_blocked AND нет OCR
+        └── requires_vision=true И !vision_blocked И нет OCR
                 │
                 ▼
-            Qwen3.5:9b Vision (pass2: base64 I-frame) ──────────► .md passport
+            Qwen3.5:9b Vision (pass2: base64 I-frame) ─────────► .md passport
 ```
 
 Три уровня Gatekeeper, решающих, вызывать ли VLM:
 
 1. **DomainRouter** — жанровая блокировка: `podcast`, `lecture`, `stream`, `true_crime`, `education` → `vision_blocked=true`
 2. **Inquisitive SLM** — Gemma4:e4b сам возвращает `requires_vision: true/false` на основе неопределённых местоимений («эта штука», «сюда», «такой»)
-3. **OCR-дедупликация** — если `OCRBuffer` содержит текст на временном отрезке сегмента, VLM не вызывается (текст на кадре уже покрывает семантику)
+3. **OCR-дедупликация** — если OCRBuffer содержит текст на временно́м отрезке сегмента, VLM не вызывается (текст на кадре уже покрывает семантику)
 
 Итог: VLM вызывается для ≤6% сегментов вместо 100%.
 
 ---
 
-## Technology Stack
+## Технологический стек
 
-### Audio Engine
+### Аудиообработка
 
 #### Whisper large-v3 (ASR)
 
-- **Почему:** whisper.cpp — C++ имплементация OpenAI Whisper без Python-оверхеда. Metal/CUDA из коробки. large-v3 даёт WER 4.2% для русского языка (Common Voice ru).
-- **Реализация:** subprocess на бинарник `whisper-cli` с параметрами `--word-timestamps True --language ru`. Результат — JSON с текстом, таймстемпами начала/конца сегмента и покадровыми метками слов.
-- **Время:** 0.3× real-time на Mac M1 Metal (1 час видео → ~18 мин CPU).
-- **Память:** ~3GB VRAM на large-v3.
+- **Почему:** whisper.cpp — C++ имплементация OpenAI Whisper без Python-оверхеда. Metal/CUDA из коробки. large-v3 даёт WER 4,2% для русского языка (Common Voice ru).
+- **Реализация:** subprocess на бинарник `whisper-cli` с флагами `--word-timestamps True --language ru`. Результат — JSON с текстом, таймстемпами начала/конца сегмента и покадровыми метками слов.
+- **Время:** 0,3× реального времени на Mac M1 Metal (1 час видео → ~18 мин CPU).
+- **Память:** ~3 GB VRAM для large-v3.
 
 #### PyAnnote Speaker Diarization 3.1
 
-- **Почему:** единственная open-source модель с speaker-aware сегментацией, обученная на 1.2M размеченных сегментов (AMI, VoxConverse, DIHARD III). Не требует GPU.
+- **Почему:** единственная open-source модель с speaker-aware сегментацией, обученная на 1,2M размеченных сегментов (AMI, VoxConverse, DIHARD III). Не требует GPU.
 - **Реализация:** `Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")` → `itertracks(yield_label=True)`. Возвращает `SpeakerSegment[]` с метками `SPEAKER_00`, `SPEAKER_01` и таймстемпами.
-- **Преимущество:** таймлайн со спикером → SLM учитывает, кто говорит (рекламодатель ≠ ведущий ≠ гость).
-- **Время:** ~0.05× real-time на CPU.
+- **Преимущество:** таймлайн со спикером → SLM учитывает, кто говорит (рекламодатель, ведущий, гость — разные контексты).
+- **Время:** ~0,05× real-time на CPU.
 
 #### ffmpeg subprocess (PyAV)
 
 - **Почему:** ffmpeg — единственный надёжный способ демодуляции MP4. Альтернатива (PyAV/ffmpeg-python, av≥14) удалена из зависимостей — subprocess даёт полный контроль над таймаутами и cancel-безопасностью.
-- **Реализация:** `asyncio.create_subprocess_exec` (не `subprocess.run`). Каждый вызов обёрнут в `asyncio.wait_for()` с таймаутом. При TimeoutError — процесс убивается через `proc.kill()`.
-- **Преимущество:** не блокирует event loop — пайплайн можно отменить на любом этапе (CANCEL на уровне API).
+- **Реализация:** `asyncio.create_subprocess_exec` (не `subprocess.run`). Каждый вызов обёрнут в `asyncio.wait_for()` с таймаутом. При TimeoutError процесс убивается через `proc.kill()`.
+- **Преимущество:** не блокирует event loop — пайплайн можно отменить на любом этапе (Cancel на уровне API).
 
 #### TimelineMerger
 
@@ -119,35 +124,35 @@ MP4
 
 ---
 
-### Vision Scanner
+### Визуальный анализатор
 
 #### RapidOCR v4 (ONNX)
 
 - **Почему:** ONNX-рантайм, работает на CPU без GPU. Модель PP-OCRv4 с кириллической поддержкой. Альтернативы (Tesseract, EasyOCR) в 3–10× медленнее на CPU.
-- **Реализация:** `RapidOCR()` (singleton для всего пайплайна) → `engine(str(fpath))` → `(box, text, confidence)`. Confidence-фильтр: `≥0.5`. Файлы `.jpg` удаляются после обработки.
-- **Время:** ~30ms на кадр (CPU).
+- **Реализация:** `RapidOCR()` (singleton для всего пайплайна) → `engine(str(fpath))` → `(box, text, confidence)`. Фильтр уверенности: ≥0,5 (настраивается в `config.yaml`). JPG-кадры удаляются после обработки.
+- **Время:** ~30 ms на кадр (CPU).
 - **Зачем:** если на I-frame уже есть текст, VLM не нужен — OCRBuffer обеспечивает экономию 5–15% VLM-вызовов на утилитарных видео (how_to, review).
 
 #### Genre Classifier (Qwen3.5:0.8b)
 
-- **Почему:** минимальная модель Ollama (0.8B params). Воспроизводит 10 жанров: podcast, lecture, stream, how_to, review, tech_review, diy, true_crime, education, unknown. Необходима для DomainRouter — жанровой блокировки VLM.
-- **Параметры:** `max_tokens=8192` — перекрывает thinking-токены Qwen3.5. При 4096 thinking обрезал JSON. Keyword fallback при недоступности Ollama.
-- **Время:** ~30s на классификацию.
+- **Почему:** минимальная модель Ollama (0,8B параметров). Распознаёт 10 жанров: podcast, lecture, stream, how_to, review, tech_review, diy, true_crime, education, unknown. Необходима для DomainRouter — жанровой блокировки VLM.
+- **Параметры:** `max_tokens=8192` — перекрывает thinking-токены Qwen3.5. При 4096 thinking обрезал JSON-ответ. Keyword fallback при недоступности Ollama.
+- **Время:** ~30 с на классификацию.
 
 #### OCRBuffer
 
-Кольцевой буфер OCR-результатов с окном ±5с. При запросе `check(timestamp)` возвращает объединённый текст всех результатов в окне. `clear()` сбрасывает буфер между job'ами. Размер: не более 2× window от самого раннего timestamp.
+Кольцевой буфер OCR-результатов с окном ±5 с. При запросе `check(timestamp)` возвращает объединённый текст всех результатов в окне. `clear()` сбрасывает буфер между job'ами.
 
 ---
 
-### Semantic Analyzer
+### Семантический анализатор
 
 #### Gemma4:e4b (SLM — Small Language Model)
 
 - **Почему:** Gemma4:e4b — эволюция Gemma2 от Google DeepMind. Ключевое отличие от предшественника (Qwen3.5:4b): **нет токенов на thinking**.
-  - Qwen3.5:4b тратил ~160s/call на thinking → Gemma4:e4b ~35–43s/call (**4× быстрее**).
+  - Qwen3.5:4b тратил ~160 с/call на thinking → Gemma4:e4b ~35–43 с/call (**4× быстрее**).
   - Промпт не требует специального форматирования — Gemma4 не чувствителен к шаблону `<|im_start|>`.
-- **Реализация:** 180 вызовов на 1ч видео (по одному на сегмент таймлайна). Возвращает структурированный JSON:
+- **Реализация:** 180 вызовов на 1 ч видео (по одному на сегмент таймлайна). Возвращает структурированный JSON:
 
 ```json
 {
@@ -164,27 +169,27 @@ MP4
 
 #### Qwen3.5:9b Vision (VLM — Vision Language Model)
 
-- **Почему:** единственная локальная vision-модель Ollama, влезающая в 16GB RAM. Принимает base64-изображение вместе с ASR-контекстом. Вызывается только для ≤6% сегментов.
-- **Защита:** I-frame >2MB → вызов пропускается (base64-чтение без лимита может вызвать OOM на 4K-кадрах). Размер проверяется через `os.path.getsize()` до чтения.
-- **Время:** ~60s/call на CPU.
+- **Почему:** единственная локальная vision-модель Ollama, влезающая в 16 GB RAM. Принимает base64-изображение вместе с ASR-контекстом. Вызывается только для ≤6% сегментов.
+- **Защита:** I-frame >2 MB → вызов пропускается (base64-чтение без лимита может вызвать OOM на 4K-кадрах). Размер проверяется через `os.path.getsize()` до чтения.
+- **Время:** ~60 с/call на CPU.
 
-#### Prompt Templates (PASS1_TEXT, PASS2_VISION, FRONTMATTER)
+#### Prompt Templates (шаблоны промптов)
 
 Три шаблона в `prompt_templates.py`:
 - PASS1_TEXT — SLM-анализ текста сегмента (ASR + OCR-контекст + жанр)
 - PASS2_VISION — VLM-анализ I-frame (весь I-frame как base64 + отрезок ASR)
 - FRONTMATTER — генерация YAML-метаданных на основе полного транскрипта
 
-Формат ответа JSON. Маркдаун-код-фенсы (` ```json `) стрипаются до парсинга через `extract_json()`.
+Формат ответа — JSON. Маркдаун-код-фенсы (```json) стрипаются до парсинга через `extract_json()`.
 
 ---
 
-### API & Infrastructure
+### API и инфраструктура
 
 #### FastAPI
 
 - **Почему:** async-native фреймворк с Pydantic v2 на каждом эндпоинте. OpenAPI spec генерируется автоматически — интеграторам не нужна отдельная документация.
-- **Реализация:** четыре эндпоинта:
+- **Эндпоинты:**
   - `POST /analyze` — загрузка видео, возврат `job_id`, фоновый запуск
   - `GET /analyze/{job_id}` — полный результат (passport + метрики)
   - `GET /analyze/{job_id}/status` — краткий статус
@@ -205,15 +210,15 @@ MP4
   - `scenes_total` — счётчик обработанных сцен
   - `jobs_total{status="pending|done|error"}` — счётчик job'ов
 
-#### Pipeline orchestration
+#### Оркестрация пайплайна
 
 - **Почему asyncio:** ffmpeg, ASR, диаризация — блокирующие операции. `asyncio.create_subprocess_exec` позволяет не блокировать event loop и отменять pipeline через `asyncio.CancelledError`.
 - **Почему subprocess:** ffmpeg и whisper.cpp — внешние бинарники. Python-обёртки (PyAV, whisper-python) добавляют оверхед и баги совместимости. Subprocess даёт полный контроль.
-- **Lazy imports:** 8 зависимостей (PyAnnote, Whisper, OCR, scene_analyzer и др.) импортируются внутри `_run_pipeline`, не в глобальной области. Это сокращает время старта сервера до <1s.
+- **Lazy imports:** 8 зависимостей (PyAnnote, Whisper, OCR, scene_analyzer и др.) импортируются внутри `_run_pipeline`, не в глобальной области. Это сокращает время старта сервера до <1 с.
 
 ---
 
-## Architecture (GRACE)
+## Архитектура (GRACE)
 
 Шесть изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
 
@@ -255,7 +260,7 @@ MP4
 
 ---
 
-## Reliability & Fault Tolerance
+## Отказоустойчивость
 
 ### TimeoutManager
 
@@ -267,7 +272,7 @@ call_ollama(prompt, timeout_name, call_name, model, max_tokens)
   ├── Circuit Breaker (CB) проверяет состояние
   │     └── OPEN → CircuitBreakerOpenError → немедленный fallback
   │
-  ├── Retry × 3 (exponential backoff: 1s → 2s → 4s, max 10s)
+  ├── Retry × 3 (exponential backoff: 1 с → 2 с → 4 с, max 10 с)
   │     └── Все попытки исчерпаны → fallback chain
   │
   └── Fallback chain (конфигурируется в config.yaml):
@@ -279,38 +284,34 @@ call_ollama(prompt, timeout_name, call_name, model, max_tokens)
 | Параметр | Значение | Эффект |
 |---|---|---|
 | `failure_threshold` | 10 | После 10 последовательных ошибок — OPEN |
-| `recovery_timeout_sec` | 60 | Через 60s — HALF-OPEN (пробный запрос) |
+| `recovery_timeout_sec` | 60 | Через 60 с — HALF-OPEN (пробный запрос) |
 | `half_open_max_requests` | 1 | В HALF-OPEN пропускается 1 запрос |
 
-Состояния: `CLOSED` → `OPEN` (после 10 failures) → `HALF-OPEN` (через 60s) → `CLOSED` (успех) / `OPEN` (снова failure).
+Состояния: `CLOSED` → `OPEN` (после 10 failures) → `HALF-OPEN` (через 60 с) → `CLOSED` (успех) / `OPEN` (снова failure).
 
 ### Таймауты по компонентам
 
 | Компонент | Таймаут | Fallback |
 |---|---|---|
-| Whisper.cpp | 300s | — (одна попытка) |
-| PyAnnote | 120s | — (DIARIZATION_FAILED → empty speaker) |
-| Gemma4:e4b (pass1) | 180s | retry → shorten_prompt → `fallback_used=llm_failed` |
-| Qwen3.5:9b (VLM) | 300s | retry → skip_vision |
-| Genre classifier | 120s | retry → keyword fallback |
-| Qwen3.5:0.8b (frontmatter) | 180s | retry → fallback frontmatter (unknown) |
-| **Pipeline total** | **3600s** | Обрыв → статус `error` |
+| Whisper.cpp | 300 с | — (одна попытка) |
+| PyAnnote | 120 с | — (ошибка → пустой speaker) |
+| Gemma4:e4b (pass1) | 180 с | retry → shorten_prompt → `fallback_used=llm_failed` |
+| Qwen3.5:9b (VLM) | 300 с | retry → skip_vision |
+| Genre classifier | 120 с | retry → keyword fallback |
+| Qwen3.5:0.8b (frontmatter) | 180 с | retry → fallback frontmatter (unknown) |
+| **Pipeline total** | **3600 с** | Обрыв → статус `error` |
 
-### Fallback поведение при отказе LLM
+### Поведение при отказе LLM
 
 При отказе всех retry для Gemma4:e4b сегмент получает `fallback_used="llm_failed"`. Monetization tags не генерируются — ни rule-based, ни keyword-based. Пустой `monetization=[]`.
 
 ### Async subprocess (ffmpeg)
 
 ```python
-async def _run_ffmpeg(cmd: list[str], timeout_sec: int, log) -> tuple[str, str]:
-    proc = await asyncio.create_subprocess_exec(
-        *cmd, stdout=PIPE, stderr=PIPE
-    )
+async def _run_ffmpeg(cmd, timeout_sec, log):
+    proc = await asyncio.create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
     try:
-        stdout, stderr = await asyncio.wait_for(
-            proc.communicate(), timeout=timeout_sec
-        )
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout_sec)
     except asyncio.TimeoutError:
         proc.kill()
         await proc.wait()
@@ -323,11 +324,11 @@ async def _run_ffmpeg(cmd: list[str], timeout_sec: int, log) -> tuple[str, str]:
 
 ---
 
-## Testing
+## Тестирование
 
-### Test suite: 81 tests, 0 failures, 1 skipped
+### Test suite: 81 тест, 0 failures, 1 skipped
 
-Скойп тестов по модулям:
+Покрытие тестов по модулям:
 
 | Модуль | Тестов | Файлы |
 |---|---|---|
@@ -337,35 +338,35 @@ async def _run_ffmpeg(cmd: list[str], timeout_sec: int, log) -> tuple[str, str]:
 | M-SEMANTIC | 11 | `test_qwen_client.py`, `test_scene_analyzer.py` |
 | M-PASSPORT | 13 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
 | M-API | 4 | `test_endpoints.py` |
-| Integration | 0 | `test_integration.py` — **skipped** (ожидает demo video) |
+| Интеграция | 0 | `test_integration.py` — **skipped** (ожидает demo video) |
 
 ### Методология
 
 - **Изоляция:** внешние вызовы (Ollama, ffmpeg, Whisper, PyAnnote) мокаются через `monkeypatch` + `AsyncMock` / `MagicMock`
 - **Async тесты:** `@pytest.mark.asyncio` + `asyncio_mode=auto` (pytest-asyncio)
 - **Файловый I/O:** временные файлы через `tmp_path` fixture (pytest built-in)
-- **Таймауты:** `pytest-timeout` — 120s на suite
+- **Таймауты:** `pytest-timeout` — 120 с на suite
 
 ### GRACE Verification
 
 22 verification scenarios, 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
-- **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600s)
+- **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
 - **Release gate:** полный suite + VLM ratio check (<6%)
 
 ---
 
-## Privacy & Security
+## Приватность и безопасность
 
 - **Все вычисления локальные.** Никакие данные (видео, аудио, текст) не отправляются во внешние API. Whisper.cpp, Ollama, PyAnnote, RapidOCR — всё запускается на машине, где развёрнут сервер.
 - **Логи не содержат PII.** structlog-логи содержат только `correlation_id` (job_id), метаданные (длительность, количество сцен), тайминги. Сырые аудио/видео данные не логируются.
 - **ФЗ-152 «О персональных данных».** Решение не зависит от персональных данных пользователей — все метки монетизации извлекаются из контента (видео + аудиодорожка), а не из профилей.
-- **Обработка файлов.** Загруженные видео сохраняются в `/tmp/rutube-jobs/{job_id}` и удаляются при очистке temp-директории. FFmpeg I-frame — временные .jpg файлы, удаляются после OCR.
+- **Обработка файлов.** Загруженные видео сохраняются в `/tmp/rutube-jobs/{job_id}` и удаляются при очистке temp-директории. I-frame — временные .jpg, удаляются после OCR.
 
 ---
 
-## Monitoring & Observability
+## Мониторинг
 
 ### Логи (structlog JSON)
 
@@ -399,13 +400,13 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-23 пар `START_BLOCK`/`END_BLOCK` в 31 source-файле. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т.д. Используется для навигации LLM по коду без чтения всего файла.
+23 пары `START_BLOCK`/`END_BLOCK` в 31 source-файле. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
-## Installation
+## Установка
 
-### Requirements
+### Требования
 
 - Python 3.13+
 - [Ollama](https://ollama.com) с моделями:
@@ -415,22 +416,22 @@ Endpoints:
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) с моделью `large-v3`
 - ffmpeg (7+)
 
-### Setup
+### Установка
 
 ```bash
 git clone <repo>
 cd rutube-video-analyzer
 
-# virtual environment
+# виртуальное окружение
 python3 -m venv .venv
 source .venv/bin/activate
 
-# install
+# установка
 pip install -e .
 pip install -e ".[dev]"
 ```
 
-### Configuration
+### Конфигурация
 
 `config.yaml` — все таймауты, ретраи, пути к моделям, жанры.
 
@@ -448,7 +449,7 @@ models:
 
 ---
 
-## Quick Start
+## Быстрый старт
 
 ```bash
 uvicorn src.api.app:app --reload --port 8000
@@ -463,9 +464,7 @@ curl -X POST -F "file=@video.mp4" http://localhost:8000/analyze
 Проверить статус:
 ```bash
 curl http://localhost:8000/analyze/a1b2c3d4
-# → {"job_id": "...", "status": "processing", "metrics": {...}}
 curl http://localhost:8000/analyze/a1b2c3d4/status
-# → {"job_id": "...", "status": "done", "metrics": {...}}
 ```
 
 Получить .md паспорт:
@@ -480,7 +479,7 @@ curl http://localhost:8000/metrics
 
 ---
 
-## API Reference
+## API
 
 ### `POST /analyze`
 
@@ -494,7 +493,6 @@ curl http://localhost:8000/metrics
 
 Полный результат обработки.
 
-- Response:
 ```json
 {
   "job_id": "str",
@@ -533,16 +531,21 @@ Prometheus endpoint. Content-Type: `text/plain; version=0.0.4`.
 
 ---
 
-## Output Example (.md passport)
+## Пример результата
+
+### Пример 1: How-to (ремонт автомобиля)
+
+Вход: 5-минутное видео «Замена генератора на ВАЗ-2110».  
+Выход: паспорт с 4 сценами, 2 `ECOM_ITEM`, 1 `AD_SLOT`, 1 `CLIP_CANDIDATE`.
 
 ```markdown
 ---
 video_id: "repair_guide_01"
 domain_type: how_to
 brand_safety_score: 95
-target_audience: ["diy", "ремонт"]
+target_audience: ["diy", "ремонт", "авто"]
 seo_title: "Замена генератора на ВАЗ-2110 — пошаговая инструкция"
-seo_tags: ["ремонт", "авто", "ВАЗ"]
+seo_tags: ["ремонт", "авто", "ВАЗ", "генератор"]
 trending_cluster: "авторемонт"
 auto_playlists: []
 ad_targeting_keywords: ["генератор", "автозапчасти", "инструмент"]
@@ -560,9 +563,11 @@ ad_targeting_keywords: ["генератор", "автозапчасти", "ин�
 * **[ECOM_ITEM]** — Поисковый запрос: "рожковый ключ на 13"
   * Уверенность: 85%
 
----
+## [00:45 - 02:30] Демонтаж старого генератора
+* **Спикер:** SPEAKER_00
+* **ASR Context:** "Откручиваем нижний болт крепления и снимаем старый генератор"
 
-## [03:30 - 04:00] Установка нового генератора
+## [02:30 - 04:00] Установка нового генератора
 * **Спикер:** SPEAKER_00
 * **ASR Context:** "Перед установкой проверьте совместимость по каталогу"
 * **[ECOM_ITEM]** — Поисковый запрос: "генератор ВАЗ-2110"
@@ -574,13 +579,66 @@ ad_targeting_keywords: ["генератор", "автозапчасти", "ин�
   * Виральный потенциал: medium
 
 ---
+
+```
+
+### Пример 2: Подкаст / интервью
+
+Вход: 10-минутный выпуск подкаста «Технологии будущего».  
+Выход: паспорт с 6 сценами, 2 `AD_SLOT` (контекстная реклама), без `ECOM_ITEM` и `CLIP_CANDIDATE`.  
+VLM не вызывался — `vision_blocked=true` для жанра podcast.
+
+```markdown
+---
+video_id: "tech_podcast_42"
+domain_type: podcast
+brand_safety_score: 100
+target_audience: ["technology", "it", "startups"]
+seo_title: "Технологии будущего — выпуск 42: нейросети в медицине"
+seo_tags: ["подкаст", "технологии", "нейросети", "медицина"]
+trending_cluster: "tech"
+auto_playlists: []
+ad_targeting_keywords: ["нейросети", "AI", "медицинские технологии"]
+---
+
+# Таймлайн и монетизация
+
+## [00:00 - 01:30] Введение: о чём сегодня поговорим
+* **Спикер:** SPEAKER_00
+* **ASR Context:** "В этом выпуске разберём, как нейросети меняют диагностику заболеваний"
+
+## [01:30 - 04:00] Интервью с главным врачом клиники
+* **Спикер:** SPEAKER_01
+* **ASR Context:** "Мы внедрили ИИ-диагностику в прошлом году и получили прирост точности на 30%"
+* **[AD_SLOT]** — Таргетинг: "медицинские ИИ-решения"
+  * Контекст: обсуждение практического использования AI в диагностике
+
+## [04:00 - 06:30] Как обучают нейросеть на медицинских данных
+* **Спикер:** SPEAKER_00
+* **ASR Context:** "Основная проблема — размеченные данные. Их сбор занимает до 80% времени проекта"
+
+## [06:30 - 08:00] Примеры из практики: успешные кейсы
+* **Спикер:** SPEAKER_01
+* **ASR Context:** "Один из наших проектов — ранняя диагностика рака лёгких по снимкам КТ"
+* **[AD_SLOT]** — Таргетинг: "облачные решения для медицины"
+  * Контекст: обсуждение ИТ-инфраструктуры для медицинских AI-продуктов
+
+## [08:00 - 09:30] Ограничения и риски
+* **Спикер:** SPEAKER_00
+* **ASR Context:** "Регуляторика в медицине — один из главных тормозов внедрения AI"
+
+## [09:30 - 10:00] Заключение и анонс следующего выпуска
+* **Спикер:** SPEAKER_01
+* **ASR Context:** "В следующем выпуске обсудим AI в образовании. Спасибо, что слушаете!"
+
+---
 ```
 
 ---
 
-## Roadmap
+## План развития
 
-1. **Интеграционное тестирование** — поместить демо-видео (≤30s, ~5MB) в `tests/fixtures/videos/` и запустить `pytest tests/test_integration.py --timeout=3600`
+1. **Интеграционное тестирование** — поместить демо-видео (≤30 с, ~5 MB) в `tests/fixtures/videos/` и запустить `pytest tests/test_integration.py --timeout=3600`
 2. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
 3. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
 4. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU

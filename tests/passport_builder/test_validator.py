@@ -40,3 +40,11 @@ def test_ecom_without_search_query():
     passport = Passport(frontmatter=fm, timeline=[sr])
     errors = validate(passport)
     assert any("ECOM_ITEM" in e for e in errors)
+
+
+def test_strict_mode_raises():
+    from src.core.exceptions import ValidationError as PipelineValidationError
+    fm = PassportFrontmatter(video_id="", domain_type="t")
+    passport = Passport(frontmatter=fm, timeline=[])
+    with pytest.raises(PipelineValidationError, match="video_id"):
+        validate(passport, strict=True)

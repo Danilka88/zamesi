@@ -38,11 +38,10 @@ def _scene_to_md(i: int, scene: SceneAnalysisResult, seg: TimelineSegment | None
             lines.append(f"* **[ECOM_ITEM]** — Поисковый запрос: \"{m.search_query}\"")
             if m.confidence:
                 lines.append(f"  * Уверенность: {m.confidence:.0%}")
-
-    if scene.ad_slot:
-        lines.append(f"* **[AD_SLOT: {scene.ad_slot.type}]** — Таргетинг: \"{scene.ad_slot.search_query or ''}\"")
-        if scene.ad_slot.reason:
-            lines.append(f"  * Контекст: {scene.ad_slot.reason}")
+        elif m.type == "ad_slot":
+            lines.append(f"* **[AD_SLOT]** — Таргетинг: \"{m.search_query or ''}\"")
+            if m.reason:
+                lines.append(f"  * Контекст: {m.reason}")
 
     if scene.clip_candidate:
         def _ts(sec: float) -> str:

@@ -148,7 +148,7 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
         )
 
         total_sec = time.monotonic() - pipeline_start
-        ad_count = sum(1 for s in scene_results if s.ad_slot is not None)
+        ad_count = sum(1 for s in scene_results if any(m.type == "ad_slot" for m in s.monetization))
         ecom_count = sum(len(s.monetization) for s in scene_results)
         clip_count = sum(1 for s in scene_results if s.clip_candidate is not None)
         fallbacks = sum(1 for s in scene_results if s.fallback_used is not None)

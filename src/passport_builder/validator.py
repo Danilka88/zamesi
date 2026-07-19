@@ -1,10 +1,11 @@
 import re
 
+from src.core.exceptions import ValidationError as PipelineValidationError
 from src.core.logging_config import get_logger
 from src.core.schemas import Passport
 
 
-def validate(passport: Passport, log=None) -> list[str]:
+def validate(passport: Passport, log=None, strict: bool = False) -> list[str]:
     log = log or get_logger()
     errors = []
 
@@ -27,6 +28,8 @@ def validate(passport: Passport, log=None) -> list[str]:
 
     if errors:
         log.warning("validation_errors", count=len(errors), errors=errors)
+        if strict:
+            raise PipelineValidationError("; ".join(errors))
     else:
         log.info("validation_passed")
     return errors

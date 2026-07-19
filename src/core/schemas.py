@@ -71,9 +71,15 @@ class SceneAnalysisResult(BaseModel):
     scene_summary: str
     monetization: list[MonetizationItem] = []
     clip_candidate: ClipCandidate | None = None
-    ad_slot: MonetizationItem | None = None
     fallback_used: str | None = None
     processing_time_sec: float = 0.0
+
+    @staticmethod
+    def build_monetization(parsed: dict) -> list[MonetizationItem]:
+        items = [MonetizationItem(**m) for m in parsed.get("monetization", [])] if parsed.get("monetization") else []
+        if parsed.get("ad_slot"):
+            items.append(MonetizationItem(**parsed["ad_slot"]))
+        return items
 
 
 class PassportFrontmatter(BaseModel):

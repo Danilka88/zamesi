@@ -2,7 +2,7 @@ import json
 import time
 
 from src.core.logging_config import get_logger
-from src.core.schemas import ClipCandidate, MonetizationItem, SceneAnalysisResult, TimelineSegment
+from src.core.schemas import ClipCandidate, SceneAnalysisResult, TimelineSegment
 from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_vision_segment
 from src.vision_scanner.ocr_buffer import OCRBuffer
 
@@ -50,11 +50,8 @@ async def analyze_scenes(
                 action_is_clear=parsed.get("action_is_clear", True),
                 requires_vision=parsed.get("requires_vision", False),
                 scene_summary=parsed.get("scene_summary", seg.text[:120]),
-                monetization=[
-                    MonetizationItem(**m) for m in parsed.get("monetization", [])
-                ] if parsed.get("monetization") else [],
+                monetization=SceneAnalysisResult.build_monetization(parsed),
                 clip_candidate=ClipCandidate(**parsed["clip_candidate"]) if parsed.get("clip_candidate") else None,
-                ad_slot=MonetizationItem(**parsed["ad_slot"]) if parsed.get("ad_slot") else None,
                 processing_time_sec=time.monotonic() - start_time,
             )
 
@@ -66,7 +63,6 @@ async def analyze_scenes(
                 scene_summary=seg.text[:120],
                 monetization=[],
                 clip_candidate=None,
-                ad_slot=None,
                 fallback_used="llm_failed",
                 processing_time_sec=time.monotonic() - start_time,
             )

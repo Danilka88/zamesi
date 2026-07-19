@@ -87,6 +87,50 @@
       </steps>
     </Phase-5>
 
+    <Phase-7 name="Semantic Search / VideoRAG" status="built">
+      <description>Паспорт → сцены → embedding → ChromaDB. Поиск: запрос → embedding → top-K сцен.</description>
+      <steps>
+        <step-19 module-ref="M-SEARCH" status="built" order="1">
+          <description>Модуль indexer: index_passport (сцена → чанк → embedding → ChromaDB), reindex_all (все .md файлы).</description>
+          <source>src/search/indexer.py</source>
+        </step-19>
+        <step-20 module-ref="M-SEARCH" status="built" order="2">
+          <description>Модуль searcher: search_scenes (запрос → embedding → query ChromaDB → SearchResult[]).</description>
+          <source>src/search/searcher.py</source>
+        </step-20>
+        <step-21 module-ref="M-SEARCH" status="built" order="3">
+          <description>Routes: GET /search (поиск с фильтром по genre), POST /search/reindex (переиндексация).</description>
+          <source>src/api/routes_search.py</source>
+        </step-21>
+        <step-22 module-ref="M-PASSPORT" status="built" order="4">
+          <description>Интеграция: index_passport вызывается после validate() в build_passport.</description>
+          <source>src/passport_builder/passport_builder.py</source>
+        </step-22>
+      </steps>
+    </Phase-7>
+
+    <Phase-8 name="Mixer (Замеси)" status="built">
+      <description>Запрос → LLM этапы → Semantic Search → LLM матчинг → Mix → Markdown.</description>
+      <steps>
+        <step-23 module-ref="M-MIXER" status="built" order="1">
+          <description>Модуль stage_planner: LLM-разбиение запроса на 3-5 этапов.</description>
+          <source>src/mixer/stage_planner.py</source>
+        </step-23>
+        <step-24 module-ref="M-MIXER" status="built" order="2">
+          <description>Модуль mix_composer: search → LLM match → MixStage.</description>
+          <source>src/mixer/mix_composer.py</source>
+        </step-24>
+        <step-25 module-ref="M-MIXER" status="built" order="3">
+          <description>Модуль mix_to_md: Mix → Markdown (структурированный вывод).</description>
+          <source>src/mixer/mix_to_md.py</source>
+        </step-25>
+        <step-26 module-ref="M-MIXER" status="built" order="4">
+          <description>Routes: POST /mix (создать микс), GET /mix/{id} (результат), GET /mix/{id}/markdown (Markdown).</description>
+          <source>src/api/routes_mix.py</source>
+        </step-26>
+      </steps>
+    </Phase-8>
+
     <Phase-6 name="API Layer &amp; Integration" status="built">
       <description>FastAPI-endpoints, job queue, оркестрация пайплайна, Prometheus-метрики, интеграционные тесты.</description>
       <steps>
@@ -169,6 +213,30 @@
       <Verification ref="V-M-PASSPORT"/>
     </M-PASSPORT>
 
+    <M-SEARCH NAME="Semantic Search" TYPE="PROCESSOR" status="built">
+      <Purpose>Embedding-индексация сцен и семантический поиск через ChromaDB</Purpose>
+      <Scope>index_passport (Ollama embedding → ChromaDB), search_scenes (embedding query → top-K), reindex_all.</Scope>
+      <Depends>
+        <Dependency ref="M-CORE"/>
+        <Dependency ref="M-PASSPORT"/>
+      </Depends>
+      <Source path="src/search/"/>
+      <Test path="tests/search/"/>
+      <Verification ref="V-M-SEARCH"/>
+    </M-SEARCH>
+
+    <M-MIXER NAME="Mixer (Замеси)" TYPE="PROCESSOR" status="built">
+      <Purpose>Multi-video structured mix generation per user query</Purpose>
+      <Scope>LLM-планирование этапов, Semantic Search + LLM матчинг, Markdown-рендеринг.</Scope>
+      <Depends>
+        <Dependency ref="M-CORE"/>
+        <Dependency ref="M-SEARCH"/>
+      </Depends>
+      <Source path="src/mixer/"/>
+      <Test path="tests/mixer/"/>
+      <Verification ref="V-M-MIXER"/>
+    </M-MIXER>
+
     <M-API NAME="API Layer" TYPE="INTERFACE" status="built">
       <Purpose>FastAPI-endpoints, job queue, оркестрация пайплайна, метрики</Purpose>
       <Scope>FastAPI, uvicorn, structlog middleware, Prometheus-метрики, asyncio task management.</Scope>
@@ -224,5 +292,24 @@
         <step order="4" module="M-API" action="GET /metrics (Prometheus) + GET /health"/>
       </steps>
     </DF-004>
+
+    <DF-005 name="Search Flow">
+      <description>Passport → index → search: индексация сцен при сборке паспорта, семантический поиск по запросу</description>
+      <steps>
+        <step order="1" module="M-PASSPORT" action="build_passport + validate"/>
+        <step order="2" module="M-SEARCH" action="index_passport (embedding → ChromaDB)"/>
+        <step order="3" module="M-SEARCH" action="search_scenes (query → embedding → ChromaDB query → results)"/>
+      </steps>
+    </DF-005>
+
+    <DF-006 name="Mix Flow">
+      <description>Query → stages → search → compose → render: генерация структурированного микса</description>
+      <steps>
+        <step order="1" module="M-MIXER" action="plan_stages (LLM → list of stages)"/>
+        <step order="2" module="M-MIXER" action="search_scenes (for each stage)"/>
+        <step order="3" module="M-MIXER" action="LLM match scenes → MixStage"/>
+        <step order="4" module="M-MIXER" action="mix_to_markdown (render)"/>
+      </steps>
+    </DF-006>
   </Flows>
 </development-plan>

@@ -17,6 +17,7 @@
     <library name="structlog" version="24.0+" purpose="Структурированное логирование"/>
     <library name="prometheus-client" version="0.20+" purpose="Prometheus-метрики"/>
     <library name="python-multipart" version="0.0.12+" purpose="Загрузка видеофайлов"/>
+    <library name="chromadb" version="1.5+" purpose="Vector search (Rust core, embedded mode)"/>
   </key-libraries>
 
   <testing>
@@ -47,6 +48,9 @@
     <asr name="Whisper large-v3" provider="whisper.cpp" binary="whisper-cli"/>
     <diarization name="PyAnnote Speaker Diarization 3.1" provider="pyannote-audio"/>
     <ocr name="RapidOCR v4" provider="onnxruntime"/>
+    <embedding name="qwen3-embedding:0.6b" provider="Ollama" endpoint="http://localhost:11434" purpose="Embedding для семантического поиска (multilingual, 1024-dim)">
+      <params MTEB="64.33"/>
+    </embedding>
   </ai-models>
 
   <constraints>

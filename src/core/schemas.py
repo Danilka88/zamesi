@@ -138,3 +138,49 @@ class AnalyzeResultResponse(BaseModel):
     passport: Passport | None = None
     metrics: JobMetrics | None = None
     error: str | None = None
+
+
+class SearchResult(BaseModel):
+    video_id: str
+    scene_index: int
+    start_sec: float
+    end_sec: float
+    summary: str
+    speaker: str = ""
+    text: str = ""
+    genre: str = ""
+    monetization_types: list[str] = []
+    score: float = 0.0
+
+
+class MixRequest(BaseModel):
+    query: str = Field(min_length=3)
+    max_videos_per_stage: int = Field(default=3, ge=1, le=10)
+
+
+class Stage(BaseModel):
+    title: str
+    description: str
+
+
+class MixSceneRef(BaseModel):
+    video_id: str
+    scene_index: int
+    start_sec: float
+    end_sec: float
+    summary: str
+    speaker: str = ""
+    text: str = ""
+
+
+class MixStage(BaseModel):
+    title: str
+    description: str
+    scenes: list[MixSceneRef]
+
+
+class Mix(BaseModel):
+    mix_id: str = ""
+    query: str = ""
+    stages: list[MixStage] = []
+    total_duration_sec: float = 0.0

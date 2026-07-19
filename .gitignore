@@ -14,3 +14,4 @@ build/
 .benchmarks/
 .DS_Store
 *.db
+data/

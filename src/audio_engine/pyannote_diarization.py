@@ -16,12 +16,11 @@ def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
 
     log.info("[M-AUDIO][PYANNOTE][START]")
     try:
-        pipeline = Pipeline.from_pretrained(
-            "pyannote/speaker-diarization-3.1",
-            use_auth_token=None,
-        )
+        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")
     except Exception as e:
         raise DiarizationError(f"Failed to load PyAnnote pipeline: {e}") from e
+
+    assert pipeline is not None
 
     try:
         diarization = pipeline(str(audio_path))
@@ -29,7 +28,7 @@ def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
         raise DiarizationError(f"PyAnnote inference failed: {e}") from e
 
     segments = []
-    for turn, _, speaker in diarization.itertracks(yield_label=True):
+    for turn, _, speaker in diarization.itertracks(yield_label=True):  # type: ignore[union-attr]
         segments.append(SpeakerSegment(
             speaker=speaker,
             start_sec=turn.start,

@@ -12,8 +12,8 @@ VIDEOS_DIR = FIXTURES_DIR / "videos"
 
 @pytest.fixture
 def capture_logs():
-    from structlog.testing import LogCapture
     import structlog as _structlog
+    from structlog.testing import LogCapture
 
     cap = LogCapture()
     _structlog.configure(

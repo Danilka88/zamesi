@@ -1,4 +1,3 @@
-from unittest.mock import AsyncMock
 
 import pytest
 
@@ -9,7 +8,12 @@ from src.passport_builder.frontmatter_generator import build_frontmatter
 @pytest.mark.asyncio
 async def test_build_frontmatter_success(monkeypatch):
     async def fake_generate(*a, **kw):
-        return '{"domain_type": "how_to", "brand_safety_score": 85, "target_audience": ["diy"], "seo_title": "Test video", "seo_tags": ["ремонт"], "trending_cluster": "", "auto_playlists": [], "ad_targeting_keywords": ["инструмент"]}'
+        return (
+            '{"domain_type": "how_to", "brand_safety_score": 85, '
+            '"target_audience": ["diy"], "seo_title": "Test video", '
+            '"seo_tags": ["ремонт"], "trending_cluster": "", '
+            '"auto_playlists": [], "ad_targeting_keywords": ["инструмент"]}'
+        )
 
     monkeypatch.setattr("src.passport_builder.frontmatter_generator.generate_frontmatter", fake_generate)
     fm = await build_frontmatter("vid_001", "транскрипт видео")

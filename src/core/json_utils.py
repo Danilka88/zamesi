@@ -12,9 +12,15 @@ def extract_json(text: str) -> str:
         text = re.sub(r"```\s*$", "", text).strip()
     start = text.find("{")
     end = text.rfind("}")
-    if start == -1 or end == -1:
-        raise ValueError(f"No JSON found in response: {text[:200]}")
-    candidate = text[start : end + 1]
-    json.loads(candidate)
-    return candidate
+    if start != -1 and end != -1:
+        candidate = text[start : end + 1]
+        json.loads(candidate)
+        return candidate
+    start = text.find("[")
+    end = text.rfind("]")
+    if start != -1 and end != -1:
+        candidate = text[start : end + 1]
+        json.loads(candidate)
+        return candidate
+    raise ValueError(f"No JSON found in response: {text[:200]}")
 # END_BLOCK: M-CORE/JSON/EXTRACT

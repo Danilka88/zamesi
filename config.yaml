@@ -101,5 +101,15 @@ genres:
       vision_blocked: false
       fallback_keywords: []
 
+search:
+  collection: "rutube_scenes"
+  embedding_model: "qwen3-embedding:0.6b"
+  top_k: 20
+  chroma_path: "./data/chroma"
+
+mixer:
+  llm_model: "gemma4:e4b"
+  max_videos_per_stage: 3
+
 passport:
   output_dir: "./output"

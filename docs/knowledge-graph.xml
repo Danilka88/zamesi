@@ -22,6 +22,12 @@
         <type-AnalyzeResponse>POST /analyze ответ: job_id, status</type-AnalyzeResponse>
         <type-AnalyzeStatusResponse>GET /analyze/{id}/status ответ: job_id, status, progress</type-AnalyzeStatusResponse>
         <type-AnalyzeResultResponse>GET /analyze/{id}/result ответ: job_id, status, passport, metrics</type-AnalyzeResultResponse>
+        <type-SearchResult>Результат семантического поиска: video_id, scene_index, summary, score</type-SearchResult>
+        <type-MixRequest>Запрос на создание микса: query, max_videos_per_stage</type-MixRequest>
+        <type-Stage>Этап микса: title, description</type-Stage>
+        <type-MixSceneRef>Ссылка на сцену в миксе: video_id, scene_index, start_sec, end_sec, summary</type-MixSceneRef>
+        <type-MixStage>Этап микса со сценами: title, description, scenes[]</type-MixStage>
+        <type-Mix>Готовый микс: mix_id, query, stages[], total_duration_sec</type-Mix>
         <type-AppConfig>Загрузка и валидация config.yaml</type-AppConfig>
         <fn-load_config>Загрузка конфигурации</fn-load_config>
         <fn-timeout_manager>TimeoutManager: retry, circuit breaker, fallback chain</fn-timeout_manager>
@@ -112,6 +118,40 @@
       <Verification ref="V-M-PASSPORT"/>
     </M-PASSPORT>
 
+    <M-SEARCH NAME="Semantic Search" TYPE="PROCESSOR">
+      <Purpose>Embedding-индексация сцен в ChromaDB и семантический поиск</Purpose>
+      <Source path="src/search/"/>
+      <Test path="tests/search/"/>
+      <Exports>
+        <fn-index_passport>Сцена → чанк → embedding → ChromaDB collection.add()</fn-index_passport>
+        <fn-search_scenes>Запрос → embedding → ChromaDB query → SearchResult[]</fn-search_scenes>
+        <fn-reindex_all>Переиндексация всех .md паспортов из output_dir</fn-reindex_all>
+      </Exports>
+      <CrossLinks>
+        <CrossLink ref="M-CORE" relation="uses-types"/>
+        <CrossLink ref="M-PASSPORT" relation="receives-passports-from"/>
+        <CrossLink ref="M-MIXER" relation="feeds-into"/>
+      </CrossLinks>
+      <Verification ref="V-M-SEARCH"/>
+    </M-SEARCH>
+
+    <M-MIXER NAME="Mixer (Замеси)" TYPE="PROCESSOR">
+      <Purpose>Multi-video structured mix generation per user query</Purpose>
+      <Source path="src/mixer/"/>
+      <Test path="tests/mixer/"/>
+      <Exports>
+        <fn-plan_stages>Запрос → LLM → list of Stage (title + description)</fn-plan_stages>
+        <fn-compose_mix>Stages → search + LLM match → Mix</fn-compose_mix>
+        <fn-mix_to_markdown>Mix → Markdown (структурированный вывод)</fn-mix_to_markdown>
+      </Exports>
+      <CrossLinks>
+        <CrossLink ref="M-CORE" relation="uses-types"/>
+        <CrossLink ref="M-SEARCH" relation="receives-search-results-from"/>
+        <CrossLink ref="M-API" relation="orchestrates"/>
+      </CrossLinks>
+      <Verification ref="V-M-MIXER"/>
+    </M-MIXER>
+
     <M-API NAME="API Layer" TYPE="INTERFACE">
       <Purpose>FastAPI endpoints: загрузка, статус, результат, метрики. Управление job queue.</Purpose>
       <Source path="src/api/"/>
@@ -121,6 +161,11 @@
         <fn-get_result>GET /analyze/{job_id} — результат</fn-get_result>
         <fn-get_status>GET /analyze/{job_id}/status — статус обработки</fn-get_status>
         <fn-get_markdown>GET /analyze/{job_id}/markdown — готовый .md паспорт</fn-get_markdown>
+        <fn-get_search>GET /search — семантический поиск (SearchResult[])</fn-get_search>
+        <fn-post_search_reindex>POST /search/reindex — переиндексация</fn-post_search_reindex>
+        <fn-post_mix>POST /mix — создание микса</fn-post_mix>
+        <fn-get_mix>GET /mix/{id} — результат микса</fn-get_mix>
+        <fn-get_mix_markdown>GET /mix/{id}/markdown — Markdown микса</fn-get_mix_markdown>
         <fn-get_health>GET /health — healthcheck</fn-get_health>
         <fn-get_metrics>GET /metrics — Prometheus-метрики</fn-get_metrics>
       </Exports>
@@ -130,6 +175,8 @@
         <CrossLink ref="M-VISION" relation="orchestrates"/>
         <CrossLink ref="M-SEMANTIC" relation="orchestrates"/>
         <CrossLink ref="M-PASSPORT" relation="orchestrates"/>
+        <CrossLink ref="M-SEARCH" relation="orchestrates"/>
+        <CrossLink ref="M-MIXER" relation="orchestrates"/>
       </CrossLinks>
       <Verification ref="V-M-API"/>
     </M-API>

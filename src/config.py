@@ -130,5 +130,29 @@ class Config:
     def fallback_chain(self) -> list[str]:
         return list(self._get("fallback_chain", default=["retry_same", "shorten_prompt", "skip_vision", "rule_based"]))
 
+    @property
+    def search_embedding_model(self) -> str:
+        return self._get("search", "embedding_model", default="qwen3-embedding:0.6b")
+
+    @property
+    def search_top_k(self) -> int:
+        return int(self._get("search", "top_k", default=20))
+
+    @property
+    def search_chroma_path(self) -> str:
+        return self._get("search", "chroma_path", default="./data/chroma")
+
+    @property
+    def search_collection(self) -> str:
+        return self._get("search", "collection", default="rutube_scenes")
+
+    @property
+    def mixer_llm_model(self) -> str:
+        return self._get("mixer", "llm_model", default="gemma4:e4b")
+
+    @property
+    def mixer_max_videos_per_stage(self) -> int:
+        return int(self._get("mixer", "max_videos_per_stage", default=3))
+
 
 config = Config()

@@ -95,6 +95,15 @@ async def build_passport(
     if errors:
         log.warning("[M-PASSPORT][BUILDER][VALIDATION_ERRORS]", count=len(errors))
 
+    try:
+        from src.search.indexer import index_passport
+        indexed = index_passport(passport, log=log)
+        log.info("[M-PASSPORT][BUILDER][INDEXED]", scenes=indexed)
+    except ImportError:
+        pass
+    except Exception as e:
+        log.warning("[M-PASSPORT][BUILDER][INDEX_FAILED]", error=str(e))
+
     return passport
 # END_BLOCK: M-PASSPORT/BUILDER/BUILD_PASSPORT
 

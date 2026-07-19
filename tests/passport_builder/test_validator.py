@@ -4,7 +4,7 @@ from src.core.schemas import Passport, PassportFrontmatter, SceneAnalysisResult
 from src.passport_builder.validator import validate
 
 
-def test_valid_passport():
+def test_valid_passport(capture_logs):
     fm = PassportFrontmatter(video_id="test_001", domain_type="how_to")
     sr = SceneAnalysisResult(
         action_is_clear=True,
@@ -14,6 +14,9 @@ def test_valid_passport():
     passport = Passport(frontmatter=fm, timeline=[sr])
     errors = validate(passport)
     assert len(errors) == 0
+
+    markers = [e.get("event", "") for e in capture_logs.entries]
+    assert any("[M-PASSPORT][VALIDATOR][PASSED]" in m for m in markers)
 
 
 def test_missing_video_id():

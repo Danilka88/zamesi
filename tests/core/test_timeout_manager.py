@@ -28,7 +28,7 @@ async def test_call_with_retry_timeout_triggers_fallback():
 
 
 @pytest.mark.asyncio
-async def test_call_with_retry_success_on_second_attempt():
+async def test_call_with_retry_success_on_second_attempt(capture_logs):
     tm = TimeoutManager()
     call_count = 0
 
@@ -49,8 +49,12 @@ async def test_call_with_retry_success_on_second_attempt():
     assert result == "success"
     assert call_count == 2
 
+    markers = [e.get("event", "") for e in capture_logs.entries]
+    assert any("[M-CORE][TIMEOUT][RETRY]" in m for m in markers)
+    assert any("[M-CORE][TIMEOUT][LLM_SUCCESS]" in m for m in markers)
 
-def test_circuit_breaker_opens_after_threshold():
+
+def test_circuit_breaker_opens_after_threshold(capture_logs):
     cb = CircuitBreaker("test")
     cb.threshold = 3
 
@@ -67,6 +71,9 @@ def test_circuit_breaker_opens_after_threshold():
 
     with pytest.raises(CircuitBreakerOpenError):
         cb.call(failing)
+
+    markers = [e.get("event", "") for e in capture_logs.entries]
+    assert any("[M-CORE][CB][OPENED]" in m for m in markers)
 
 
 def test_circuit_breaker_recovers():

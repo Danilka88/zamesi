@@ -42,6 +42,7 @@
         <CrossLink ref="M-CORE" relation="uses-types"/>
         <CrossLink ref="M-VISION" relation="feeds-iframes-to"/>
         <CrossLink ref="M-SEMANTIC" relation="feeds-into"/>
+        <CrossLink ref="M-PASSPORT" relation="feeds-timeline-into"/>
       </CrossLinks>
       <Verification ref="V-M-AUDIO"/>
     </M-AUDIO>

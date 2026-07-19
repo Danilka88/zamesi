@@ -20,7 +20,7 @@ async def _fake_vision_pass(**kwargs):
 
 
 @pytest.mark.asyncio
-async def test_analyze_scenes_basic(monkeypatch):
+async def test_analyze_scenes_basic(monkeypatch, capture_logs):
     import src.semantic_analyzer.scene_analyzer as sa
 
     monkeypatch.setattr(sa, "analyze_text_segment", _fake_text_pass)
@@ -38,6 +38,9 @@ async def test_analyze_scenes_basic(monkeypatch):
     assert results[0].action_is_clear is True
     assert results[0].scene_summary == "mocked"
     assert vlm_calls == 0
+
+    markers = [e.get("event", "") for e in capture_logs.entries]
+    assert any("[M-SEMANTIC][SCENE][ALL_DONE]" in m for m in markers)
 
 
 @pytest.mark.asyncio

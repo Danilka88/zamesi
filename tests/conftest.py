@@ -11,6 +11,26 @@ VIDEOS_DIR = FIXTURES_DIR / "videos"
 
 
 @pytest.fixture
+def capture_logs():
+    from structlog.testing import LogCapture
+    import structlog as _structlog
+
+    cap = LogCapture()
+    _structlog.configure(
+        processors=[
+            _structlog.stdlib.add_log_level,
+            cap,
+            _structlog.dev.ConsoleRenderer(),
+        ],
+        wrapper_class=_structlog.stdlib.BoundLogger,
+        context_class=dict,
+        cache_logger_on_first_use=False,
+    )
+    cap.entries.clear()
+    return cap
+
+
+@pytest.fixture
 def sample_video_howto() -> str | None:
     """Return path to a short how-to video (3-10 min). Place manually in tests/fixtures/videos/"""
     files = list(VIDEOS_DIR.glob("*howto*.mp4")) + list(VIDEOS_DIR.glob("*.mp4"))

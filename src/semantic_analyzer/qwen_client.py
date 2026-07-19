@@ -1,5 +1,7 @@
 import base64
+import os
 
+from src.config import config
 from src.core.exceptions import JSONParseError
 from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger
@@ -33,6 +35,17 @@ async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=Non
 async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> str:
     log = log or get_logger()
     from src.semantic_analyzer.prompt_templates import PASS2_VISION_SYSTEM, PASS2_VISION_USER
+
+    max_bytes = config.vision_max_image_bytes
+    try:
+        size = os.path.getsize(image_path)
+    except OSError:
+        log.warning("[M-SEMANTIC][QWEN][VISION_FILE_MISSING]", path=image_path)
+        return ""
+
+    if size > max_bytes:
+        log.warning("[M-SEMANTIC][QWEN][VISION_SKIP_LARGE]", path=image_path, size_bytes=size, max_bytes=max_bytes)
+        return ""
 
     with open(image_path, "rb") as f:
         image_b64 = base64.b64encode(f.read()).decode("utf-8")

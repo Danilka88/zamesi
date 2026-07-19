@@ -76,10 +76,8 @@ class SceneAnalysisResult(BaseModel):
 
     @staticmethod
     def build_monetization(parsed: dict) -> list[MonetizationItem]:
-        items = [MonetizationItem(**m) for m in parsed.get("monetization", [])] if parsed.get("monetization") else []
-        if parsed.get("ad_slot"):
-            items.append(MonetizationItem(**parsed["ad_slot"]))
-        return items
+        raw = parsed.get("monetization") or []
+        return [MonetizationItem(**m) for m in raw]
 
 
 class PassportFrontmatter(BaseModel):

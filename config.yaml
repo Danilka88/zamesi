@@ -5,6 +5,7 @@ models:
     vision_model: "qwen3.5:9b"
     classifier_model: "qwen3.5:0.8b"
     classifier_max_tokens: 8192
+    vision_max_image_bytes: 2097152  # 2 MB — I-frames larger than this skip VLM
     default_params:
       temperature: 0.1
       top_p: 0.9
@@ -58,8 +59,6 @@ ocr:
   buffer_window_sec: 5
 
 genres:
-  classifier_model: "qwen3.5:0.8b"
-
   labels:
     - id: podcast
       description: "разговорный формат, интервью, обсуждение без визуального контента"

@@ -110,7 +110,7 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
     try:
         log.info("[M-API][PIPELINE][START]")
 
-        audio_path = extract_audio(video_path, log=log)
+        audio_path = await extract_audio(video_path, log=log)
 
         asr_segments = transcribe(audio_path, log=log)
 
@@ -119,7 +119,7 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
         timeline = merge(asr_segments, speaker_segments, log=log)
 
         timestamps = [(s.start_sec + s.end_sec) / 2 for s in timeline]
-        frames = extract_iframes(video_path, timestamps, log=log)
+        frames = await extract_iframes(video_path, timestamps, log=log)
         iframe_map = {f["timestamp_sec"]: f["path"] for f in frames}
 
         ocr_results = process_frames(frames, log=log)

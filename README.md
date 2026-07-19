@@ -5,7 +5,7 @@ AI pipeline: **video → .md passport** с AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE.
 ## Требования
 
 - Python 3.13+
-- [Ollama](https://ollama.com) с моделью `qwen3.5:9b`
+- [Ollama](https://ollama.com) с моделями `gemma4:e4b` (текст) и `qwen3.5:9b` (vision)
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) с моделью `large-v3`
 - ffmpeg
 
@@ -57,7 +57,7 @@ pytest
 ```
 [MP4] → PyAV → Whisper.cpp (ASR) → PyAnnote (диаризация) → OCR
                                                                │
-                                          Qwen3.5:9b (текст) ←─┤
+                                          Gemma4:e4b (текст) ←─┤
                                                │                │
                                     (непонятно + VLM триггер?)  │
                                                │                │

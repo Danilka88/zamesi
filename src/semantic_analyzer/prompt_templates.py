@@ -7,8 +7,9 @@ PASS1_TEXT_SYSTEM = """Ты — AI-аналитик видеоконтента �
   "action_is_clear": bool,       // Понятно ли из текста, что конкретно происходит?
   "requires_vision": bool,       // Нужно ли визуальное подтверждение?
   "scene_summary": "string",     // Краткое описание сцены (1 предложение)
-  "monetization": [              // Массив точек монетизации
+  "monetization": [              // Массив точек монетизации — если ни одной, пустой массив
     {"type": "ecom_item", "search_query": "название товара", "confidence": 0.0-1.0},
+    {"type": "ad_slot", "search_query": "ключевые слова для таргетинга", "reason": "почему здесь"},
     {"type": "ecom_item", ...}
   ],
   "clip_candidate": {            // Если сцена подходит для Shorts/нарезки
@@ -16,14 +17,10 @@ PASS1_TEXT_SYSTEM = """Ты — AI-аналитик видеоконтента �
     "time_range_start": число,
     "time_range_end": число,
     "virality_potential": "low|medium|high"
-  } | null,
-  "ad_slot": {                   // Если подходит для рекламной врезки
-    "type": "ad_slot",
-    "search_query": "ключевые слова для таргетинга",
-    "reason": "почему здесь"
   } | null
 }
 
+ВАЖНО: monetization — единственное место для ad_slot и ecom_item. Не дублируй их в другие поля.
 Правила:
 - ECOM_ITEM: если спикер называет конкретный товар, инструмент, бренд
 - CLIP_CANDIDATE: если есть лайфхак, ошибка, неожиданный поворот
@@ -65,6 +62,3 @@ FRONTMATTER_USER = """Полный транскрипт видео:
 
 Сгенерируй SEO-метаданные в JSON."""
 
-RULE_BASED_FALLBACK_TEMPLATE = """Сегмент: {asr_text}
-Тип: {fallback_type}
-Описание: контент на основе ASR без визуального анализа"""

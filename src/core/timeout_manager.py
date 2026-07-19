@@ -31,13 +31,28 @@ class CircuitBreaker:
         self.last_failure_time = 0.0
         self.threshold = config.circuit_breaker_threshold
         self.recovery_sec = config.circuit_breaker_recovery_sec
+        self.half_open_max = int(config._get("circuit_breaker", "half_open_max_requests", default=1))
+        self._half_open_requests = 0
 
-    def call(self, func, *args, **kwargs):
+    def _allow_request(self) -> bool:
+        if self.state == CircuitState.closed:
+            return True
         if self.state == CircuitState.open:
             if time.monotonic() - self.last_failure_time >= self.recovery_sec:
                 self.state = CircuitState.half_open
-            else:
-                raise CircuitBreakerOpenError(f"Circuit breaker '{self.name}' is open")
+                self._half_open_requests = 0
+                return True
+            return False
+        if self.state == CircuitState.half_open:
+            if self._half_open_requests < self.half_open_max:
+                self._half_open_requests += 1
+                return True
+            return False
+        return False
+
+    def call(self, func, *args, **kwargs):
+        if not self._allow_request():
+            raise CircuitBreakerOpenError(f"Circuit breaker '{self.name}' is open")
         try:
             result = func(*args, **kwargs)
             self._on_success()
@@ -47,11 +62,8 @@ class CircuitBreaker:
             raise
 
     async def acall(self, func, *args, **kwargs):
-        if self.state == CircuitState.open:
-            if time.monotonic() - self.last_failure_time >= self.recovery_sec:
-                self.state = CircuitState.half_open
-            else:
-                raise CircuitBreakerOpenError(f"Circuit breaker '{self.name}' is open")
+        if not self._allow_request():
+            raise CircuitBreakerOpenError(f"Circuit breaker '{self.name}' is open")
         try:
             result = await func(*args, **kwargs)
             self._on_success()

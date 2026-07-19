@@ -1,7 +1,22 @@
+import re
+
 from src.core.logging_config import get_logger
 from src.core.schemas import Passport, SceneAnalysisResult, TimelineSegment
 from src.passport_builder.frontmatter_generator import build_frontmatter
 from src.passport_builder.validator import validate
+
+_NON_PRINTABLE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
+def _escape_yaml_value(s: str) -> str:
+    return (
+        s.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+    )
+
 
 _MD_TEMPLATE = """---
 {video_id}
@@ -96,11 +111,7 @@ def passport_to_markdown(passport: Passport) -> str:
         domain_type=passport.frontmatter.domain_type,
         brand_safety_score=passport.frontmatter.brand_safety_score,
         target_audience=passport.frontmatter.target_audience,
-        seo_title=passport.frontmatter.seo_title
-        .replace('\\', '\\\\')
-        .replace('"', '\\"')
-        .replace('\n', '\\n')
-        .replace('\r', '\\r'),
+        seo_title=_escape_yaml_value(passport.frontmatter.seo_title),
         seo_tags=passport.frontmatter.seo_tags,
         trending_cluster=passport.frontmatter.trending_cluster,
         auto_playlists=passport.frontmatter.auto_playlists,

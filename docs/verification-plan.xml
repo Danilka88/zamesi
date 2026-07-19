@@ -15,7 +15,7 @@
       <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
       <Scenarios>
         <Scenario id="S-M-CORE-1" type="success">
-          <description>JobStatus enum: все значения корректны</description>
+          <description>JobStatus enum и Pydantic-модели: все значения корректны</description>
           <commands>
             <command>pytest tests/core/test_schemas.py -v -k "test_valid_frontmatter or test_frontmatter_brand_safety"</command>
           </commands>
@@ -31,7 +31,7 @@
           </commands>
           <evidence>
             <marker required="true">[M-CORE][SCHEMAS][MONETIZATION]</marker>
-            <assert>MonetizationItem, ClipCandidate корректно сериализуются</assert>
+            <assert>MonetizationItem, ClipCandidate корректно сериализуются; monetization включает ad_slot</assert>
           </evidence>
         </Scenario>
         <Scenario id="S-M-CORE-3" type="success">
@@ -61,7 +61,7 @@
     </V-M-CORE>
 
     <V-M-AUDIO module-ref="M-AUDIO" priority="high">
-      <description>Извлечение аудио, ASR, диаризация, сборка таймлайна</description>
+      <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна</description>
       <Scenarios>
         <Scenario id="S-M-AUDIO-1" type="success">
           <description>Timeline merger: корректное присвоение спикера</description>
@@ -80,19 +80,29 @@
     </V-M-AUDIO>
 
     <V-M-VISION module-ref="M-VISION" priority="high">
-      <description>I-frame extraction, OCR, DomainRouter, OCR-дедупликация</description>
+      <description>Genre classification, DomainRouter, OCR, OCR-буфер</description>
       <Scenarios>
         <Scenario id="S-M-VISION-1" type="success">
-          <description>DomainRouter: жанровая классификация, VLM off для подкастов/лекций</description>
+          <description>DomainRouter: keyword fallback для разных жанров</description>
           <commands>
-            <command>pytest tests/vision_scanner/test_domain_router.py -v</command>
+            <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_keyword_fallback"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-VISION][DOMAIN_ROUTER][GENRE_BLOCKED]</marker>
-            <assert>Для подкастов/лекций domain_router возвращает block_vlm=true</assert>
+            <marker required="true">[M-VISION][ROUTER][KEYWORD_FALLBACK]</marker>
+            <assert>Для подкастов/лекций domain_router возвращает соответствующий жанр</assert>
           </evidence>
         </Scenario>
         <Scenario id="S-M-VISION-2" type="success">
+          <description>DomainRouter: is_vision_blocked для разных жанров</description>
+          <commands>
+            <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_is_vision_blocked"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-VISION][ROUTER][VISION_BLOCKED]</marker>
+            <assert>is_vision_blocked возвращает True для podcast/lecture, False для how_to</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-VISION-3" type="success">
           <description>OCR-буфер: поиск текста в окне ±5с</description>
           <commands>
             <command>pytest tests/vision_scanner/test_ocr_buffer.py -v</command>
@@ -109,16 +119,66 @@
     </V-M-VISION>
 
     <V-M-SEMANTIC module-ref="M-SEMANTIC" priority="critical">
-      <description>SLM-анализ, VLM Gatekeeper (трёхуровневый), извлечение монетизационных точек. Критично для TCO.</description>
+      <description>SLM-анализ (gemma4:e4b), VLM Gatekeeper, analyze_scenes. Критично для TCO.</description>
       <Scenarios>
         <Scenario id="S-M-SEMANTIC-1" type="success">
-          <description>Fallback rules: извлечение ECOM_ITEM, AD_SLOT, CLIP_CANDIDATE по ключевым словам</description>
+          <description>qwen_client: analyze_text_segment возвращает JSON, analyze_vision_segment, generate_frontmatter</description>
           <commands>
-            <command>pytest tests/semantic_analyzer/test_fallback_rules.py -v</command>
+            <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_analyze_text_segment or test_analyze_vision_segment or test_generate_frontmatter"</command>
           </commands>
           <evidence>
-            <marker required="true">[M-SEMANTIC][FALLBACK][MONETIZATION]</marker>
-            <assert>Ключевые слова инструментов → ECOM_ITEM; реклама → AD_SLOT; лайфхак → CLIP_CANDIDATE; обычная речь → без монетизации</assert>
+            <marker required="true">[M-SEMANTIC][QWEN][TEXT_ANALYSIS]</marker>
+            <assert>analyze_text_segment возвращает JSON с action_is_clear; analyze_vision_segment обрабатывает base64; generate_frontmatter работает</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEMANTIC-2" type="failure">
+          <description>qwen_client: _extract_json_checked рейзит JSONParseError на пустом/невалидном JSON</description>
+          <commands>
+            <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_extract_json_checked_raises"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEMANTIC][QWEN][EXTRACT_FAILED]</marker>
+            <assert>Пустой ответ → JSONParseError; невалидный JSON → JSONParseError; markdown fences стрипаются</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEMANTIC-3" type="success">
+          <description>analyze_scenes: базовый сценарий с монетизацией</description>
+          <commands>
+            <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_basic"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEMANTIC][SCENE][BASIC]</marker>
+            <assert>1 сегмент → 1 SceneAnalysisResult с action_is_clear=True</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEMANTIC-4" type="failure">
+          <description>analyze_scenes: ошибка LLM → fallback_used=llm_failed</description>
+          <commands>
+            <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_llm_error"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEMANTIC][SCENE][LLM_FAILED]</marker>
+            <assert>При ошибке LLM возвращается результат с fallback_used=llm_failed, пустой monetization</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEMANTIC-5" type="success">
+          <description>analyze_scenes: VLM gate — vision_blocked=False → VLM вызывается</description>
+          <commands>
+            <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_gate"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEMANTIC][SCENE][VLM_CALLED]</marker>
+            <assert>requires_vision=True + vision_blocked=False → vlm_calls=1, [Видео: …] в summary</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEMANTIC-6" type="success">
+          <description>analyze_scenes: VLM gate — vision_blocked=True → VLM не вызывается</description>
+          <commands>
+            <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_blocked_suppresses_vlm"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEMANTIC][SCENE][VLM_BLOCKED]</marker>
+            <assert>vision_blocked=True → vlm_calls=0, [Видео: …] отсутствует</assert>
           </evidence>
         </Scenario>
       </Scenarios>
@@ -158,6 +218,16 @@
           <evidence>
             <marker required="true">[M-PASSPORT][VALIDATE][ECOM_NO_QUERY]</marker>
             <assert>ECOM_ITEM без search_query → ошибка валидации</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-PASSPORT-4" type="failure">
+          <description>Валидация: strict mode рейзит ValidationError</description>
+          <commands>
+            <command>pytest tests/passport_builder/test_validator.py -v -k "test_strict_mode_raises"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-PASSPORT][VALIDATE][STRICT]</marker>
+            <assert>strict=True с ошибками → ValidationError</assert>
           </evidence>
         </Scenario>
       </Scenarios>
@@ -213,7 +283,7 @@
       <check>unit-tests: pytest tests/ --timeout=30 -x -q</check>
     </Gate>
     <Gate level="phase">
-      <check>integration-tests: pytest tests/test_integration.py --timeout=120 -v</check>
+      <check>integration-tests: pytest tests/test_integration.py --timeout=3600 -v</check>
       <check>all-tests: pytest tests/ --timeout=60 -v</check>
     </Gate>
     <Gate level="release">

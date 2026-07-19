@@ -5,17 +5,17 @@
       <description>Создание Pydantic-моделей, конфигурации, базовых исключений. Фундамент для всех модулей.</description>
       <steps>
         <step-1 module-ref="M-CORE" status="built" order="1">
-          <description>Реализация core типов: JobStatus, TimelineSegment, SceneAnalysisResult, Passport, AppConfig. Pydantic v2 модели с валидацией.</description>
-          <source>src/core/schemas.py, src/core/exceptions.py, src/core/logging_config.py, src/core/timeout_manager.py, src/config.py</source>
+          <description>Реализация core типов: JobStatus, TimelineSegment, SceneAnalysisResult, Passport, AppConfig. Pydantic v2 модели с валидацией. TimeoutManager с circuit breaker + retry + fallback chain.</description>
+          <source>src/core/schemas.py, src/core/exceptions.py, src/core/logging_config.py, src/core/timeout_manager.py, src/core/metrics.py, src/core/json_utils.py, src/config.py</source>
         </step-1>
       </steps>
     </Phase-1>
 
     <Phase-2 name="Audio Engine" status="built">
-      <description>Извлечение аудио (PyAV), ASR (Whisper.cpp), диаризация (PyAnnote), сборка таймлайна.</description>
+      <description>Извлечение аудио (ffmpeg subprocess), ASR (Whisper.cpp), диаризация (PyAnnote), сборка таймлайна.</description>
       <steps>
         <step-2 module-ref="M-AUDIO" status="built" order="1">
-          <description>Модуль extract_audio: PyAV демодуляция → WAV 16kHz mono. Обработка ошибок (битое видео, нет аудиодорожки).</description>
+          <description>Модуль extract_audio: ffmpeg subprocess → WAV 16kHz mono + extract_iframes. Обработка ошибок (битое видео, нет аудиодорожки).</description>
           <source>src/audio_engine/pyav_reader.py</source>
         </step-2>
         <step-3 module-ref="M-AUDIO" status="built" order="2">
@@ -34,86 +34,78 @@
     </Phase-2>
 
     <Phase-3 name="Vision Scanner" status="built">
-      <description>I-frame extraction, OCR (RapidOCR v4), DomainRouter (жанровая блокировка), OCR-дедупликация.</description>
+      <description>I-frame extraction, OCR (RapidOCR v4), GenreClassifier + DomainRouter (LLM-driven жанровая блокировка VLM), OCR-дедупликация.</description>
       <steps>
         <step-6 module-ref="M-VISION" status="built" order="1">
-          <description>Модуль extract_iframes: PyAV извлечение ключевых кадров по сценам из таймлайна.</description>
+          <description>Модуль extract_iframes: ffmpeg subprocess извлечение ключевых кадров по середине каждого сегмента.</description>
           <source>src/audio_engine/pyav_reader.py (extract_iframes)</source>
         </step-6>
         <step-7 module-ref="M-VISION" status="built" order="2">
           <description>Модуль ocr_frame: RapidOCR v4 на I-frame, фильтр confidence ≥0.5, буферизация окон 5с.</description>
-          <source>src/vision_scanner/rapid_ocr.py</source>
+          <source>src/vision_scanner/rapid_ocr.py, src/vision_scanner/ocr_buffer.py</source>
         </step-7>
         <step-8 module-ref="M-VISION" status="built" order="3">
-          <description>Модуль domain_router: Классификация жанра по ASR + метаданным (подкаст/лекция → VLM off).</description>
-          <source>src/vision_scanner/domain_router.py</source>
+          <description>Модуль genre_classifier + domain_router: LLM-классификация жанра через qwen3.5:0.8b с keyword fallback. Определение vision_blocked по конфигу.</description>
+          <source>src/vision_scanner/genre_classifier.py, src/vision_scanner/domain_router.py</source>
         </step-8>
-        <step-9 module-ref="M-VISION" status="built" order="4">
-          <description>Модуль ocr_deduplication: проверка, покрывает ли OCR-текст семантику сцены (→ VLM not needed).</description>
-          <source>src/vision_scanner/ocr_buffer.py</source>
-        </step-9>
       </steps>
     </Phase-3>
 
     <Phase-4 name="Semantic Analyzer &amp; VLM Gatekeeper" status="built">
-      <description>SLM-анализ (Qwen3.5:9b), трёхуровневый Gatekeeper, VLM-анализ (Qwen Vision), извлечение монетизационных точек.</description>
+      <description>SLM-анализ (gemma4:e4b), трёхуровневый Gatekeeper, VLM-анализ (qwen3.5:9b Vision), извлечение монетизационных точек.</description>
       <steps>
-        <step-10 module-ref="M-SEMANTIC" status="built" order="1">
-          <description>Модуль analyze_segment: SLM-анализ текста сегмента + MonetizationFilter.</description>
+        <step-9 module-ref="M-SEMANTIC" status="built" order="1">
+          <description>Модуль analyze_text_segment: SLM-запрос к gemma4:e4b для текста сегмента (pass1). Парсинг JSON-ответа с извлечением action_is_clear, requires_vision, monetization.</description>
+          <source>src/semantic_analyzer/qwen_client.py</source>
+        </step-9>
+        <step-10 module-ref="M-SEMANTIC" status="built" order="2">
+          <description>Модуль analyze_scenes: итерация по всем сегментам, вызов pass1, VLM gate (requires_vision + vision_blocked), опциональный pass2 vision. При ошибке LLM → fallback_used=llm_failed.</description>
           <source>src/semantic_analyzer/scene_analyzer.py</source>
         </step-10>
-        <step-11 module-ref="M-SEMANTIC" status="built" order="2">
-          <description>Модуль gatekeep: трёхуровневая логика принятия решения о вызове VLM (DomainRouter → MonetizationFilter → OCR-dedup). Счётчик VLM calls, трекинг ≤6%.</description>
-          <source>src/semantic_analyzer/scene_analyzer.py</source>
-        </step-11>
-        <step-12 module-ref="M-SEMANTIC" status="built" order="3">
-          <description>Модуль vlm_analyze: вызов Qwen3.5:9b с I-frame, парсинг ответа, извлечение AD_SLOT/ECOM_ITEM/CLIP_CANDIDATE.</description>
+        <step-11 module-ref="M-SEMANTIC" status="built" order="3">
+          <description>Модуль analyze_vision_segment: вызов qwen3.5:9b Vision с I-frame (base64), парсинг ответа, извлечение визуального описания.</description>
           <source>src/semantic_analyzer/qwen_client.py</source>
-        </step-12>
-        <step-13 module-ref="M-SEMANTIC" status="built" order="4">
-          <description>Модуль extract_monetization: парсинг ответов VLM/SLM → структурированные точки монетизации.</description>
-          <source>src/semantic_analyzer/fallback_rules.py</source>
-        </step-13>
+        </step-11>
       </steps>
     </Phase-4>
 
     <Phase-5 name="Passport Builder" status="built">
-      <description>Генерация YAML-frontmatter, Markdown-таймлайн, запись .md паспорта.</description>
+      <description>Генерация YAML-frontmatter (LLM), Markdown-таймлайн, запись .md паспорта, валидация.</description>
       <steps>
-        <step-14 module-ref="M-PASSPORT" status="built" order="1">
-          <description>Модуль build_frontmatter: YAML-секция (метаданные, SEO, авто-плейлисты).</description>
+        <step-12 module-ref="M-PASSPORT" status="built" order="1">
+          <description>Модуль build_frontmatter: LLM-генерация YAML-секции (метаданные, SEO, авто-плейлисты).</description>
           <source>src/passport_builder/frontmatter_generator.py</source>
-        </step-14>
-        <step-15 module-ref="M-PASSPORT" status="built" order="2">
-          <description>Модуль build_timeline_md: Markdown-форматирование таймлайна с AD_SLOT/ECOM_ITEM/CLIP_CANDIDATE.</description>
+        </step-12>
+        <step-13 module-ref="M-PASSPORT" status="built" order="2">
+          <description>Модуль build_passport + passport_to_markdown: Markdown-форматирование таймлайна с AD_SLOT/ECOM_ITEM/CLIP_CANDIDATE из monetization списка.</description>
           <source>src/passport_builder/passport_builder.py</source>
-        </step-15>
-        <step-16 module-ref="M-PASSPORT" status="built" order="3">
-          <description>Модуль validate: проверка .md структуры (YAML, таймкоды, обязательные поля).</description>
+        </step-13>
+        <step-14 module-ref="M-PASSPORT" status="built" order="3">
+          <description>Модуль validate: проверка .md структуры (YAML, таймкоды, обязательные поля). Опциональный strict mode с raise.</description>
           <source>src/passport_builder/validator.py</source>
-        </step-16>
+        </step-14>
       </steps>
     </Phase-5>
 
     <Phase-6 name="API Layer &amp; Integration" status="built">
       <description>FastAPI-endpoints, job queue, оркестрация пайплайна, Prometheus-метрики, интеграционные тесты.</description>
       <steps>
-        <step-17 module-ref="M-API" status="built" order="1">
-          <description>FastAPI приложение: POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/markdown, GET /health.</description>
+        <step-15 module-ref="M-API" status="built" order="1">
+          <description>FastAPI приложение: POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health.</description>
           <source>src/api/app.py, src/api/routes.py</source>
-        </step-17>
-        <step-18 module-ref="M-API" status="built" order="2">
+        </step-15>
+        <step-16 module-ref="M-API" status="built" order="2">
           <description>Job queue: фоновый запуск пайплайна (asyncio.create_task), хранение статуса in-memory, correlation_id.</description>
           <source>src/api/routes.py (_run_pipeline)</source>
-        </step-18>
-        <step-19 module-ref="M-API" status="built" order="3">
-          <description>Метрики: Prometheus latency_histogram, vlm_calls_total, error_rate_total.</description>
-          <source>src/api/metrics.py</source>
-        </step-19>
-        <step-20 module-ref="M-API" status="built" order="4">
+        </step-16>
+        <step-17 module-ref="M-API" status="built" order="3">
+          <description>Метрики: Prometheus counter/histogram (jobs, vlm_calls, scenes, processing duration).</description>
+          <source>src/api/metrics.py, src/core/metrics.py</source>
+        </step-17>
+        <step-18 module-ref="M-API" status="built" order="4">
           <description>Интеграция всех модулей: эндпоинт POST /analyze запускает полный пайплайн (Audio→Vision→Semantic→Passport).</description>
           <source>src/api/routes.py</source>
-        </step-20>
+        </step-18>
       </steps>
     </Phase-6>
   </Phases>
@@ -121,7 +113,7 @@
   <Modules>
     <M-CORE NAME="Core Types &amp; Contracts" TYPE="LIBRARY" status="built">
       <Purpose>Pydantic-модели, конфигурация (load_config), кастомные исключения, TimeoutManager. Единственный module без внешних зависимостей.</Purpose>
-      <Scope>Pydantic v2: JobStatus, TimelineSegment, SceneAnalysisResult, MonetizationItem, Passport, PassportFrontmatter, JobMetrics, AnalyzeResponse. YAML-загрузка конфига. TimeoutManager с circuit breaker + retry + fallback chain.</Scope>
+      <Scope>Pydantic v2: JobStatus, TimelineSegment, SceneAnalysisResult, MonetizationItem, ClipCandidate, Passport, PassportFrontmatter, JobMetrics, AnalyzeResponse. YAML-загрузка конфига. TimeoutManager с circuit breaker + retry + fallback chain (shorten_prompt, skip_vision). Prometheus-counters (timeouts_total, fallbacks_total, json_errors_total).</Scope>
       <Depends/>
       <Source path="src/core/"/>
       <Test path="tests/core/"/>
@@ -130,7 +122,7 @@
 
     <M-AUDIO NAME="Audio Engine" TYPE="PROCESSOR" status="built">
       <Purpose>Извлечение аудио из MP4 → ASR + диаризация → структурированный таймлайн</Purpose>
-      <Scope>PyAV (audio extraction), whisper.cpp large-v3 (ASR), pyannote 3.1 (diarization), retry/fallback.</Scope>
+      <Scope>ffmpeg subprocess (audio + I-frame extraction), whisper.cpp large-v3 (ASR), pyannote 3.1 (diarization), retry/fallback.</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
       </Depends>
@@ -140,8 +132,8 @@
     </M-AUDIO>
 
     <M-VISION NAME="Vision Scanner" TYPE="PROCESSOR" status="built">
-      <Purpose>I-frame extraction, OCR, DomainRouter, OCR-дедупликация</Purpose>
-      <Scope>PyAV (I-frame), RapidOCR v4 (ONNX), SLM-классификация жанра.</Scope>
+      <Purpose>I-frame extraction, OCR, GenreClassifier, DomainRouter, OCR-дедупликация</Purpose>
+      <Scope>ffmpeg subprocess (I-frame), RapidOCR v4 (ONNX), LLM-классификация жанра (qwen3.5:0.8b) с keyword fallback.</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
         <Dependency ref="M-AUDIO"/>
@@ -152,8 +144,8 @@
     </M-VISION>
 
     <M-SEMANTIC NAME="Semantic Analyzer &amp; VLM Gatekeeper" TYPE="PROCESSOR" status="built">
-      <Purpose>SLM-анализ (Qwen3.5:9b), трёхуровневый VLM Gatekeeper, извлечение точек монетизации</Purpose>
-      <Scope>Qwen3.5:9b (Ollama HTTP), Gatekeeper логика (≤6% VLM), MonetizationFilter, VLM call, rule-based fallback.</Scope>
+      <Purpose>SLM-анализ (gemma4:e4b), VLM Gatekeeper, извлечение точек монетизации</Purpose>
+      <Scope>gemma4:e4b и qwen3.5:9b Vision (Ollama HTTP через TimeoutManager), Gatekeeper логика (≤6% VLM), LLM-ошибка → fallback_used=llm_failed (без keyword fallback).</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
         <Dependency ref="M-AUDIO"/>
@@ -166,7 +158,7 @@
 
     <M-PASSPORT NAME="Passport Builder" TYPE="GENERATOR" status="built">
       <Purpose>Генерация .md паспорта с YAML-frontmatter + таймлайн точек монетизации</Purpose>
-      <Scope>PyYAML (frontmatter), Markdown-форматирование, валидация структуры.</Scope>
+      <Scope>LLM-генерация frontmatter (qwen_client.generate_frontmatter), Markdown-форматирование, валидация структуры (video_id, ecom search_query).</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
         <Dependency ref="M-SEMANTIC"/>
@@ -197,30 +189,29 @@
     <DF-001 name="Audio-First Pipeline">
       <description>Основной флоу: MP4 → аудио → ASR → диаризация → таймлайн</description>
       <steps>
-        <step order="1" module="M-AUDIO" action="extract_audio (PyAV)"/>
+        <step order="1" module="M-AUDIO" action="extract_audio (ffmpeg subprocess)"/>
         <step order="2" module="M-AUDIO" action="transcribe (Whisper large-v3)"/>
         <step order="3" module="M-AUDIO" action="diarize (PyAnnote 3.1)"/>
-        <step order="4" module="M-AUDIO" action="build_timeline (timeline_merger)"/>
+        <step order="4" module="M-AUDIO" action="merge_timeline (timeline_merger)"/>
       </steps>
     </DF-001>
 
     <DF-002 name="VLM Gatekeeper Flow">
-      <description>Трёхуровневая фильтрация VLM-вызовов: жанр → монетизация → OCR → Vision</description>
+      <description>Трёхуровневая фильтрация VLM-вызовов: жанр → requires_vision → OCR → Vision</description>
       <steps>
         <step order="1" module="M-VISION" action="extract_iframes (pyav_reader)"/>
-        <step order="2" module="M-VISION" action="ocr_frame (RapidOCR v4)"/>
-        <step order="3" module="M-SEMANTIC" action="analyze_segment + gatekeep (scene_analyzer)"/>
-        <step order="4" module="M-SEMANTIC" action="vlm_analyze (Qwen3.5:9b) — только если gatekeep пропустил"/>
-        <step order="5" module="M-SEMANTIC" action="extract_monetization (fallback_rules)"/>
+        <step order="2" module="M-VISION" action="ocr_frame (RapidOCR v4) + OCRBuffer"/>
+        <step order="3" module="M-VISION" action="detect_genre (LLM) + is_vision_blocked"/>
+        <step order="4" module="M-SEMANTIC" action="analyze_scenes (pass1 text → VLM gate → pass2 vision)"/>
       </steps>
     </DF-002>
 
     <DF-003 name="Passport Generation Flow">
       <description>Финальная сборка .md паспорта из всех результатов</description>
       <steps>
-        <step order="1" module="M-PASSPORT" action="build_frontmatter (YAML + SEO)"/>
-        <step order="2" module="M-PASSPORT" action="build_timeline_md (markdown)"/>
-        <step order="3" module="M-PASSPORT" action="validate_passport (validator)"/>
+        <step order="1" module="M-PASSPORT" action="build_frontmatter (LLM + YAML)"/>
+        <step order="2" module="M-PASSPORT" action="build_passport + passport_to_markdown"/>
+        <step order="3" module="M-PASSPORT" action="validate (optional strict mode)"/>
       </steps>
     </DF-003>
 
@@ -230,7 +221,7 @@
         <step order="1" module="M-API" action="POST /analyze (загрузка + job_id)"/>
         <step order="2" module="M-API" action="оркестрация DF-001 + DF-002 + DF-003"/>
         <step order="3" module="M-API" action="GET /analyze/{id}/markdown (результат)"/>
-        <step order="4" module="M-API" action="GET /metrics (Prometheus)"/>
+        <step order="4" module="M-API" action="GET /metrics (Prometheus) + GET /health"/>
       </steps>
     </DF-004>
   </Flows>

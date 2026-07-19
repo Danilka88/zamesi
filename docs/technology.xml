@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <technology project="RUTUBE Video Analyzer" version="0.1.0">
-  <runtime language="Python" version="3.13"/>
+  <runtime language="Python" version="3.14"/>
   <framework name="FastAPI" version="0.115+"/>
   <pydantic version="2.0+">
     <description>Все межмодульные контракты — Pydantic v2 модели в модуле core</description>
   </pydantic>
 
   <key-libraries>
-    <library name="PyAV" version="12.0+" purpose="Демодуляция MP4, извлечение аудио и I-frame"/>
+    <library name="ffmpeg" version="7+" purpose="Демодуляция MP4, извлечение аудио (subprocess) и I-frame"/>
     <library name="whisper.cpp" version="large-v3" purpose="ASR транскрибация (локально, через whisper-cli)"/>
     <library name="pyannote-audio" version="3.1" purpose="Диаризация спикеров"/>
     <library name="rapidocr-onnxruntime" version="1.2+/v4" purpose="OCR текста с кадров (ONNX)"/>
@@ -22,7 +22,7 @@
   <testing>
     <runner>pytest 8.0+</runner>
     <extensions>pytest-asyncio, pytest-benchmark, pytest-timeout</extensions>
-    <mock>unittest.mock + freezegun</mock>
+    <mock>unittest.mock + monkeypatch (встроен)</mock>
     <type-hinting>mypy 1.11+ (strict=false, warn_unused_configs)</type-hinting>
     <linter>ruff 0.5+ (E,F,I,N,W)</linter>
   </testing>
@@ -35,10 +35,15 @@
   </observability>
 
   <ai-models>
-    <slm name="Qwen3.5:9b" provider="Ollama" endpoint="http://localhost:11434" purpose="Текстовый пайплайн (ASR пост-процессинг, DomainRouter, Passport Assembly)">
-      <params temperature="0.1" top_p="0.9" max_tokens="2048"/>
+    <slm name="gemma4:e4b" provider="Ollama" endpoint="http://localhost:11434" purpose="Текстовый пайплайн (pass1 text analysis)">
+      <params temperature="0.1" max_tokens="4096"/>
     </slm>
-    <vlm name="Qwen3.5:9b (Vision)" provider="Ollama" endpoint="http://localhost:11434" purpose="Визуальный анализ I-frame (Gatekeeper)" weight="≤6% сегментов"/>
+    <classifier name="qwen3.5:0.8b" provider="Ollama" endpoint="http://localhost:11434" purpose="Genre classification (LLM-driven)">
+      <params temperature="0.1" max_tokens="8192"/>
+    </classifier>
+    <vlm name="qwen3.5:9b (Vision)" provider="Ollama" endpoint="http://localhost:11434" purpose="Визуальный анализ I-frame (Gatekeeper)" weight="≤6% сегментов">
+      <params temperature="0.1" max_tokens="4096"/>
+    </vlm>
     <asr name="Whisper large-v3" provider="whisper.cpp" binary="whisper-cli"/>
     <diarization name="PyAnnote Speaker Diarization 3.1" provider="pyannote-audio"/>
     <ocr name="RapidOCR v4" provider="onnxruntime"/>
@@ -48,7 +53,7 @@
     <constraint>VLM Gatekeeper: ≤6% всех сегментов проходят через Vision-модель</constraint>
     <constraint>Себестоимость пайплайна &lt;$0.0025/час видео (CPU-only, локальные модели)</constraint>
     <constraint>Все внешние вызовы защищены circuit breaker + retry + fallback chain</constraint>
-    <constraint>Таймаут pipeline: 600 сек; каждый под-таймаут индивидуален</constraint>
+    <constraint>Таймаут pipeline: 3600 сек (pipeline_total); каждый под-таймаут индивидуален (qwen_pass1_text: 180, qwen_pass2_vision: 300, domain_router: 120)</constraint>
     <constraint>Нет веб-сервера зависимостей: Whisper, PyAnnote, RapidOCR — локальный запуск</constraint>
   </constraints>
 </technology>

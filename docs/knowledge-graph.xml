@@ -2,16 +2,20 @@
 <knowledge-graph project="RUTUBE Video Analyzer" version="0.1.0">
   <Modules>
     <M-CORE NAME="Core Types &amp; Contracts" TYPE="LIBRARY">
-      <Purpose>Pydantic-модели, конфигурация, исключения — общие для всех модулей</Purpose>
+      <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager — общие для всех модулей</Purpose>
       <Source path="src/core/"/>
-      <Test path="tests/test_core/"/>
+      <Test path="tests/core/"/>
       <Exports>
-        <type-JobStatus>Статус обработки: pending, running, done, error</type-JobStatus>
+        <type-JobStatus>Статус обработки: pending, processing, done, error</type-JobStatus>
         <type-TimelineSegment>Сегмент таймлайна: start_sec, end_sec, text, speaker</type-TimelineSegment>
-        <type-MonetizationPoint>Точка монетизации: AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE</type-MonetizationPoint>
-        <type-VideoPassport>Финальный .md паспорт с фронтмэттером</type-VideoPassport>
+        <type-SceneAnalysisResult>Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[]</type-SceneAnalysisResult>
+        <type-MonetizationItem>Точка монетизации: ad_slot, ecom_item, clip_candidate</type-MonetizationItem>
+        <type-ClipCandidate>Кандидат на нарезку: hook, time_range, virality_potential</type-ClipCandidate>
+        <type-Passport>Финальный .md паспорт с фронтмэттером и таймлайном</type-Passport>
         <type-AppConfig>Загрузка и валидация config.yaml</type-AppConfig>
         <fn-load_config>Загрузка конфигурации</fn-load_config>
+        <fn-timeout_manager>TimeoutManager: retry, circuit breaker, fallback chain</fn-timeout_manager>
+        <fn-extract_json>Извлечение JSON из markdown code fences</fn-extract_json>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-AUDIO" relation="defines-types-for"/>
@@ -24,50 +28,51 @@
     </M-CORE>
 
     <M-AUDIO NAME="Audio Engine" TYPE="PROCESSOR">
-      <Purpose>Извлечение аудио, ASR (Whisper), диаризация (PyAnnote), сборка таймлайна</Purpose>
+      <Purpose>Извлечение аудио (ffmpeg subprocess), ASR (Whisper), диаризация (PyAnnote), сборка таймлайна</Purpose>
       <Source path="src/audio_engine/"/>
-      <Test path="tests/test_audio_engine/"/>
+      <Test path="tests/audio_engine/"/>
       <Exports>
-        <fn-extract_audio>Извлечение аудиодорожки (PyAV) → WAV 16kHz mono</fn-extract_audio>
+        <fn-extract_audio>Извлечение аудиодорожки (ffmpeg) → WAV 16kHz mono</fn-extract_audio>
+        <fn-extract_iframes>Извлечение I-frame (ffmpeg) по таймштампам</fn-extract_iframes>
         <fn-transcribe>Whisper.cpp ASR → сегменты с текстом и таймстампами</fn-transcribe>
         <fn-diarize>PyAnnote диаризация → маппинг спикеров на таймлайне</fn-diarize>
-        <fn-build_timeline>Слияние ASR + диаризация → TimelineSegment[]</fn-build_timeline>
-        <type-TimelineSegment>Сегмент: start_sec, end_sec, text, speaker, confidence</type-TimelineSegment>
+        <fn-merge_timeline>Слияние ASR + диаризация → TimelineSegment[]</fn-merge_timeline>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-CORE" relation="uses-types"/>
+        <CrossLink ref="M-VISION" relation="feeds-iframes-to"/>
         <CrossLink ref="M-SEMANTIC" relation="feeds-into"/>
       </CrossLinks>
       <Verification ref="V-M-AUDIO"/>
     </M-AUDIO>
 
     <M-VISION NAME="Vision Scanner" TYPE="PROCESSOR">
-      <Purpose>OCR (RapidOCR v4), DomainRouter (жанровая блокировка), I-frame extraction</Purpose>
+      <Purpose>OCR (RapidOCR v4), GenreClassifier (LLM-driven), DomainRouter (жанровая блокировка VLM)</Purpose>
       <Source path="src/vision_scanner/"/>
-      <Test path="tests/test_vision_scanner/"/>
+      <Test path="tests/vision_scanner/"/>
       <Exports>
-        <fn-extract_iframes>Извлечение ключевых кадров (I-frame) из видео</fn-extract_iframes>
-        <fn-ocr_frame>RapidOCR v4: распознавание текста на кадре</fn-ocr_frame>
-        <fn-domain_router>Классификация жанра (подкаст/лекция → VLM off)</fn-domain_router>
-        <fn-ocr_deduplication>Проверка: покрывает ли OCR-текст семантику сцены</fn-ocr_deduplication>
+        <fn-detect_genre>Классификация жанра через LLM (qwen3.5:0.8b) с keyword fallback</fn-detect_genre>
+        <fn-is_vision_blocked>Проверка: блокировать ли VLM для данного жанра</fn-is_vision_blocked>
+        <fn-process_frames>RapidOCR v4: распознавание текста на I-frame</fn-process_frames>
+        <class-OCRBuffer>Буфер OCR-результатов с окном ±5с для дедупликации</class-OCRBuffer>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-CORE" relation="uses-types"/>
-        <CrossLink ref="M-AUDIO" relation="receives-timeline-from"/>
-        <CrossLink ref="M-SEMANTIC" relation="feeds-into"/>
+        <CrossLink ref="M-AUDIO" relation="receives-iframes-from"/>
+        <CrossLink ref="M-SEMANTIC" relation="feeds-ocr-into"/>
       </CrossLinks>
       <Verification ref="V-M-VISION"/>
     </M-VISION>
 
     <M-SEMANTIC NAME="Semantic Analyzer" TYPE="PROCESSOR">
-      <Purpose>SLM-анализ (Qwen3.5:9b), VLM Gatekeeper (жанр→монетизация→OCR→Vision), извлечение точек монетизации</Purpose>
+      <Purpose>SLM-анализ (gemma4:e4b), VLM Gatekeeper (жанр→монетизация→OCR→Vision), извлечение точек монетизации</Purpose>
       <Source path="src/semantic_analyzer/"/>
-      <Test path="tests/test_semantic_analyzer/"/>
+      <Test path="tests/semantic_analyzer/"/>
       <Exports>
-        <fn-analyze_segment>SLM-анализ текстового сегмента: жанр, коммерческий потенциал</fn-analyze_segment>
-        <fn-gatekeep>Трёхуровневый VLM Gatekeeper: DomainRouter → MonetizationFilter → OCR-dedup</fn-gatekeep>
-        <fn-vlm_analyze>Вызов Qwen Vision (если gatekeeper пропустил)</fn-vlm_analyze>
-        <fn-extract_monetization>Извлечение AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE из ответа VLM/SLM</fn-extract_monetization>
+        <fn-analyze_scenes>SLM-анализ всех сегментов: pass1 text + VLM gate + pass2 vision</fn-analyze_scenes>
+        <fn-analyze_text_segment>Одиночный SLM-запрос к gemma4:e4b для текстового сегмента</fn-analyze_text_segment>
+        <fn-analyze_vision_segment>Одиночный VLM-запрос к qwen3.5:9b с I-frame</fn-analyze_vision_segment>
+        <fn-generate_frontmatter>Генерация YAML-фронтмэттера через LLM</fn-generate_frontmatter>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-CORE" relation="uses-types"/>
@@ -81,12 +86,12 @@
     <M-PASSPORT NAME="Passport Builder" TYPE="GENERATOR">
       <Purpose>Формирование YAML-frontmatter + Markdown-таймлайн с точками монетизации</Purpose>
       <Source path="src/passport_builder/"/>
-      <Test path="tests/test_passport_builder/"/>
+      <Test path="tests/passport_builder/"/>
       <Exports>
-        <fn-build_frontmatter>Генерация YAML-секции (метаданные, статистика VLM)</fn-build_frontmatter>
-        <fn-build_timeline_md>Построение Markdown-таймлайна с AD_SLOT/ECOM_ITEM/CLIP_CANDIDATE</fn-build_timeline_md>
-        <fn-write_passport>Запись .md файла в output_dir</fn-write_passport>
-        <type-VideoPassport>Полный паспорт: frontmatter + timeline body</type-VideoPassport>
+        <fn-build_frontmatter>Генерация YAML-секции (метаданные, SEO) через LLM</fn-build_frontmatter>
+        <fn-build_passport>Сборка Passport из scene_results + frontmatter</fn-build_passport>
+        <fn-passport_to_markdown>Преобразование Passport → .md файл</fn-passport_to_markdown>
+        <fn-validate>Валидация .md структуры (video_id, таймкоды, ecom search_query)</fn-validate>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-CORE" relation="uses-types"/>
@@ -99,11 +104,13 @@
     <M-API NAME="API Layer" TYPE="INTERFACE">
       <Purpose>FastAPI endpoints: загрузка, статус, результат, метрики. Управление job queue.</Purpose>
       <Source path="src/api/"/>
-      <Test path="tests/test_api/"/>
+      <Test path="tests/api/"/>
       <Exports>
         <fn-post_analyze>POST /analyze — загрузка видео, старт пайплайна</fn-post_analyze>
-        <fn-get_status>GET /analyze/{job_id} — статус обработки</fn-get_status>
-        <fn-get_passport>GET /analyze/{job_id}/markdown — готовый .md паспорт</fn-get_passport>
+        <fn-get_result>GET /analyze/{job_id} — результат</fn-get_result>
+        <fn-get_status>GET /analyze/{job_id}/status — статус обработки</fn-get_status>
+        <fn-get_markdown>GET /analyze/{job_id}/markdown — готовый .md паспорт</fn-get_markdown>
+        <fn-get_health>GET /health — healthcheck</fn-get_health>
         <fn-get_metrics>GET /metrics — Prometheus-метрики</fn-get_metrics>
       </Exports>
       <CrossLinks>

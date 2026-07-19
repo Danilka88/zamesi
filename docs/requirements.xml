@@ -9,7 +9,7 @@
       <actor>Video Uploader (API client)</actor>
       <precondition>Видеофайл загружен, пайплайн запущен</precondition>
       <steps>
-        <step order="1">PyAV демодулирует MP4: извлекает аудио (16kHz, mono)</step>
+        <step order="1">ffmpeg subprocess: извлечение аудио (16kHz, mono) + I-frame extraction</step>
         <step order="2">Whisper.cpp (large-v3) выполняет ASR → текст с таймстампами</step>
         <step order="3">PyAnnote 3.1 выполняет диаризацию спикеров</step>
         <step order="4">Слияние ASR + диаризация → структурированный таймлайн</step>
@@ -18,16 +18,16 @@
     </UseCase>
 
     <UseCase id="UC-2" name="VLM Gatekeeper Pipeline" priority="high">
-      <description>Трёхуровневая фильтрация перед вызовом VLM: жанровая блокировка, монетизационный фильтр, OCR-дедупликация. VLM вызывается только для 4–7% кадров.</description>
+      <description>Трёхуровневая фильтрация перед вызовом VLM: жанровая блокировка (LLM), monetization filter (SLM), OCR-дедупликация. VLM вызывается только для 4–7% кадров.</description>
       <actor>Audio-First pipeline (вызывается автоматически)</actor>
       <precondition>Аудио-таймлайн получен, сцены идентифицированы</precondition>
       <steps>
-        <step order="1">DomainRouter определяет жанр (подкаст/лекция → VLM off)</step>
-        <step order="2">Monetization Filter проверяет коммерческий потенциал сцены</step>
+        <step order="1">GenreClassifier (qwen3.5:0.8b) определяет жанр, DomainRouter проверяет vision_blocked</step>
+        <step order="2">SLM pass1 (gemma4:e4b) проверяет requires_vision для каждой сцены</step>
         <step order="3">OCR-дедупликация: RapidOCR v4 читает текст на I-frame, если он покрывает семантику сцены</step>
-        <step order="4">Только если все три уровня дали "проход" — вызов Qwen Vision (VLM)</step>
+        <step order="4">Только если requires_vision=true и не vision_blocked — вызов VLM (qwen3.5:9b Vision)</step>
       </steps>
-      <postcondition>VLM вызыван не более чем для 6% сегментов; результат — извлечённые AD_SLOT / ECOM_ITEM / CLIP_CANDIDATE</postcondition>
+      <postcondition>VLM вызван не более чем для 6% сегментов; результат — извлечённые AD_SLOT / ECOM_ITEM / CLIP_CANDIDATE</postcondition>
     </UseCase>
 
     <UseCase id="UC-3" name="Passport Generation" priority="high">
@@ -35,10 +35,10 @@
       <actor>VLM Gatekeeper pipeline (финальная стадия)</actor>
       <precondition>Таймлайн сцен + результаты VLM/OCR получены</precondition>
       <steps>
-        <step order="1">Qwen (SLM) агрегирует все результаты ASR + OCR + VLM</step>
-        <step order="2">Формирование YAML-frontmatter (метаданные видео, общая статистика)</step>
-        <step order="3">Построение таймлайна с аннотациями AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE</step>
-        <step order="4">Запись .md паспорта в output_dir</step>
+        <step order="1">Агрегация всех результатов ASR + OCR + VLM</step>
+        <step order="2">LLM-генерация YAML-frontmatter (метаданные видео, SEO, авто-плейлисты)</step>
+        <step order="3">Построение таймлайна с аннотациями AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE из monetization списка</step>
+        <step order="4">Валидация .md паспорта (video_id, таймкоды, ecom search_query), опциональный strict mode</step>
       </steps>
       <postcondition>.md паспорт сохранён; доступен по API /analyze/{job_id}/markdown</postcondition>
     </UseCase>
@@ -49,9 +49,9 @@
       <precondition>Сервер запущен (uvicorn)</precondition>
       <steps>
         <step order="1">POST /analyze — загрузка видео, создание job_id, запуск фонового пайплайна</step>
-        <step order="2">GET /analyze/{job_id} — опрос статуса (pending/running/done/error)</step>
+        <step order="2">GET /analyze/{job_id} или GET /analyze/{job_id}/status — опрос статуса (pending/processing/done/error)</step>
         <step order="3">GET /analyze/{job_id}/markdown — получение готового .md паспорта</step>
-        <step order="4">GET /metrics — Prometheus-метрики (latency, VLM calls, error rate)</step>
+        <step order="4">GET /health — healthcheck; GET /metrics — Prometheus-метрики</step>
       </steps>
       <postcondition>Клиент получил .md паспорт или статус ошибки; метрики доступны</postcondition>
     </UseCase>
@@ -65,10 +65,10 @@
       <description>VLM вызовы не должны превышать 6% от общего числа сегментов; себестоимость анализа &lt;$0.0025/час видео.</description>
     </Requirement>
     <Requirement id="NFR-3" category="reliability">
-      <description>Каждый внешний вызов (Whisper, Ollama, PyAnnote) защищён retry-цепочкой (tenacity) + circuit breaker. При падении любого звена — fallback до rule_based.</description>
+      <description>Каждый внешний вызов (Whisper, Ollama, PyAnnote) защищён TimeoutManager с retry (circuit breaker) + fallback chain (shorten_prompt, skip_vision). При падении всех retry — LLM fallback с fallback_used=llm_failed (без rule-based генерации монетизационных тегов).</description>
     </Requirement>
     <Requirement id="NFR-4" category="observability">
-      <description>Структурированное логирование (structlog JSON) с correlation_id на job. Prometheus-метрики: latency гистограммы, счётчики VLM calls, error rate по модулям.</description>
+      <description>Структурированное логирование (structlog JSON) с correlation_id на job. Prometheus-метрики: latency_histogram, VLM calls счётчики, error rate по модулям.</description>
     </Requirement>
     <Requirement id="NFR-5" category="maintainability">
       <description>Каждый модуль изолирован (PBS): audio_engine, vision_scanner, semantic_analyzer, passport_builder, api. Модули коммуницируют через Pydantic-модели в core.</description>

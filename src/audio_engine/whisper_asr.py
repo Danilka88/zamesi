@@ -8,6 +8,7 @@ from src.core.logging_config import get_logger
 from src.core.schemas import TimelineSegment, WordTimestamp
 
 
+# START_BLOCK: M-AUDIO/WHISPER/TRANSCRIBE
 def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
     log = log or get_logger()
     audio_path = Path(audio_path)
@@ -24,7 +25,7 @@ def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
         "--output-json",
         "-of", str(output_path.with_suffix("")),
     ]
-    log.info("whisper_start", cmd=" ".join(cmd))
+    log.info("[M-AUDIO][WHISPER][START]", cmd=" ".join(cmd))
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=config.timeout("whisper_asr"))
     if result.returncode != 0:
         raise ASRError(f"whisper.cpp failed: {result.stderr}")
@@ -55,5 +56,6 @@ def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
             word_timestamps=words,
         ))
 
-    log.info("whisper_done", segments=len(segments), words=sum(len(s.word_timestamps) for s in segments))
+    log.info("[M-AUDIO][WHISPER][DONE]", segments=len(segments), words=sum(len(s.word_timestamps) for s in segments))
     return segments
+# END_BLOCK: M-AUDIO/WHISPER/TRANSCRIBE

@@ -70,7 +70,7 @@ class CircuitBreaker:
         self.last_failure_time = time.monotonic()
         if self.failure_count >= self.threshold:
             self.state = CircuitState.open
-            get_logger().warning("circuit_breaker_opened", name=self.name, failures=self.failure_count)
+            get_logger().warning("[M-CORE][CB][OPENED]", name=self.name, failures=self.failure_count)
 
 
 class TimeoutManager:
@@ -85,6 +85,7 @@ class TimeoutManager:
     def get_timeout(self, timeout_name: str) -> int:
         return config.timeout(timeout_name)
 
+    # START_BLOCK: M-CORE/TIMEOUT/CALL_WITH_RETRY
     async def call_with_retry(
         self,
         call_name: str,
@@ -106,33 +107,34 @@ class TimeoutManager:
         for attempt in range(1, max_attempts + 1):
             try:
                 result = await cb.acall(self._run_with_timeout, func, timeout, attempt, log, **kwargs)
-                log.info("llm_call_success", call=call_name, attempt=attempt)
+                log.info("[M-CORE][TIMEOUT][LLM_SUCCESS]", call=call_name, attempt=attempt)
                 return result
             except (TimeoutError, JSONParseError, LLMResponseError) as e:
                 last_error = e
-                log.warning("llm_call_retry", call=call_name, attempt=attempt, error=str(e))
+                log.warning("[M-CORE][TIMEOUT][RETRY]", call=call_name, attempt=attempt, error=str(e))
                 if attempt < max_attempts:
                     await self._backoff(attempt)
                 else:
-                    log.warning("llm_call_retry_exhausted", call=call_name)
+                    log.warning("[M-CORE][TIMEOUT][RETRY_EXHAUSTED]", call=call_name)
 
         remaining_fallbacks = [s for s in fallback_chain if s not in ("retry_same",)]
         for fb_strategy in remaining_fallbacks:
             try:
                 result = await self._execute_fallback(fb_strategy, call_name, timeout_name, func, log, **kwargs)
-                log.warning("fallback_used", call=call_name, strategy=fb_strategy)
+                log.warning("[M-CORE][TIMEOUT][FALLBACK]", call=call_name, strategy=fb_strategy)
                 return result
             except FallbackTriggered:
                 continue
 
         raise RetryExhaustedError(f"All retries and fallbacks failed for '{call_name}': {last_error}") from last_error
+    # END_BLOCK: M-CORE/TIMEOUT/CALL_WITH_RETRY
 
     async def _run_with_timeout(self, func, timeout: int, attempt: int, log, **kwargs) -> str:
         try:
             result = await asyncio.wait_for(func(**kwargs), timeout=timeout)
             return result
         except asyncio.TimeoutError:
-            log.warning("timeout_occurred", timeout=timeout, attempt=attempt)
+            log.warning("[M-CORE][TIMEOUT][OCCURRED]", timeout=timeout, attempt=attempt)
             timeouts_total.labels(operation="llm_call").inc()
             raise TimeoutError(f"Timed out after {timeout}s (attempt {attempt})") from None
 
@@ -187,6 +189,7 @@ class TimeoutManager:
             log=log,
         )
 
+    # START_BLOCK: M-CORE/TIMEOUT/OLLAMA_INFER
     async def _ollama_infer(
         self, prompt: str, image_base64: str | None = None,
         model: str | None = None, max_tokens: int | None = None,
@@ -215,6 +218,7 @@ class TimeoutManager:
             data = response.json()
             raw = data.get("response", "")
             return extract_json(raw)
+    # END_BLOCK: M-CORE/TIMEOUT/OLLAMA_INFER
 
 
 timeout_manager = TimeoutManager()

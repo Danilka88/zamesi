@@ -32,7 +32,7 @@ _jobs: dict[str, JobResult] = {}
 async def analyze(file: UploadFile = File(...)):
     job_id = str(uuid.uuid4())[:8]
     log = get_logger(correlation_id=job_id)
-    log.info("job_created", filename=file.filename)
+    log.info("[M-API][ROUTES][JOB_CREATED]", filename=file.filename)
 
     temp_dir = Path("/tmp/rutube-jobs") / job_id
     temp_dir.mkdir(parents=True, exist_ok=True)
@@ -41,7 +41,7 @@ async def analyze(file: UploadFile = File(...)):
 
     content = await file.read()
     video_path.write_bytes(content)
-    log.info("video_saved", path=str(video_path), size_mb=round(len(content) / 1e6, 2))
+    log.info("[M-API][ROUTES][VIDEO_SAVED]", path=str(video_path), size_mb=round(len(content) / 1e6, 2))
     del content
 
     _jobs[job_id] = JobResult(job_id=job_id, status=JobStatus.pending)
@@ -91,6 +91,7 @@ async def get_markdown(job_id: str):
     return PlainTextResponse(md, media_type="text/markdown")
 
 
+# START_BLOCK: M-API/PIPELINE/RUN
 async def _run_pipeline(job_id: str, video_path: str, log) -> None:
     # Lazy imports — heavy dependencies loaded only at runtime
     from src.audio_engine.pyannote_diarization import diarize
@@ -107,7 +108,7 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
     _jobs[job_id].status = JobStatus.processing
 
     try:
-        log.info("pipeline_started")
+        log.info("[M-API][PIPELINE][START]")
 
         audio_path = extract_audio(video_path, log=log)
 
@@ -178,24 +179,25 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
         for _ in range(vlm_count):
             vlm_calls_total.inc()
 
-        log.info("pipeline_completed",
+        log.info("[M-API][PIPELINE][DONE]",
             duration_sec=round(total_sec, 2),
             scenes=len(scene_results),
             vlm_pct=metrics.vlm_percent,
         )
 
     except asyncio.CancelledError:
-        log.warning("pipeline_cancelled")
+        log.warning("[M-API][PIPELINE][CANCELLED]")
         _jobs[job_id].status = JobStatus.error
         _jobs[job_id].error = "Pipeline cancelled"
         jobs_total.labels(status="error").inc()
         raise
 
     except Exception as e:
-        log.error("pipeline_failed", error=str(e))
+        log.error("[M-API][PIPELINE][FAILED]", error=str(e))
         _jobs[job_id].status = JobStatus.error
         _jobs[job_id].error = str(e)
         jobs_total.labels(status="error").inc()
 
     finally:
         jobs_active.dec()
+# END_BLOCK: M-API/PIPELINE/RUN

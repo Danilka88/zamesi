@@ -58,6 +58,7 @@ def _scene_to_md(i: int, scene: SceneAnalysisResult, seg: TimelineSegment | None
     return "\n".join(lines)
 
 
+# START_BLOCK: M-PASSPORT/BUILDER/BUILD_PASSPORT
 async def build_passport(
     video_id: str,
     timeline_segments: list[TimelineSegment],
@@ -77,11 +78,13 @@ async def build_passport(
 
     errors = validate(passport, log=log)
     if errors:
-        log.warning("passport_has_validation_errors", count=len(errors))
+        log.warning("[M-PASSPORT][BUILDER][VALIDATION_ERRORS]", count=len(errors))
 
     return passport
+# END_BLOCK: M-PASSPORT/BUILDER/BUILD_PASSPORT
 
 
+# START_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
 def passport_to_markdown(passport: Passport) -> str:
     timeline_md = "\n".join(
         _scene_to_md(i, scene, passport.raw_timeline_segments[i] if i < len(passport.raw_timeline_segments) else None)
@@ -104,3 +107,4 @@ def passport_to_markdown(passport: Passport) -> str:
         ad_targeting_keywords=passport.frontmatter.ad_targeting_keywords,
         timeline_md=timeline_md,
     )
+# END_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD

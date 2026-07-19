@@ -7,6 +7,7 @@ from src.core.exceptions import AudioExtractionError
 from src.core.logging_config import get_logger
 
 
+# START_BLOCK: M-AUDIO/PYAV/EXTRACT_AUDIO
 def extract_audio(video_path: str | Path, log=None) -> str:
     log = log or get_logger()
     video_path = Path(video_path)
@@ -18,7 +19,7 @@ def extract_audio(video_path: str | Path, log=None) -> str:
     output_path = temp_dir / f"{video_path.stem}.wav"
 
     if output_path.exists():
-        log.info("audio_cache_hit", path=str(output_path))
+        log.info("[M-AUDIO][PYAV][CACHE_HIT]", path=str(output_path))
         return str(output_path)
 
     cmd = [
@@ -31,17 +32,19 @@ def extract_audio(video_path: str | Path, log=None) -> str:
         "-y",
         str(output_path),
     ]
-    log.info("extracting_audio", cmd=" ".join(cmd))
+    log.info("[M-AUDIO][PYAV][EXTRACT_START]", cmd=" ".join(cmd))
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
     if result.returncode != 0:
         raise AudioExtractionError(f"ffmpeg failed: {result.stderr}")
-    log.info("audio_extracted", path=str(output_path))
+    log.info("[M-AUDIO][PYAV][EXTRACT_DONE]", path=str(output_path))
     return str(output_path)
+# END_BLOCK: M-AUDIO/PYAV/EXTRACT_AUDIO
 
 
+# START_BLOCK: M-AUDIO/PYAV/EXTRACT_IFRAMES
 def extract_iframes(video_path: str | Path, timestamps: list[float], log=None) -> list[dict]:
     log = log or get_logger()
-    log.info("extracting_iframes", count=len(timestamps))
+    log.info("[M-AUDIO][PYAV][IFRAME_START]", count=len(timestamps))
     frames = []
     for ts in timestamps:
         with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
@@ -57,7 +60,8 @@ def extract_iframes(video_path: str | Path, timestamps: list[float], log=None) -
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
-            log.warning("iframe_extract_failed", timestamp=ts, stderr=result.stderr[:200])
+            log.warning("[M-AUDIO][PYAV][IFRAME_FAILED]", timestamp=ts, stderr=result.stderr[:200])
             continue
         frames.append({"timestamp_sec": ts, "path": frame_path})
     return frames
+# END_BLOCK: M-AUDIO/PYAV/EXTRACT_IFRAMES

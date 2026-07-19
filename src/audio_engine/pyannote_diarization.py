@@ -7,13 +7,14 @@ from src.core.logging_config import get_logger
 from src.core.schemas import SpeakerSegment
 
 
+# START_BLOCK: M-AUDIO/PYANNOTE/DIARIZE
 def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
     log = log or get_logger()
     audio_path = Path(audio_path)
     if not audio_path.exists():
         raise DiarizationError(f"Audio file not found: {audio_path}")
 
-    log.info("diarization_start")
+    log.info("[M-AUDIO][PYANNOTE][START]")
     try:
         pipeline = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.1",
@@ -35,5 +36,6 @@ def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
             end_sec=turn.end,
         ))
 
-    log.info("diarization_done", segments=len(segments), speakers=len(set(s.speaker for s in segments)))
+    log.info("[M-AUDIO][PYANNOTE][DONE]", segments=len(segments), speakers=len(set(s.speaker for s in segments)))
     return segments
+# END_BLOCK: M-AUDIO/PYANNOTE/DIARIZE

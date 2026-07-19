@@ -7,6 +7,7 @@ from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_visi
 from src.vision_scanner.ocr_buffer import OCRBuffer
 
 
+# START_BLOCK: M-SEMANTIC/SCENE/ANALYZE_SCENES
 async def analyze_scenes(
     timeline: list[TimelineSegment],
     genre: str,
@@ -56,7 +57,7 @@ async def analyze_scenes(
             )
 
         except Exception as e:
-            log.warning("scene_analysis_failed", error=str(e), asr_preview=seg.text[:80])
+            log.warning("[M-SEMANTIC][SCENE][ANALYSIS_FAILED]", error=str(e), asr_preview=seg.text[:80])
             result = SceneAnalysisResult(
                 action_is_clear=True,
                 requires_vision=False,
@@ -70,5 +71,6 @@ async def analyze_scenes(
         results.append(result)
 
     vlm_pct = round(vlm_calls / len(results) * 100, 1) if results else 0
-    log.info("scenes_analyzed", total=len(results), vlm_calls=vlm_calls, vlm_percent=vlm_pct)
+    log.info("[M-SEMANTIC][SCENE][ALL_DONE]", total=len(results), vlm_calls=vlm_calls, vlm_percent=vlm_pct)
     return results, vlm_calls
+# END_BLOCK: M-SEMANTIC/SCENE/ANALYZE_SCENES

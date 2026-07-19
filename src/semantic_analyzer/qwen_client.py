@@ -7,6 +7,7 @@ from src.core.metrics import json_errors_total
 from src.core.timeout_manager import timeout_manager
 
 
+# START_BLOCK: M-SEMANTIC/QWEN/ANALYZE_TEXT
 async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=None) -> str:
     log = log or get_logger()
     from src.semantic_analyzer.prompt_templates import PASS1_TEXT_SYSTEM, PASS1_TEXT_USER
@@ -25,8 +26,10 @@ async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=Non
         log=log,
     )
     return _extract_json_checked(raw)
+# END_BLOCK: M-SEMANTIC/QWEN/ANALYZE_TEXT
 
 
+# START_BLOCK: M-SEMANTIC/QWEN/ANALYZE_VISION
 async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> str:
     log = log or get_logger()
     from src.semantic_analyzer.prompt_templates import PASS2_VISION_SYSTEM, PASS2_VISION_USER
@@ -44,6 +47,7 @@ async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> st
         log=log,
     )
     return raw
+# END_BLOCK: M-SEMANTIC/QWEN/ANALYZE_VISION
 
 
 async def generate_frontmatter(full_transcript: str, log=None) -> str:

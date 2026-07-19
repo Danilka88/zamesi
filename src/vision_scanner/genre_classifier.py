@@ -26,6 +26,7 @@ def _keyword_fallback(full_asr_text: str) -> VideoGenre:
     return VideoGenre.unknown
 
 
+# START_BLOCK: M-VISION/CLASSIFIER/CLASSIFY
 async def classify(full_asr_text: str, log=None) -> VideoGenre:
     log = log or get_logger()
     try:
@@ -44,5 +45,6 @@ async def classify(full_asr_text: str, log=None) -> VideoGenre:
         genre_str = parsed.get("genre", "unknown")
         return VideoGenre(genre_str)
     except Exception as e:
-        log.warning("genre_classifier_fallback", error=str(e))
+        log.warning("[M-VISION][CLASSIFIER][FALLBACK]", error=str(e))
         return _keyword_fallback(full_asr_text)
+# END_BLOCK: M-VISION/CLASSIFIER/CLASSIFY

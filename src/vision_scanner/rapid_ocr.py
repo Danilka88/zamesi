@@ -24,7 +24,7 @@ def process_frames(frame_paths: list[dict], log=None) -> list[OCRResult]:
     for item in frame_paths:
         fpath = Path(item["path"])
         if not fpath.exists():
-            log.warning("frame_not_found", path=str(fpath))
+            log.warning("[M-VISION][OCR][FRAME_NOT_FOUND]", path=str(fpath))
             continue
         try:
             ocr_result, _ = engine(str(fpath))
@@ -40,7 +40,7 @@ def process_frames(frame_paths: list[dict], log=None) -> list[OCRResult]:
             if fpath.suffix == ".jpg":
                 fpath.unlink(missing_ok=True)
         except Exception as e:
-            log.warning("ocr_error", path=str(fpath), error=str(e))
+            log.warning("[M-VISION][OCR][ERROR]", path=str(fpath), error=str(e))
 
-    log.info("ocr_done", frames_processed=len(frame_paths), texts_found=len(results))
+    log.info("[M-VISION][OCR][DONE]", frames_processed=len(frame_paths), texts_found=len(results))
     return results

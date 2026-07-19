@@ -5,6 +5,7 @@ from src.core.logging_config import get_logger
 from src.core.schemas import Passport
 
 
+# START_BLOCK: M-PASSPORT/VALIDATOR/VALIDATE
 def validate(passport: Passport, log=None, strict: bool = False) -> list[str]:
     log = log or get_logger()
     errors = []
@@ -27,9 +28,10 @@ def validate(passport: Passport, log=None, strict: bool = False) -> list[str]:
                 errors.append(f"Scene {i}: ECOM_ITEM without search_query")
 
     if errors:
-        log.warning("validation_errors", count=len(errors), errors=errors)
+        log.warning("[M-PASSPORT][VALIDATOR][ERRORS]", count=len(errors), errors=errors)
         if strict:
             raise PipelineValidationError("; ".join(errors))
     else:
-        log.info("validation_passed")
+        log.info("[M-PASSPORT][VALIDATOR][PASSED]")
     return errors
+# END_BLOCK: M-PASSPORT/VALIDATOR/VALIDATE

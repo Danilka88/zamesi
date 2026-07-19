@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<technology project="RUTUBE Video Analyzer" version="0.1.0">
+  <runtime language="Python" version="3.13"/>
+  <framework name="FastAPI" version="0.115+"/>
+  <pydantic version="2.0+">
+    <description>Все межмодульные контракты — Pydantic v2 модели в модуле core</description>
+  </pydantic>
+
+  <key-libraries>
+    <library name="PyAV" version="12.0+" purpose="Демодуляция MP4, извлечение аудио и I-frame"/>
+    <library name="whisper.cpp" version="large-v3" purpose="ASR транскрибация (локально, через whisper-cli)"/>
+    <library name="pyannote-audio" version="3.1" purpose="Диаризация спикеров"/>
+    <library name="rapidocr-onnxruntime" version="1.2+/v4" purpose="OCR текста с кадров (ONNX)"/>
+    <library name="onnxruntime" version="1.18+" purpose="Рантайм для OCR"/>
+    <library name="httpx" version="0.27+" purpose="HTTP-клиент к Ollama API"/>
+    <library name="pyyaml" version="6.0+" purpose="YAML-frontmatter для .md паспортов"/>
+    <library name="structlog" version="24.0+" purpose="Структурированное логирование"/>
+    <library name="prometheus-client" version="0.20+" purpose="Prometheus-метрики"/>
+    <library name="python-multipart" version="0.0.12+" purpose="Загрузка видеофайлов"/>
+  </key-libraries>
+
+  <testing>
+    <runner>pytest 8.0+</runner>
+    <extensions>pytest-asyncio, pytest-benchmark, pytest-timeout</extensions>
+    <mock>unittest.mock + freezegun</mock>
+    <type-hinting>mypy 1.11+ (strict=false, warn_unused_configs)</type-hinting>
+    <linter>ruff 0.5+ (E,F,I,N,W)</linter>
+  </testing>
+
+  <observability>
+    <logger>structlog</logger>
+    <format>JSON (correlation_id на job, module, timestamp)</format>
+    <metrics>prometheus-client: latency_histogram, vlm_calls_total, error_rate_total</metrics>
+    <redaction>Логи не содержат сырых аудио/видео данных, только ссылки на job_id</redaction>
+  </observability>
+
+  <ai-models>
+    <slm name="Qwen3.5:9b" provider="Ollama" endpoint="http://localhost:11434" purpose="Текстовый пайплайн (ASR пост-процессинг, DomainRouter, Passport Assembly)">
+      <params temperature="0.1" top_p="0.9" max_tokens="2048"/>
+    </slm>
+    <vlm name="Qwen3.5:9b (Vision)" provider="Ollama" endpoint="http://localhost:11434" purpose="Визуальный анализ I-frame (Gatekeeper)" weight="≤6% сегментов"/>
+    <asr name="Whisper large-v3" provider="whisper.cpp" binary="whisper-cli"/>
+    <diarization name="PyAnnote Speaker Diarization 3.1" provider="pyannote-audio"/>
+    <ocr name="RapidOCR v4" provider="onnxruntime"/>
+  </ai-models>
+
+  <constraints>
+    <constraint>VLM Gatekeeper: ≤6% всех сегментов проходят через Vision-модель</constraint>
+    <constraint>Себестоимость пайплайна &lt;$0.0025/час видео (CPU-only, локальные модели)</constraint>
+    <constraint>Все внешние вызовы защищены circuit breaker + retry + fallback chain</constraint>
+    <constraint>Таймаут pipeline: 600 сек; каждый под-таймаут индивидуален</constraint>
+    <constraint>Нет веб-сервера зависимостей: Whisper, PyAnnote, RapidOCR — локальный запуск</constraint>
+  </constraints>
+</technology>

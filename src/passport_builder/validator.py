@@ -1,0 +1,32 @@
+import re
+
+from src.core.logging_config import get_logger
+from src.core.schemas import Passport
+
+
+def validate(passport: Passport, log=None) -> list[str]:
+    log = log or get_logger()
+    errors = []
+
+    if not passport.frontmatter.video_id:
+        errors.append("Missing video_id in frontmatter")
+
+    prev_end = -1
+    for i, scene in enumerate(passport.timeline):
+        ts_match = re.search(r"(\d+:\d+)", scene.scene_summary)
+        if ts_match:
+            parts = ts_match.group(1).split(":")
+            sec = int(parts[0]) * 60 + int(parts[1])
+            if sec < prev_end:
+                errors.append(f"Scene {i}: timestamp overlap or out of order ({sec} < {prev_end})")
+            prev_end = sec
+
+        for m in scene.monetization:
+            if m.type == "ecom_item" and not m.search_query:
+                errors.append(f"Scene {i}: ECOM_ITEM without search_query")
+
+    if errors:
+        log.warning("validation_errors", count=len(errors), errors=errors)
+    else:
+        log.info("validation_passed")
+    return errors

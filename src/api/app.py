@@ -1,0 +1,22 @@
+
+from fastapi import FastAPI
+from prometheus_client import make_asgi_app
+
+from src.api.routes import router
+from src.core.logging_config import setup_logging
+
+setup_logging()
+
+app = FastAPI(
+    title="RUTUBE Video Analyzer",
+    version="0.1.0",
+    description="AI pipeline: video → .md passport with monetization tags",
+)
+
+app.include_router(router)
+app.mount("/metrics", make_asgi_app())
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "service": "rutube-video-analyzer"}

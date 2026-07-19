@@ -1,0 +1,77 @@
+import base64
+import json
+
+from src.core.exceptions import JSONParseError
+from src.core.logging_config import get_logger
+from src.core.metrics import json_errors_total
+from src.core.timeout_manager import timeout_manager
+
+
+async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=None) -> str:
+    log = log or get_logger()
+    from src.semantic_analyzer.prompt_templates import PASS1_TEXT_SYSTEM, PASS1_TEXT_USER
+
+    user_prompt = PASS1_TEXT_USER.format(
+        genre=genre,
+        asr_text=asr_text[:1500],
+        ocr_text=ocr_text[:500] or "(нет текста на экране)",
+    )
+    full_prompt = f"{PASS1_TEXT_SYSTEM}\n\n{user_prompt}"
+
+    raw = await timeout_manager.call_ollama(
+        prompt=full_prompt,
+        timeout_name="qwen_pass1_text",
+        call_name="pass1_text",
+        log=log,
+    )
+    return _extract_json(raw)
+
+
+async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> str:
+    log = log or get_logger()
+    from src.semantic_analyzer.prompt_templates import PASS2_VISION_SYSTEM, PASS2_VISION_USER
+
+    with open(image_path, "rb") as f:
+        image_b64 = base64.b64encode(f.read()).decode("utf-8")
+
+    full_prompt = f"{PASS2_VISION_SYSTEM}\n\n{PASS2_VISION_USER}\n\nКонтекст ASR: {asr_text[:500]}"
+
+    raw = await timeout_manager.call_ollama(
+        prompt=full_prompt,
+        image_base64=image_b64,
+        timeout_name="qwen_pass2_vision",
+        call_name="pass2_vision",
+        log=log,
+    )
+    return raw
+
+
+async def generate_frontmatter(full_transcript: str, log=None) -> str:
+    log = log or get_logger()
+    from src.semantic_analyzer.prompt_templates import FRONTMATTER_SYSTEM, FRONTMATTER_USER
+
+    user_prompt = FRONTMATTER_USER.format(full_transcript=full_transcript[:8000])
+    full_prompt = f"{FRONTMATTER_SYSTEM}\n\n{user_prompt}"
+
+    raw = await timeout_manager.call_ollama(
+        prompt=full_prompt,
+        timeout_name="qwen_frontmatter",
+        call_name="frontmatter",
+        log=log,
+    )
+    return _extract_json(raw)
+
+
+def _extract_json(raw: str) -> str:
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start == -1 or end == -1:
+        json_errors_total.inc()
+        raise JSONParseError(f"No JSON found in response: {raw[:200]}")
+    candidate = raw[start : end + 1]
+    try:
+        json.loads(candidate)
+    except json.JSONDecodeError as e:
+        json_errors_total.inc()
+        raise JSONParseError(f"Invalid JSON: {e}") from e
+    return candidate

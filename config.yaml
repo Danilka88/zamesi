@@ -1,0 +1,106 @@
+models:
+  ollama:
+    endpoint: "http://localhost:11434"
+    text_model: "qwen3.5:4b"
+    vision_model: "qwen3.5:9b"
+    classifier_model: "qwen3.5:0.8b"
+    classifier_max_tokens: 8192
+    default_params:
+      temperature: 0.1
+      top_p: 0.9
+      max_tokens: 4096
+
+  whisper:
+    binary: "whisper-cli"
+    model: "large-v3"
+    model_path: ""  # auto-resolve by whisper-cli
+
+  pyannote:
+    model: "pyannote/speaker-diarization-3.1"
+
+  rapidocr:
+    model: "v4"
+
+timeouts:
+  whisper_asr: 300
+  pyannote_diarization: 120
+  rapidocr_inference: 30
+  qwen_pass1_text: 180
+  qwen_pass2_vision: 300
+  qwen_frontmatter: 180
+  llm_general_default: 120
+  domain_router: 120
+  pipeline_total: 3600
+
+retry:
+  max_attempts: 3
+  base_delay_sec: 1.0
+  max_delay_sec: 10.0
+  backoff_factor: 2.0
+
+circuit_breaker:
+  failure_threshold: 10
+  recovery_timeout_sec: 60
+  half_open_max_requests: 1
+
+fallback_chain:
+  - "retry_same"
+  - "shorten_prompt"
+  - "skip_vision"
+
+audio:
+  sample_rate: 16000
+  channels: 1
+  temp_dir: "/tmp/rutube-audio"
+
+ocr:
+  confidence_threshold: 0.5
+  buffer_window_sec: 5
+
+genres:
+  classifier_model: "qwen3.5:0.8b"
+
+  labels:
+    - id: podcast
+      description: "разговорный формат, интервью, обсуждение без визуального контента"
+      vision_blocked: true
+      fallback_keywords: ["подкаст", "выпуск", "гость", "интервью"]
+    - id: lecture
+      description: "лекция, урок, образовательный контент"
+      vision_blocked: true
+      fallback_keywords: ["лекция", "урок", "курс", "занятие"]
+    - id: stream
+      description: "стрим, прямой эфир, трансляция"
+      vision_blocked: true
+      fallback_keywords: ["стрим", "лайв", "прямой эфир", "трансляция"]
+    - id: how_to
+      description: "инструкция, туториал, ремонт, сборка"
+      vision_blocked: false
+      fallback_keywords: ["как", "инструкция", "гайд", "туториал"]
+    - id: review
+      description: "обзор товара, распаковка, тест-драйв"
+      vision_blocked: false
+      fallback_keywords: ["обзор", "распаковка", "тест", "отзыв"]
+    - id: tech_review
+      description: "обзор техники, гаджетов, ПО, сравнение характеристик"
+      vision_blocked: false
+      fallback_keywords: ["гаджет", "техника", "смартфон", "ноутбук"]
+    - id: diy
+      description: "сделай сам, крафт, хендмейд, рукоделие"
+      vision_blocked: false
+      fallback_keywords: ["своими руками", "diy", "handmade"]
+    - id: true_crime
+      description: "криминал, детектив, расследование"
+      vision_blocked: true
+      fallback_keywords: ["убийство", "преступление", "детектив", "расследование"]
+    - id: education
+      description: "обучение, наука, познавательный контент, документалистика"
+      vision_blocked: true
+      fallback_keywords: ["обучение", "наука", "документальный", "познавательный"]
+    - id: unknown
+      description: "не подходит ни под одну из вышеперечисленных категорий"
+      vision_blocked: false
+      fallback_keywords: []
+
+passport:
+  output_dir: "./output"

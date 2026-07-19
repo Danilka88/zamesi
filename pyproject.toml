@@ -1,0 +1,51 @@
+[project]
+name = "rutube-video-analyzer"
+version = "0.1.0"
+description = "AI pipeline: video → .md passport with AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]",
+    "pydantic>=2.0",
+    "av>=14.0",
+    "pyannote-audio>=3.1",
+    "onnxruntime>=1.18",
+    "rapidocr-onnxruntime>=1.2",
+    "httpx>=0.27",
+    "structlog>=24.0",
+    "prometheus-client>=0.20",
+    "pyyaml>=6.0",
+    "aiofiles>=24.0",
+    "python-multipart>=0.0.12",
+    "anyio>=4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-benchmark>=4.0",
+    "pytest-timeout>=2.3",
+    "freezegun>=1.5",
+    "ruff>=0.5",
+    "mypy>=1.11",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["N818"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = false
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+timeout = 120

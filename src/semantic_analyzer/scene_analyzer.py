@@ -1,0 +1,78 @@
+import json
+import time
+
+from src.core.logging_config import get_logger
+from src.core.schemas import ClipCandidate, MonetizationItem, SceneAnalysisResult, TimelineSegment
+from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_vision_segment
+from src.vision_scanner.ocr_buffer import OCRBuffer
+
+
+async def analyze_scenes(
+    timeline: list[TimelineSegment],
+    genre: str,
+    vision_blocked: bool,
+    ocr_buffer: OCRBuffer,
+    iframe_map: dict[float, str],
+    log=None,
+) -> tuple[list[SceneAnalysisResult], int]:
+    log = log or get_logger()
+    results = []
+    vlm_calls = 0
+
+    for seg in timeline:
+        start_time = time.monotonic()
+        mid_ts = (seg.start_sec + seg.end_sec) / 2
+        ocr_text = ocr_buffer.check(mid_ts) or ""
+
+        try:
+            raw_json = await analyze_text_segment(
+                genre=genre,
+                asr_text=seg.text,
+                ocr_text=ocr_text,
+                log=log,
+            )
+            parsed = json.loads(raw_json)
+
+            if parsed.get("requires_vision") and not vision_blocked:
+                ocr_at_moment = ocr_buffer.check(mid_ts)
+                if not ocr_at_moment:
+                    frame_path = iframe_map.get(mid_ts)
+                    if frame_path:
+                        vision_desc = await analyze_vision_segment(
+                            asr_text=seg.text,
+                            image_path=frame_path,
+                            log=log,
+                        )
+                        parsed["scene_summary"] += f" [Видео: {vision_desc[:200]}]"
+                        vlm_calls += 1
+
+            result = SceneAnalysisResult(
+                action_is_clear=parsed.get("action_is_clear", True),
+                requires_vision=parsed.get("requires_vision", False),
+                scene_summary=parsed.get("scene_summary", seg.text[:120]),
+                monetization=[
+                    MonetizationItem(**m) for m in parsed.get("monetization", [])
+                ] if parsed.get("monetization") else [],
+                clip_candidate=ClipCandidate(**parsed["clip_candidate"]) if parsed.get("clip_candidate") else None,
+                ad_slot=MonetizationItem(**parsed["ad_slot"]) if parsed.get("ad_slot") else None,
+                processing_time_sec=time.monotonic() - start_time,
+            )
+
+        except Exception as e:
+            log.warning("scene_analysis_failed", error=str(e), asr_preview=seg.text[:80])
+            result = SceneAnalysisResult(
+                action_is_clear=True,
+                requires_vision=False,
+                scene_summary=seg.text[:120],
+                monetization=[],
+                clip_candidate=None,
+                ad_slot=None,
+                fallback_used="llm_failed",
+                processing_time_sec=time.monotonic() - start_time,
+            )
+
+        results.append(result)
+
+    vlm_pct = round(vlm_calls / len(results) * 100, 1) if results else 0
+    log.info("scenes_analyzed", total=len(results), vlm_calls=vlm_calls, vlm_percent=vlm_pct)
+    return results, vlm_calls

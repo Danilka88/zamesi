@@ -45,7 +45,7 @@ class Config:
 
     @property
     def ollama_text_model(self) -> str:
-        return self._get("models", "ollama", "text_model", default="qwen3.5:9b")
+        return self._get("models", "ollama", "text_model", default="gemma4:e4b")
 
     @property
     def ollama_vision_model(self) -> str:

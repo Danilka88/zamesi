@@ -9,7 +9,7 @@ from src.core.schemas import (
 )
 
 
-def test_valid_frontmatter():
+def test_valid_frontmatter(capture_logs):
     fm = PassportFrontmatter(
         video_id="test_001",
         domain_type="how_to_repair",
@@ -17,6 +17,9 @@ def test_valid_frontmatter():
         seo_title="Test",
     )
     assert fm.brand_safety_score == 95
+
+    from src.core.logging_config import get_logger
+    get_logger().info("[M-CORE][SCHEMAS][VALID_ENUM]")
 
 
 def test_frontmatter_brand_safety_clamped():
@@ -28,7 +31,7 @@ def test_frontmatter_brand_safety_clamped():
         )
 
 
-def test_scene_result_with_monetization():
+def test_scene_result_with_monetization(capture_logs):
     sr = SceneAnalysisResult(
         action_is_clear=True,
         requires_vision=False,
@@ -39,6 +42,9 @@ def test_scene_result_with_monetization():
     )
     assert len(sr.monetization) == 1
     assert sr.monetization[0].search_query == "test product"
+
+    from src.core.logging_config import get_logger
+    get_logger().info("[M-CORE][SCHEMAS][MONETIZATION]")
 
 
 def test_scene_result_with_clip():

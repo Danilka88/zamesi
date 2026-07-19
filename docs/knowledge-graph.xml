@@ -6,12 +6,22 @@
       <Source path="src/core/"/>
       <Test path="tests/core/"/>
       <Exports>
+        <type-VideoGenre>Enum жанров: how_to_repair, podcast, lecture, gameplay, interview, vlog, review, unboxing, cooking, travel, sports, news, tutorial, other</type-VideoGenre>
         <type-JobStatus>Статус обработки: pending, processing, done, error</type-JobStatus>
         <type-TimelineSegment>Сегмент таймлайна: start_sec, end_sec, text, speaker</type-TimelineSegment>
+        <type-WordTimestamp>Слово с таймстампом: word, start_sec, end_sec, probability</type-WordTimestamp>
+        <type-SpeakerSegment>Сегмент спикера: speaker, start_sec, end_sec</type-SpeakerSegment>
         <type-SceneAnalysisResult>Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[]</type-SceneAnalysisResult>
         <type-MonetizationItem>Точка монетизации: ad_slot, ecom_item, clip_candidate</type-MonetizationItem>
         <type-ClipCandidate>Кандидат на нарезку: hook, time_range, virality_potential</type-ClipCandidate>
+        <type-OCRResult>Результат OCR: text, confidence, bbox, timestamp</type-OCRResult>
         <type-Passport>Финальный .md паспорт с фронтмэттером и таймлайном</type-Passport>
+        <type-PassportFrontmatter>YAML-фронтмэттер: video_id, domain_type, brand_safety_score, seo_title</type-PassportFrontmatter>
+        <type-JobMetrics>Метрики пайплайна: total_segments, vlm_calls, vlm_percent, duration_sec</type-JobMetrics>
+        <type-JobResult>Результат job: job_id, status, passport, metrics, timestamps</type-JobResult>
+        <type-AnalyzeResponse>POST /analyze ответ: job_id, status</type-AnalyzeResponse>
+        <type-AnalyzeStatusResponse>GET /analyze/{id}/status ответ: job_id, status, progress</type-AnalyzeStatusResponse>
+        <type-AnalyzeResultResponse>GET /analyze/{id}/result ответ: job_id, status, passport, metrics</type-AnalyzeResultResponse>
         <type-AppConfig>Загрузка и валидация config.yaml</type-AppConfig>
         <fn-load_config>Загрузка конфигурации</fn-load_config>
         <fn-timeout_manager>TimeoutManager: retry, circuit breaker, fallback chain</fn-timeout_manager>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <technology project="RUTUBE Video Analyzer" version="0.1.0">
-  <runtime language="Python" version="3.14"/>
+  <runtime language="Python" version="3.13+"/>
   <framework name="FastAPI" version="0.115+"/>
   <pydantic version="2.0+">
     <description>Все межмодульные контракты — Pydantic v2 модели в модуле core</description>
@@ -30,7 +30,7 @@
   <observability>
     <logger>structlog</logger>
     <format>JSON (correlation_id на job, module, timestamp)</format>
-    <metrics>prometheus-client: latency_histogram, vlm_calls_total, error_rate_total</metrics>
+    <metrics>prometheus-client: latency_histogram, vlm_calls_total, json_errors_total, timeouts_total, fallbacks_total</metrics>
     <redaction>Логи не содержат сырых аудио/видео данных, только ссылки на job_id</redaction>
   </observability>
 

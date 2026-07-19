@@ -58,13 +58,13 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/api/metrics.py` — Prometheus metrics
 
 ### @tests
-- `tests/core/` — Pydantic validation, timeout manager
-- `tests/audio_engine/` — Timeline merger
-- `tests/vision_scanner/` — Domain router, OCR buffer
-- `tests/semantic_analyzer/` — Fallback rules
-- `tests/passport_builder/` — Validator
+- `tests/core/` — Pydantic validation, timeout manager, circuit breaker
+- `tests/audio_engine/` — ASR (whisper), diarization (pyannote), ffmpeg (pyav), timeline merger
+- `tests/vision_scanner/` — Domain router, OCR (rapid_ocr), OCR buffer, genre classifier
+- `tests/semantic_analyzer/` — Qwen client (text/vision/frontmatter), scene analyzer, VLM gatekeeper
+- `tests/passport_builder/` — Frontmatter generator, passport builder, validator
 - `tests/api/` — Health, endpoints, metrics
-- `tests/integration.py` — Full pipeline e2e
+- `tests/integration.py` — Full pipeline e2e (requires demo video)
 
 ## Config
 `config.yaml` — Timeouts, retries, model paths, circuit breaker params

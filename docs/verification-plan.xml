@@ -35,13 +35,14 @@
           </evidence>
         </Scenario>
         <Scenario id="S-M-CORE-3" type="success">
-          <description>TimeoutManager: retry + fallback chain</description>
+          <description>TimeoutManager: retry + fallback chain + timeout occurrence</description>
           <commands>
             <command>pytest tests/core/test_timeout_manager.py -v</command>
           </commands>
           <evidence>
             <marker required="true">[M-CORE][TIMEOUT][RETRY]</marker>
-            <assert>Timeout → retry → RetryExhaustedError; circuit breaker открывается после порога</assert>
+            <marker required="true">[M-CORE][TIMEOUT][OCCURRED]</marker>
+            <assert>Timeout → retry → RetryExhaustedError; circuit breaker открывается после порога; маркер OCCURRED логируется при timeout</assert>
           </evidence>
         </Scenario>
         <Scenario id="S-M-CORE-4" type="failure">

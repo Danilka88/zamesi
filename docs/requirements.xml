@@ -55,6 +55,38 @@
       </steps>
       <postcondition>Клиент получил .md паспорт или статус ошибки; метрики доступны</postcondition>
     </UseCase>
+    <UseCase id="UC-5" name="Semantic Search / VideoRAG" priority="medium">
+      <description>Индексация сцен паспорта в ChromaDB и семантический поиск по текстовому запросу через qwen3-embedding</description>
+      <actor>API client</actor>
+      <precondition>Хотя бы один .md паспорт проиндексирован (автоматически при build_passport или через POST /search/reindex)</precondition>
+      <steps>
+        <step order="1">GET /search/?q=... — текстовый запрос пользователя</step>
+        <step order="2">Qwen3-Embedding:0.6b через Ollama /api/embed → вектор запроса (1024-dim)</step>
+        <step order="3">ChromaDB collection.query — косинусная близость, top-K</step>
+        <step order="4">Фильтрация по genre (опционально), сортировка по убыванию score</step>
+      </steps>
+      <postcondition>Получен list[SearchResult] с video_id, scene_index, summary, score; возможна переиндексация через POST /search/reindex</postcondition>
+      <evidence>
+        <marker required="true">[M-SEARCH][SEARCHER][RESULTS]</marker>
+      </evidence>
+    </UseCase>
+
+    <UseCase id="UC-6" name="Mixer (Замеси)" priority="medium">
+      <description>Генерация структурированной видеоподборки по текстовому запросу: LLM-планирование этапов → семантический поиск → LLM-матчинг → Markdown</description>
+      <actor>API client</actor>
+      <precondition>Паспорта проиндексированы в ChromaDB</precondition>
+      <steps>
+        <step order="1">POST /mix {"query": "...", "max_videos_per_stage": N} — создание подборки</step>
+        <step order="2">gemma4:e4b разбивает запрос на 3-5 этапов (plan_stages)</step>
+        <step order="3">Для каждого этапа: search_scenes (description) + gemma4:e4b матчинг → MixStage</step>
+        <step order="4">Mix сохраняется в _mixes; GET /mix/{id} — структура, GET /mix/{id}/markdown — Markdown</step>
+      </steps>
+      <postcondition>Получен Mix с этапами и подходящими сценами; доступен в JSON и Markdown</postcondition>
+      <evidence>
+        <marker required="true">[M-MIXER][PLANNER][STAGES]</marker>
+        <marker required="true">[M-MIXER][COMPOSER][DONE]</marker>
+      </evidence>
+    </UseCase>
   </UseCases>
 
   <NonFunctionalRequirements>

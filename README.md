@@ -43,15 +43,22 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | `ECOM_ITEM` | Назван конкретный товар, бренд или инструмент |
 | `CLIP_CANDIDATE` | Сцена содержит лайфхак, ошибку или неожиданный сюжетный поворот |
 
+**Как Search и Mixer работают с метками:**
+
+- **Semantic Search** — возвращает сцены с фильтром по `monetization_types`. Позволяет найти все `ECOM_ITEM`-сцены для каталога товаров или все `AD_SLOT`-сцены для programmatic размещения рекламы.
+- **Mixer (Замеси)** — автоматически собирает сцены с `AD_SLOT` и `ECOM_ITEM` в структурированные видеоподборки. Каждая подборка — готовый монетизируемый плейлист: рекламные блоки + товарные сцены без ручного монтажа.
+
 ### Соответствие критериям технического задания
 
 | Критерий | Раздел в README |
-|---|---|
-| Влияние на метрики монетизации | Типы меток, схема работы |
+|---|---|---|
+| Влияние на метрики монетизации | Типы меток, схема работы, Search + Mixer |
 | Юнит-экономика | Экономическая эффективность |
-| Воспроизводимость | Тестирование (81 тест) |
+| Воспроизводимость | Тестирование (103 теста) |
 | Чувствительные данные | Приватность и безопасность |
 | Production-готовность | Отказоустойчивость, мониторинг |
+| UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
+| UC-6: Mixer (Замеси) | Mixer, API: `POST /mix`, Быстрый старт |
 
 ---
 
@@ -89,7 +96,7 @@ MP4
 1. **DomainRouter** — жанровая блокировка: `podcast`, `lecture`, `stream`, `true_crime`, `education` → `vision_blocked=true`
 2. **Inquisitive SLM** — Gemma4:e4b сам возвращает `requires_vision: true/false` на основе неопределённых местоимений («эта штука», «сюда», «такой»)
 3. **OCR-дедупликация** — если OCRBuffer содержит текст на временно́м отрезке сегмента, VLM не вызывается (текст на кадре уже покрывает семантику)
-
+]
 Итог: VLM вызывается для ≤6% сегментов вместо 100%.
 
 ---
@@ -152,7 +159,7 @@ MP4
 - **Почему:** Gemma4:e4b — эволюция Gemma2 от Google DeepMind. Ключевое отличие от предшественника (Qwen3.5:4b): **нет токенов на thinking**.
   - Qwen3.5:4b тратил ~160 с/call на thinking → Gemma4:e4b ~35–43 с/call (**4× быстрее**).
   - Промпт не требует специального форматирования — Gemma4 не чувствителен к шаблону `<|im_start|>`.
-- **Реализация:** 180 вызовов на 1 ч видео (по одному на сегмент таймлайна). Возвращает структурированный JSON:
+- **Реализация:** до 180 вызовов на 1 ч видео (по одному на сегмент таймлайна). Возвращает структурированный JSON:
 
 ```json
 {
@@ -184,16 +191,54 @@ MP4
 
 ---
 
+### Семантический поиск (VideoRAG)
+
+Поиск сцен по смыслу, а не по ключевым словам. Возвращает не просто текст, а готовые монетизационные точки: какие сцены содержат `AD_SLOT` (контекст для рекламы), `ECOM_ITEM` (товары), `CLIP_CANDIDATE` (виральный клип). Каждый результат — готовая единица для programmatic placement.
+
+#### ChromaDB 1.5+ (Vector Search)
+
+- **Почему:** ChromaDB — Apache 2.0, Rust core, `pip install`, embedded mode без внешнего сервера. Для масштаба тысяч сцен — оптимально.
+- **Реализация:** lazy-инициализация `PersistentClient(path=config.search_chroma_path)`. Каждая сцена → векторный чанк (speaker + ASR + summary + monetization_types) → `collection.add(embedding, metadata, id)`. Расстояние — косинусная близость.
+- **Индексация:** автоматически при сборке паспорта (в `build_passport` после `validate`). Опциональная ручная через `POST /search/reindex`.
+
+#### Qwen3-Embedding:0.6b
+
+- **Почему:** мультиязычная модель (русский включён), 639 MB, 1024-dim, MTEB 64.33. Альтернатива `nomic-embed-text` — только английский.
+- **Реализация:** Ollama `/api/embed` через `httpx.Client` (connection pooling) с таймаутом 30 с.
+- **Время:** <200 ms на один embedding (CPU, Mac M1).
+
+---
+
+### Mixer (Замеси)
+
+Генератор монетизируемых видеоподборок по текстовому запросу пользователя. Каждая подборка — готовый плейлист из сцен с `AD_SLOT` (рекламные блоки), `ECOM_ITEM` (товары) и `CLIP_CANDIDATE` (виральные клипы). Без Mixer подборки собираются редактором вручную часы; с Mixer — секунды.
+
+- **Почему:** ручной монтаж подборок — часы работы редактора. Mixer автоматизирует: LLM-планирование этапов → семантический поиск сцен → LLM-матчинг → Markdown. Результат можно сразу передавать в рекомендательную систему RUTUBE или на ручную доработку.
+- **Реализация:** фоновый `_run_mix` pipeline (аналог `_run_pipeline`):
+  1. `plan_stages` — `gemma4:e4b` разбивает запрос на 3-5 этапов
+  2. `compose_mix` — для каждого этапа `search_scenes` (фильтр по monetization_types) + `gemma4:e4b` матчинг → `MixStage`
+  3. `mix_to_markdown` — `Mix` → структурированный Markdown
+- **Хранилище:** in-memory `_mixes: dict[str, Mix]` (как `_jobs` в `routes.py`)
+
+---
+
 ### API и инфраструктура
 
 #### FastAPI
 
 - **Почему:** async-native фреймворк с Pydantic v2 на каждом эндпоинте. OpenAPI spec генерируется автоматически — интеграторам не нужна отдельная документация.
-- **Эндпоинты:**
+- **Эндпоинты основного пайплайна:**
   - `POST /analyze` — загрузка видео, возврат `job_id`, фоновый запуск
   - `GET /analyze/{job_id}` — полный результат (passport + метрики)
   - `GET /analyze/{job_id}/status` — краткий статус
   - `GET /analyze/{job_id}/markdown` — текст .md паспорта
+- **Эндпоинты семантического поиска:**
+  - `GET /search?q=...&top_k=20&genre=...` — поиск сцен по текстовому запросу
+  - `POST /search/reindex` — переиндексация всех `.md` паспортов в ChromaDB
+- **Эндпоинты Mixer (Замеси):**
+  - `POST /mix` — создание видеоподборки, возврат `mix_id`, фоновый запуск
+  - `GET /mix/{mix_id}` — результат (структура Mix)
+  - `GET /mix/{mix_id}/markdown` — Markdown подборки
 - **Фоновые задачи:** `asyncio.create_task()` с lazy imports — тяжёлые зависимости (PyAnnote, Whisper) загружаются только при первом запуске, не влияя на старт сервера.
 
 #### structlog + Prometheus
@@ -220,25 +265,29 @@ MP4
 
 ## Архитектура (GRACE)
 
-Шесть изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
+Восемь изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  M-API (FastAPI) — 2 файла, 4 теста                         │
-│  POST /analyze → _run_pipeline → GET /analyze/{id}/markdown │
-└──────────┬──────────────────────────────────────────────────┘
-           │
-┌──────────▼──────────────────────────────────────────────────┐
-│  M-PASSPORT — 4 файла, 13 тестов                            │
-│  build_frontmatter → build_passport → passport_to_markdown  │
-│  validate (strict mode)                                      │
-└──────────┬──────────────────────────────────────────────────┘
-           │
-┌──────────▼──────────────────────────────────────────────────┐
-│  M-SEMANTIC — 4 файла, 11 тестов                            │
-│  Gemma4:e4b (text) + Qwen3.5:9b (vision) + analyze_scenes   │
-│  VLM Gatekeeper: ≤6% сегментов                               │
-└──────┬───────────┬──────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  M-API (FastAPI) — 4 файла, 10 тестов                            │
+│  analyze + search + mix + metrics + health                       │
+└──┬───────────────┬────────────────────────┬─────────────────────┘
+   │               │                        │
+┌──▼───────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
+│ M-PASSPORT   │ │ M-SEARCH        │  │  M-MIXER             │
+│ 4 файла      │ │ 3 файла         │  │  4 файла             │
+│ 13 тестов    │ │ 8 тестов        │  │  8 тестов            │
+│ build→md     │ │ index→search    │  │  plan→compose→render │
+│ validate     │ │ ChromaDB        │  │  LLM-матчинг         │
+└──┬───────────┘ └──┬──────────────┘  └──────┬───────────────┘
+   │                │                         │
+   └────────────────┼─────────────────────────┘
+                    │
+┌───────────────────▼───────────────────────────────────────────┐
+│  M-SEMANTIC — 4 файла, 11 тестов                              │
+│  Gemma4:e4b (text) + Qwen3.5:9b (vision) + analyze_scenes    │
+│  VLM Gatekeeper: ≤6% сегментов                                │
+└──────┬───────────┬───────────────────────────────────────────┘
        │           │
 ┌──────▼────┐ ┌────▼──────────┐
 │ M-AUDIO   │ │ M-VISION      │
@@ -256,7 +305,7 @@ MP4
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 31 source-файл, 26 test-файлов, 57 файлов Python.
+Всего: 40 source-файлов, 33 test-файла, 73 файла Python.
 
 ---
 
@@ -326,7 +375,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 81 тест, 0 failures, 1 skipped
+### Test suite: 103 теста, 0 failures, 1 skipped
 
 Покрытие тестов по модулям:
 
@@ -337,7 +386,9 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-VISION | 13 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
 | M-SEMANTIC | 11 | `test_qwen_client.py`, `test_scene_analyzer.py` |
 | M-PASSPORT | 13 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
-| M-API | 4 | `test_endpoints.py` |
+| M-SEARCH | 8 | `test_indexer.py` (4), `test_searcher.py` (4) |
+| M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
+| M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
 | Интеграция | 0 | `test_integration.py` — **skipped** (ожидает demo video) |
 
 ### Методология
@@ -349,7 +400,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ### GRACE Verification
 
-22 verification scenarios, 3 gate levels:
+26 verification scenarios, 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
@@ -381,7 +432,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 {"event": "[M-API][PIPELINE][DONE]", "duration_sec": 142.5, "scenes": 45, "vlm_pct": 5.2}
 ```
 
-37 log-маркеров формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]` во всех source-файлах.
+54 log-маркера формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]` во всех source-файлах.
 
 ### Prometheus-метрики
 
@@ -400,7 +451,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-23 пары `START_BLOCK`/`END_BLOCK` в 31 source-файле. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+36 пар `START_BLOCK`/`END_BLOCK` в 40 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
@@ -410,9 +461,10 @@ Endpoints:
 
 - Python 3.13+
 - [Ollama](https://ollama.com) с моделями:
-  - `gemma4:e4b` (text analysis)
+  - `gemma4:e4b` (text analysis, stage planner)
   - `qwen3.5:9b` (vision)
   - `qwen3.5:0.8b` (genre classifier)
+  - `qwen3-embedding:0.6b` (semantic search embeddings)
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) с моделью `large-v3`
 - ffmpeg (7+)
 
@@ -470,6 +522,25 @@ curl http://localhost:8000/analyze/a1b2c3d4/status
 Получить .md паспорт:
 ```bash
 curl http://localhost:8000/analyze/a1b2c3d4/markdown
+```
+
+Семантический поиск:
+```bash
+curl "http://localhost:8000/search/?q=ключ+на+13&top_k=5"
+# → [{"video_id": "repair_guide_01", "scene_index": 1, "summary": "...", "score": 0.12}]
+```
+
+Создать видеоподборку (mix):
+```bash
+curl -X POST http://localhost:8000/mix/ \
+  -H "Content-Type: application/json" \
+  -d '{"query": "замена генератора на ВАЗ", "max_videos_per_stage": 3}'
+# → {"mix_id": "a1b2c3d4"}
+```
+
+Получить подборку в Markdown:
+```bash
+curl http://localhost:8000/mix/a1b2c3d4/markdown
 ```
 
 Prometheus метрики:
@@ -531,7 +602,82 @@ Prometheus endpoint. Content-Type: `text/plain; version=0.0.4`.
 
 ---
 
-## Пример результата
+### `GET /search`
+
+Семантический поиск сцен по текстовому запросу. Позволяет найти все сцены с `AD_SLOT` для рекламного размещения, `ECOM_ITEM` для каталога товаров или `CLIP_CANDIDATE` для виральных клипов — без ручного пересмотра видео.
+
+- Query params: `q` (str, обязательный), `top_k` (int, default 20), `genre` (str, опциональный фильтр)
+- Response: `list[SearchResult]`, сортировка по убыванию косинусной близости
+
+```json
+[
+  {
+    "video_id": "repair_guide_01",
+    "scene_index": 1,
+    "start_sec": 15.0,
+    "end_sec": 45.0,
+    "summary": "Откручивание верхней гайки генератора",
+    "speaker": "SPEAKER_00",
+    "text": "документ чанка",
+    "genre": "how_to",
+    "monetization_types": ["ecom_item"],
+    "score": 0.12
+  }
+]
+```
+
+### `POST /search/reindex`
+
+Переиндексация всех `.md` паспортов из директории `passport.output_dir` в ChromaDB.
+
+- Response: `{"status": "ok", "indexed": 5}`
+
+---
+
+### `POST /mix`
+
+Создание структурированной видеоподборки (микса) по текстовому запросу. Каждая подборка — готовый монетизируемый плейлист: этапы со сценами, содержащими `AD_SLOT`, `ECOM_ITEM` или `CLIP_CANDIDATE`. Фоновый pipeline.
+
+- Request body: `{"query": "str" (min 3 символа), "max_videos_per_stage": 3 (1-10)}`
+- Response: `{"mix_id": "str"}`
+- Статус: фоновый запуск (результат доступен через несколько секунд)
+
+### `GET /mix/{mix_id}`
+
+Результат подборки.
+
+```json
+{
+  "mix_id": "a1b2c3d4",
+  "query": "замена генератора",
+  "stages": [
+    {
+      "title": "Подготовка",
+      "description": "Собери инструменты",
+      "scenes": [
+        {
+          "video_id": "repair_guide_01",
+          "scene_index": 0,
+          "start_sec": 0.0,
+          "end_sec": 15.0,
+          "summary": "Снятие клеммы аккумулятора",
+          "speaker": "SPEAKER_00",
+          "text": "Первым делом снимаем минусовую клемму"
+        }
+      ]
+    }
+  ],
+  "total_duration_sec": 15.0
+}
+```
+
+### `GET /mix/{mix_id}/markdown`
+
+Markdown-текст подборки. Content-Type: `text/markdown`.
+
+---
+
+## Примеры результатов
 
 ### Пример 1: How-to (ремонт автомобиля)
 
@@ -636,13 +782,80 @@ ad_targeting_keywords: ["нейросети", "AI", "медицинские те
 
 ---
 
-## План развития
+### Пример 3: Результат семантического поиска
 
-1. **Интеграционное тестирование** — поместить демо-видео (≤30 с, ~5 MB) в `tests/fixtures/videos/` и запустить `pytest tests/test_integration.py --timeout=3600`
-2. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
-3. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
-4. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+Поисковый запрос: `"рожковый ключ на 13"` — возвращает все сцены, где упоминается этот товар, с указанием монетизационного потенциала.
+
+```json
+[
+  {
+    "video_id": "repair_guide_01",
+    "scene_index": 1,
+    "start_sec": 15.0,
+    "end_sec": 45.0,
+    "summary": "Откручивание верхней гайки генератора",
+    "speaker": "SPEAKER_00",
+    "text": "Берём рожковый ключ на 13 и откручиваем верхнюю гайку крепления",
+    "genre": "how_to",
+    "monetization_types": ["ecom_item"],
+    "score": 0.32
+  },
+  {
+    "video_id": "garage_tips_07",
+    "scene_index": 3,
+    "start_sec": 120.0,
+    "end_sec": 150.0,
+    "summary": "Как выбрать рожковый ключ",
+    "speaker": "SPEAKER_00",
+    "text": "Рожковый ключ на 13 — самый ходовой размер в авторемонте",
+    "genre": "how_to",
+    "monetization_types": ["ecom_item", "ad_slot"],
+    "score": 0.28
+  }
+]
+```
+
+Поле `monetization_types` позволяет сразу определить коммерческую ценность каждой сцены: `ecom_item` → товар для каталога, `ad_slot` → контекст для рекламы.
 
 ---
 
-*GRACE-governed project: 7 docs-артефактов, 6 MODULE_CONTRACT, 23 semantic block pairs, 22 verification scenarios.*
+### Пример 4: Markdown-подборка Mixer
+
+Запрос: `"замена генератора на ВАЗ"` → Mixer создал 3-этапную подборку, готовую к публикации.
+
+```markdown
+# Замена генератора на ВАЗ
+
+## Этап 1: Подготовка и инструменты
+*Источник: repair_guide_01 (00:00-00:15)*
+> Первым делом снимаем минусовую клемму аккумулятора
+* **[ECOM_ITEM]** — рожковый ключ на 13
+
+## Этап 2: Демонтаж старого генератора
+*Источник: repair_guide_01 (00:45-02:30)*
+> Откручиваем нижний болт крепления и снимаем старый генератор
+* **[AD_SLOT]** — контекст: запчасти для отечественных авто
+
+## Этап 3: Установка нового генератора
+*Источник: repair_guide_01 (02:30-04:00)*
+> Перед установкой проверьте совместимость по каталогу
+* **[ECOM_ITEM]** — генератор ВАЗ-2110
+* **[AD_SLOT]** — таргетинг: автозапчасти генератор
+```
+
+Каждый этап — готовая монетизационная единица: товар (ECOM_ITEM) или рекламное место (AD_SLOT).
+
+---
+
+## План развития
+
+1. ✅ **Семантический поиск (VideoRAG)** — ChromaDB + qwen3-embedding (реализовано)
+2. ✅ **Mixer (Замеси)** — multi-video подборки через LLM (реализовано)
+3. **Интеграционное тестирование** — поместить демо-видео (≤30 с, ~5 MB) в `tests/fixtures/videos/` и запустить `pytest tests/test_integration.py --timeout=3600`
+4. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
+5. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
+6. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+
+---
+
+*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 36 semantic block pairs, 26 verification scenarios.*

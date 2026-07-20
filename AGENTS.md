@@ -41,7 +41,7 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/config.py` — YAML config loader
 - `src/audio_engine/pyav_reader.py` — Audio + I-frame extraction
 - `src/audio_engine/whisper_asr.py` — Whisper.cpp ASR
-- `src/audio_engine/pyannote_diarization.py` — Speaker diarization
+- `src/audio_engine/diarization_speechbrain.py` — Speaker diarization (SpeechBrain ECAPA)
 - `src/audio_engine/timeline_merger.py` — ASR + diarization merge
 - `src/vision_scanner/rapid_ocr.py` — OCR on I-frames
 - `src/vision_scanner/domain_router.py` — Genre classification, VLM gate
@@ -66,7 +66,7 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 
 ### @tests
 - `tests/core/` — Pydantic validation, timeout manager, circuit breaker
-- `tests/audio_engine/` — ASR (whisper), diarization (pyannote), ffmpeg (pyav), timeline merger
+- `tests/audio_engine/` — ASR (whisper), diarization (speechbrain), ffmpeg (pyav), timeline merger
 - `tests/vision_scanner/` — Domain router, OCR (rapid_ocr), OCR buffer, genre classifier
 - `tests/semantic_analyzer/` — Qwen client (text/vision/frontmatter), scene analyzer, VLM gatekeeper
 - `tests/passport_builder/` — Frontmatter generator, passport builder, validator

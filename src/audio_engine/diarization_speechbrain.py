@@ -54,8 +54,8 @@ async def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
             label = "SPEAKER_00"
             return [SpeakerSegment(speaker=label, start_sec=s, end_sec=e) for s, e in valid_segments]
 
-        from sklearn.cluster import SpectralClustering
         import numpy as np
+        from sklearn.cluster import SpectralClustering
         emb_array = np.array(embeddings)
         n_clusters = _estimate_clusters(emb_array)
         clustering = SpectralClustering(
@@ -80,7 +80,7 @@ async def diarize(audio_path: str | Path, log=None) -> list[SpeakerSegment]:
 
 
 def _vad_segments(waveform: torch.Tensor) -> list[tuple[float, float]]:
-    from silero_vad import load_silero_vad, get_speech_timestamps
+    from silero_vad import get_speech_timestamps, load_silero_vad
     model = load_silero_vad(onnx=False)
     wav = waveform.cpu() if waveform.device.type != "cpu" else waveform
     ts = get_speech_timestamps(
@@ -108,7 +108,6 @@ def _merge_segments(segments: list[tuple[float, float]], gap_sec: float) -> list
 
 
 def _estimate_clusters(embeddings) -> int:
-    import numpy as np
     n = len(embeddings)
     if n <= 2:
         return 1
@@ -120,4 +119,4 @@ def _remap_labels(labels) -> list[str]:
     import numpy as np
     unique = sorted(np.unique(labels))
     mapping = {old: f"SPEAKER_{i:02d}" for i, old in enumerate(unique)}
-    return [mapping[l] for l in labels]
+    return [mapping[label] for label in labels]

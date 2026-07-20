@@ -1,8 +1,8 @@
 
 from src.config import config
+from src.core.embedding import embed_text, get_chroma_client
 from src.core.logging_config import get_logger
 from src.core.schemas import SearchResult
-from src.core.embedding import embed_text, get_chroma_client
 
 
 # START_BLOCK: M-SEARCH/SEARCHER/SEARCH_SCENES

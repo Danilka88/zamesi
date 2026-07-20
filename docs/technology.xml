@@ -9,7 +9,8 @@
   <key-libraries>
     <library name="ffmpeg" version="7+" purpose="Демодуляция MP4, извлечение аудио (subprocess) и I-frame"/>
     <library name="whisper.cpp" version="large-v3" purpose="ASR транскрибация (локально, через whisper-cli)"/>
-    <library name="pyannote-audio" version="3.1" purpose="Диаризация спикеров"/>
+    <library name="speechbrain" version="1.0+" purpose="ECAPA-TDNN диаризация спикеров"/>
+    <library name="silero-vad" version="5.0+" purpose="Voice Activity Detection"/>
     <library name="rapidocr-onnxruntime" version="1.2+/v4" purpose="OCR текста с кадров (ONNX)"/>
     <library name="onnxruntime" version="1.18+" purpose="Рантайм для OCR"/>
     <library name="httpx" version="0.27+" purpose="HTTP-клиент к Ollama API"/>
@@ -46,7 +47,7 @@
       <params temperature="0.1" max_tokens="4096"/>
     </vlm>
     <asr name="Whisper large-v3" provider="whisper.cpp" binary="whisper-cli"/>
-    <diarization name="PyAnnote Speaker Diarization 3.1" provider="pyannote-audio"/>
+    <diarization name="SpeechBrain ECAPA-TDNN + Silero VAD" provider="speechbrain"/>
     <ocr name="RapidOCR v4" provider="onnxruntime"/>
     <embedding name="qwen3-embedding:0.6b" provider="Ollama" endpoint="http://localhost:11434" purpose="Embedding для семантического поиска (multilingual, 1024-dim)">
       <params MTEB="64.33"/>
@@ -58,6 +59,6 @@
     <constraint>Себестоимость пайплайна &lt;$0.0025/час видео (CPU-only, локальные модели)</constraint>
     <constraint>Все внешние вызовы защищены circuit breaker + retry + fallback chain</constraint>
     <constraint>Таймаут pipeline: 3600 сек (pipeline_total); каждый под-таймаут индивидуален (qwen_pass1_text: 180, qwen_pass2_vision: 300, domain_router: 120)</constraint>
-    <constraint>Нет веб-сервера зависимостей: Whisper, PyAnnote, RapidOCR — локальный запуск</constraint>
+    <constraint>Нет веб-сервера зависимостей: Whisper, SpeechBrain, RapidOCR — локальный запуск</constraint>
   </constraints>
 </technology>

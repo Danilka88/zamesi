@@ -17,11 +17,11 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Юнит-экономика $0.015/ч на CPU** — ключевой фактор: VLM Gatekeeper (DomainRouter + Inquisitive SLM + OCR-дедупликация) сокращает VLM-вызовы со 100% до ≤6% сегментов. Gemma4:e4b не тратит время на thinking-токены (в 4× быстрее Qwen3.5:4b). RapidOCR v4 на ONNX — ~30 ms/кадр. Себестоимость анализа 1 часа видео ~$0.015 на CPU, целевая — <$0.0025/ч с GPU (Metal/CUDA ускоряет VLM и SLM в 5-10×). P&L сходится на масштабе.
 
-- **Audio-first архитектура** — в отличие от конкурентов, которые гонят 100% кадров через VLM, пайплайн стартует с аудиодорожки. Whisper large-v3 (WER 4.2% на русском, 0.3× real-time через Metal) + PyAnnote 3.1 speaker diarization (CPU, 0.05× RT) → TimelineMerger → Gemma4:e4b текстовый анализ покрывает 94% сцен. Vision-модель Qwen3.5:9b вызывается только для ≤6% неопределённых сцен.
+- **Audio-first архитектура** — в отличие от конкурентов, которые гонят 100% кадров через VLM, пайплайн стартует с аудиодорожки. Whisper large-v3 (WER 4.2% на русском, 0.3× real-time через Metal) + SpeechBrain ECAPA-TDNN + Silero VAD (CPU, 0.05× RT) → TimelineMerger → Gemma4:e4b текстовый анализ покрывает 94% сцен. Vision-модель Qwen3.5:9b вызывается только для ≤6% неопределённых сцен.
 
-- **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), PyAnnote 3.1, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
+- **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 103 теста с изоляцией внешних вызовов (monkeypatch, AsyncMock). 8 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 144 теста с изоляцией внешних вызовов (monkeypatch, AsyncMock). 8 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs), structlog с 54 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -48,7 +48,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | Gemma4:e4b (SLM, текст) | ~180 | 7200 с | $0.0120 |
 | Qwen3.5:0.8b (классификатор жанров) | 1 | 30 с | $0.0001 |
 | Qwen3.5:9b (VLM, vision) | ≤10 | 600 с | $0.0010 |
-| RapidOCR + PyAnnote + ffmpeg | — | 300 с | $0.0005 |
+| RapidOCR + SpeechBrain + ffmpeg | — | 300 с | $0.0005 |
 | **Итого** | | **~3210 с** | **~$0.015** |
 
 Целевой порог — <$0.0025/ч. Достижим при GPU-акселерации (Ollama через CUDA/Metal): скорость VLM и SLM растёт в 5–10×, стоимость электроэнергии остаётся <$0.002/ч.
@@ -72,7 +72,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 |---|---|---|
 | Влияние на метрики монетизации | Типы меток, схема работы, Search + Mixer |
 | Юнит-экономика | Экономическая эффективность |
-| Воспроизводимость | Тестирование (103 теста) |
+| Воспроизводимость | Тестирование (144 теста) |
 | Чувствительные данные | Приватность и безопасность |
 | Production-готовность | Отказоустойчивость, мониторинг |
 | UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
@@ -86,7 +86,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 MP4
 ├── PyAV: extract_audio()  ──────────────► Whisper.cpp (large-v3) ──► сегменты ASR
 │                                              │
-│                                        PyAnnote 3.1 ──────────────► сегменты спикеров
+│                                        SpeechBrain ECAPA-TDNN ──────────────► сегменты спикеров
 │                                              │
 │                                        TimelineMerger ────────────► timeline[]
 │
@@ -114,7 +114,7 @@ MP4
 1. **DomainRouter** — жанровая блокировка: `podcast`, `lecture`, `stream`, `true_crime`, `education` → `vision_blocked=true`
 2. **Inquisitive SLM** — Gemma4:e4b сам возвращает `requires_vision: true/false` на основе неопределённых местоимений («эта штука», «сюда», «такой»)
 3. **OCR-дедупликация** — если OCRBuffer содержит текст на временно́м отрезке сегмента, VLM не вызывается (текст на кадре уже покрывает семантику)
-]
+
 Итог: VLM вызывается для ≤6% сегментов вместо 100%.
 
 ---
@@ -126,16 +126,16 @@ MP4
 #### Whisper large-v3 (ASR)
 
 - **Почему:** whisper.cpp — C++ имплементация OpenAI Whisper без Python-оверхеда. Metal/CUDA из коробки. large-v3 даёт WER 4,2% для русского языка (Common Voice ru).
-- **Реализация:** subprocess на бинарник `whisper-cli` с флагами `--word-timestamps True --language ru`. Результат — JSON с текстом, таймстемпами начала/конца сегмента и покадровыми метками слов.
+- **Реализация:** subprocess на бинарник `whisper-cli` с флагами `-ojf --language ru`. Результат — JSON с текстом, таймстемпами начала/конца сегмента и покадровыми метками слов.
 - **Время:** 0,3× реального времени на Mac M1 Metal (1 час видео → ~18 мин CPU).
 - **Память:** ~3 GB VRAM для large-v3.
 
-#### PyAnnote Speaker Diarization 3.1
+#### SpeechBrain ECAPA-TDNN + Silero VAD
 
-- **Почему:** единственная open-source модель с speaker-aware сегментацией, обученная на 1,2M размеченных сегментов (AMI, VoxConverse, DIHARD III). Не требует GPU.
-- **Реализация:** `Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")` → `itertracks(yield_label=True)`. Возвращает `SpeakerSegment[]` с метками `SPEAKER_00`, `SPEAKER_01` и таймстемпами.
-- **Преимущество:** таймлайн со спикером → SLM учитывает, кто говорит (рекламодатель, ведущий, гость — разные контексты).
-- **Время:** ~0,05× real-time на CPU.
+- **Почему:** ECAPA-TDNN — state-of-the-art speaker embedding (200 MB) без gated моделей. Silero VAD v5 (1.2 MB) — лучшая открытая VAD. Всё полностью локально, HF_TOKEN не требуется.
+- **Реализация:** `torchaudio.load` → Silero VAD (`get_speech_timestamps`) → ECAPA embeddings (`EncoderClassifier.from_hparams`) → `SpectralClustering` → `SpeakerSegment[]` с метками `SPEAKER_00`, `SPEAKER_01`.
+- **Преимущество:** таймлайн со спикером → SLM учитывает, кто говорит (рекламодатель, ведущий, гость — разные контексты). Без зависимостей от HuggingFace gated моделей.
+- **Время:** ~0,1× real-time на CPU.
 
 #### ffmpeg subprocess (PyAV)
 
@@ -236,7 +236,7 @@ MP4
   1. `plan_stages` — `gemma4:e4b` разбивает запрос на 3-5 этапов
   2. `compose_mix` — для каждого этапа `search_scenes` (фильтр по monetization_types) + `gemma4:e4b` матчинг → `MixStage`
   3. `mix_to_markdown` — `Mix` → структурированный Markdown
-- **Хранилище:** in-memory `_mixes: dict[str, Mix]` (как `_jobs` в `routes.py`)
+- **Хранилище:** `MemoryStore[Mix]` (TTL-кеш с автоматической очисткой)
 
 ---
 
@@ -257,7 +257,7 @@ MP4
   - `POST /mix` — создание видеоподборки, возврат `mix_id`, фоновый запуск
   - `GET /mix/{mix_id}` — результат (структура Mix)
   - `GET /mix/{mix_id}/markdown` — Markdown подборки
-- **Фоновые задачи:** `asyncio.create_task()` с lazy imports — тяжёлые зависимости (PyAnnote, Whisper) загружаются только при первом запуске, не влияя на старт сервера.
+- **Фоновые задачи:** `asyncio.create_task()` с lazy imports — тяжёлые зависимости (SpeechBrain, Whisper) загружаются только при первом запуске, не влияя на старт сервера.
 
 #### structlog + Prometheus
 
@@ -277,7 +277,7 @@ MP4
 
 - **Почему asyncio:** ffmpeg, ASR, диаризация — блокирующие операции. `asyncio.create_subprocess_exec` позволяет не блокировать event loop и отменять pipeline через `asyncio.CancelledError`.
 - **Почему subprocess:** ffmpeg и whisper.cpp — внешние бинарники. Python-обёртки (PyAV, whisper-python) добавляют оверхед и баги совместимости. Subprocess даёт полный контроль.
-- **Lazy imports:** 8 зависимостей (PyAnnote, Whisper, OCR, scene_analyzer и др.) импортируются внутри `_run_pipeline`, не в глобальной области. Это сокращает время старта сервера до <1 с.
+- **Lazy imports:** 8 зависимостей (SpeechBrain, Whisper, OCR, scene_analyzer и др.) импортируются внутри `_run_pipeline`, не в глобальной области. Это сокращает время старта сервера до <1 с.
 
 ---
 
@@ -287,14 +287,14 @@ MP4
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  M-API (FastAPI) — 4 файла, 10 тестов                            │
-│  analyze + search + mix + metrics + health                       │
+│  M-API (FastAPI) — 7 файлов, 10 тестов                          │
+│  analyze + search + mix + metrics + health + pipeline           │
 └──┬───────────────┬────────────────────────┬─────────────────────┘
    │               │                        │
 ┌──▼───────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
 │ M-PASSPORT   │ │ M-SEARCH        │  │  M-MIXER             │
 │ 4 файла      │ │ 3 файла         │  │  4 файла             │
-│ 13 тестов    │ │ 8 тестов        │  │  8 тестов            │
+│ 16 тестов    │ │ 8 тестов        │  │  8 тестов            │
 │ build→md     │ │ index→search    │  │  plan→compose→render │
 │ validate     │ │ ChromaDB        │  │  LLM-матчинг         │
 └──┬───────────┘ └──┬──────────────┘  └──────┬───────────────┘
@@ -302,7 +302,7 @@ MP4
    └────────────────┼─────────────────────────┘
                     │
 ┌───────────────────▼───────────────────────────────────────────┐
-│  M-SEMANTIC — 4 файла, 11 тестов                              │
+│  M-SEMANTIC — 4 файла, 12 тестов                              │
 │  Gemma4:e4b (text) + Qwen3.5:9b (vision) + analyze_scenes    │
 │  VLM Gatekeeper: ≤6% сегментов                                │
 └──────┬───────────┬───────────────────────────────────────────┘
@@ -310,20 +310,21 @@ MP4
 ┌──────▼────┐ ┌────▼──────────┐
 │ M-AUDIO   │ │ M-VISION      │
 │ 5 файлов  │ │ 5 файлов      │
-│ 11 тестов │ │ 13 тестов     │
+│ 29 тестов │ │ 23 теста      │
 │ Whisper   │ │ OCR, Genre,   │
-│ PyAnnote  │ │ DomainRouter  │
+│ SpeechBrain│ │ DomainRouter  │
 │ ffmpeg    │ │ OCRBuffer     │
 └───────────┘ └───────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│  M-CORE — 8 файлов, 7 тестов                                │
-│  Pydantic-схемы, Config, TimeoutManager, Exceptions,        │
-│  logging_config, json_utils, prometheus метрики              │
+│  M-CORE — 10 файлов, 38 тестов                              │
+│  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
+│  Exceptions, logging_config, json_utils, time_utils,         │
+│  embedding, prometheus метрики                                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 40 source-файлов, 33 test-файла, 73 файла Python.
+Всего: 44 source-файла, 38 test-файлов, 82 файла Python.
 
 ---
 
@@ -361,7 +362,7 @@ call_ollama(prompt, timeout_name, call_name, model, max_tokens)
 | Компонент | Таймаут | Fallback |
 |---|---|---|
 | Whisper.cpp | 300 с | — (одна попытка) |
-| PyAnnote | 120 с | — (ошибка → пустой speaker) |
+| SpeechBrain | 120 с | — (ошибка → пустой speaker) |
 | Gemma4:e4b (pass1) | 180 с | retry → shorten_prompt → `fallback_used=llm_failed` |
 | Qwen3.5:9b (VLM) | 300 с | retry → skip_vision |
 | Genre classifier | 120 с | retry → keyword fallback |
@@ -393,32 +394,32 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 103 теста, 0 failures, 1 skipped
+### Test suite: 144 теста, 0 failures, 1 skipped
 
 Покрытие тестов по модулям:
 
 | Модуль | Тестов | Файлы |
-|---|---|---|
-| M-CORE | 7 | `test_schemas.py`, `test_timeout_manager.py` |
-| M-AUDIO | 11 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_pyannote_diarization.py`, `test_timeline_merger.py` |
-| M-VISION | 13 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
-| M-SEMANTIC | 11 | `test_qwen_client.py`, `test_scene_analyzer.py` |
-| M-PASSPORT | 13 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
+|---|---|---|---|
+| M-CORE | 38 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py` |
+| M-AUDIO | 29 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py` |
+| M-VISION | 23 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
+| M-SEMANTIC | 12 | `test_qwen_client.py`, `test_scene_analyzer.py` |
+| M-PASSPORT | 16 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
 | M-SEARCH | 8 | `test_indexer.py` (4), `test_searcher.py` (4) |
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
-| Интеграция | 0 | `test_integration.py` — **skipped** (ожидает demo video) |
+| Интеграция | 1 | `test_integration.py` — **skipped** (ожидает demo video) |
 
 ### Методология
 
-- **Изоляция:** внешние вызовы (Ollama, ffmpeg, Whisper, PyAnnote) мокаются через `monkeypatch` + `AsyncMock` / `MagicMock`
+- **Изоляция:** внешние вызовы (Ollama, ffmpeg, Whisper, SpeechBrain) мокаются через `monkeypatch` + `AsyncMock` / `MagicMock`
 - **Async тесты:** `@pytest.mark.asyncio` + `asyncio_mode=auto` (pytest-asyncio)
 - **Файловый I/O:** временные файлы через `tmp_path` fixture (pytest built-in)
 - **Таймауты:** `pytest-timeout` — 120 с на suite
 
 ### GRACE Verification
 
-26 verification scenarios, 3 gate levels:
+33 verification scenarios, 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
@@ -428,7 +429,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Приватность и безопасность
 
-- **Все вычисления локальные.** Никакие данные (видео, аудио, текст) не отправляются во внешние API. Whisper.cpp, Ollama, PyAnnote, RapidOCR — всё запускается на машине, где развёрнут сервер.
+- **Все вычисления локальные.** Никакие данные (видео, аудио, текст) не отправляются во внешние API. Whisper.cpp, Ollama, SpeechBrain, RapidOCR — всё запускается на машине, где развёрнут сервер.
 - **Логи не содержат PII.** structlog-логи содержат только `correlation_id` (job_id), метаданные (длительность, количество сцен), тайминги. Сырые аудио/видео данные не логируются.
 - **ФЗ-152 «О персональных данных».** Решение не зависит от персональных данных пользователей — все метки монетизации извлекаются из контента (видео + аудиодорожка), а не из профилей.
 - **Обработка файлов.** Загруженные видео сохраняются в `/tmp/rutube-jobs/{job_id}` и удаляются при очистке temp-директории. I-frame — временные .jpg, удаляются после OCR.
@@ -469,7 +470,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-36 пар `START_BLOCK`/`END_BLOCK` в 40 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+38 пар `START_BLOCK`/`END_BLOCK` в 44 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
@@ -876,4 +877,4 @@ ad_targeting_keywords: ["нейросети", "AI", "медицинские те
 
 ---
 
-*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 36 semantic block pairs, 26 verification scenarios.*
+*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 38 semantic block pairs, 33 verification scenarios.*

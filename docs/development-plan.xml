@@ -12,7 +12,7 @@
     </Phase-1>
 
     <Phase-2 name="Audio Engine" status="built">
-      <description>Извлечение аудио (ffmpeg subprocess), ASR (Whisper.cpp), диаризация (PyAnnote), сборка таймлайна.</description>
+      <description>Извлечение аудио (ffmpeg subprocess), ASR (Whisper.cpp), диаризация (SpeechBrain ECAPA-TDNN + Silero VAD), сборка таймлайна.</description>
       <steps>
         <step-2 module-ref="M-AUDIO" status="built" order="1">
           <description>Модуль extract_audio: ffmpeg subprocess → WAV 16kHz mono + extract_iframes. Обработка ошибок (битое видео, нет аудиодорожки).</description>
@@ -23,8 +23,8 @@
           <source>src/audio_engine/whisper_asr.py</source>
         </step-3>
         <step-4 module-ref="M-AUDIO" status="built" order="3">
-          <description>Модуль diarize: PyAnnote Speaker Diarization 3.1, маппинг спикеров на таймлайне.</description>
-          <source>src/audio_engine/pyannote_diarization.py</source>
+          <description>Модуль diarize: SpeechBrain ECAPA-TDNN + Silero VAD, маппинг спикеров на таймлайне.</description>
+          <source>src/audio_engine/diarization_speechbrain.py</source>
         </step-4>
         <step-5 module-ref="M-AUDIO" status="built" order="4">
           <description>Модуль build_timeline: слияние ASR + диаризация → List[TimelineSegment].</description>
@@ -166,7 +166,7 @@
 
     <M-AUDIO NAME="Audio Engine" TYPE="PROCESSOR" status="built">
       <Purpose>Извлечение аудио из MP4 → ASR + диаризация → структурированный таймлайн</Purpose>
-      <Scope>ffmpeg subprocess (audio + I-frame extraction), whisper.cpp large-v3 (ASR), pyannote 3.1 (diarization), retry/fallback.</Scope>
+      <Scope>ffmpeg subprocess (audio + I-frame extraction), whisper.cpp large-v3 (ASR), speechbrain ecapa-tdnn + silero vad (diarization), retry/fallback.</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
       </Depends>
@@ -259,7 +259,7 @@
       <steps>
         <step order="1" module="M-AUDIO" action="extract_audio (ffmpeg subprocess)"/>
         <step order="2" module="M-AUDIO" action="transcribe (Whisper large-v3)"/>
-        <step order="3" module="M-AUDIO" action="diarize (PyAnnote 3.1)"/>
+        <step order="3" module="M-AUDIO" action="diarize (SpeechBrain ECAPA-TDNN + Silero VAD)"/>
         <step order="4" module="M-AUDIO" action="merge_timeline (timeline_merger)"/>
       </steps>
     </DF-001>

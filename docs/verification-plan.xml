@@ -74,6 +74,46 @@
             <assert>ASR-сегмент получает speaker из диаризации; fallback на 'unknown'</assert>
           </evidence>
         </Scenario>
+        <Scenario id="S-M-AUDIO-2" type="success">
+          <description>pyav_reader: извлечение аудио через ffmpeg</description>
+          <commands>
+            <command>pytest tests/audio_engine/test_pyav_reader.py -v -k "test_extract_audio"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-AUDIO][PYAV][AUDIO_OK]</marker>
+            <assert>Успешное извлечение .wav; cache hit возвращает существующий файл; отсутствующий файл → AudioExtractionError; ошибка ffmpeg → AudioExtractionError</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-AUDIO-3" type="success">
+          <description>pyav_reader: извлечение I-frames</description>
+          <commands>
+            <command>pytest tests/audio_engine/test_pyav_reader.py -v -k "test_extract_iframes"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-AUDIO][PYAV][IFRAMES_OK]</marker>
+            <assert>N таймстампов → N фреймов с timestamp_sec и path; пустой список → пустой результат; ошибка ffmpeg → пустой результат (продолжает pipeline)</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-AUDIO-4" type="success">
+          <description>Whisper ASR: транскрипция аудио</description>
+          <commands>
+            <command>pytest tests/audio_engine/test_whisper_asr.py -v -k "test_transcribe"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-AUDIO][WHISPER][DONE]</marker>
+            <assert>Успешная транскрипция → сегменты с текстом и word_timestamps; отсутствующий файл → ASRError; ошибка whisper → ASRError; нет JSON → ASRError; пустой JSON → пустой список</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-AUDIO-5" type="success">
+          <description>Diarization (SpeechBrain + Silero VAD): выделение спикеров</description>
+          <commands>
+            <command>pytest tests/audio_engine/test_diarization_speechbrain.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-AUDIO][SPEECHBRAIN][DONE]</marker>
+            <assert>Пустой аудиофайл → пустой список; один спикер → все сегменты SPEAKER_00; два спикера → SPEAKER_00/SPEAKER_01; отсутствующий файл → DiarizationError</assert>
+          </evidence>
+        </Scenario>
       </Scenarios>
       <RequiredMarkers>
         <marker>[M-AUDIO][*][*]</marker>
@@ -241,23 +281,53 @@
       <description>Embedding-индексация сцен и семантический поиск через ChromaDB</description>
       <Scenarios>
         <Scenario id="S-M-SEARCH-1" type="success">
-          <description>index_passport: базовая индексация сцены</description>
+          <description>index_passport: пустой паспорт</description>
           <commands>
-            <command>pytest tests/search/test_indexer.py -v -k "test_index_passport"</command>
+            <command>pytest tests/search/test_indexer.py -v -k "test_index_passport_empty"</command>
           </commands>
           <evidence>
             <marker required="true">[M-SEARCH][INDEXER][DONE]</marker>
-            <assert>Пустой паспорт → 0 сцен; 1 сцена → 1 чанк; N сцен → N чанков</assert>
+            <assert>Паспорт без timeline → 0 проиндексированных сцен</assert>
           </evidence>
         </Scenario>
         <Scenario id="S-M-SEARCH-2" type="success">
-          <description>search_scenes: поиск с результатами и без</description>
+          <description>index_passport: индексация одной и нескольких сцен</description>
           <commands>
-            <command>pytest tests/search/test_searcher.py -v -k "test_search"</command>
+            <command>pytest tests/search/test_indexer.py -v -k "test_index_passport_single or test_index_passport_multiple"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEARCH][INDEXER][DONE]</marker>
+            <assert>1 сцена → 1 чанк; N сцен → N чанков; каждый чанк содержит корректные метаданные</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEARCH-3" type="success">
+          <description>embed_text: вызов Ollama embedding API</description>
+          <commands>
+            <command>pytest tests/search/test_indexer.py -v -k "test_embedding_call"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEARCH][INDEXER][EMBED_DONE]</marker>
+            <assert>embed_text возвращает список float; модель qwen3-embedding:0.6b; input передаётся корректно</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEARCH-4" type="success">
+          <description>search_scenes: пустой запрос, без результатов, с результатами</description>
+          <commands>
+            <command>pytest tests/search/test_searcher.py -v -k "test_search_empty or test_search_no_results or test_search_with_results"</command>
           </commands>
           <evidence>
             <marker required="true">[M-SEARCH][SEARCHER][RESULTS]</marker>
-            <assert>Пустой запрос → пустой список; запрос с моком → 2 результата; фильтр genre передаётся в where</assert>
+            <assert>Пустой запрос → пустой список; нет совпадений → пустой список; 2 результата → список из 2 SceneSearchResult с корректными video_id и scene_index</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-SEARCH-5" type="success">
+          <description>search_scenes: фильтр по genre</description>
+          <commands>
+            <command>pytest tests/search/test_searcher.py -v -k "test_search_with_filter"</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-SEARCH][SEARCHER][RESULTS]</marker>
+            <assert>Фильтр genre передаётся в ChromaDB where-параметр; возвращается пустой результат при фильтре без совпадений</assert>
           </evidence>
         </Scenario>
       </Scenarios>

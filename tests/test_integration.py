@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from src.api.routes import _run_pipeline
+from src.api.pipeline import run_pipeline
 from src.core.schemas import JobStatus
 
 
@@ -23,15 +23,14 @@ async def test_pipeline_howto_video(mock_ollama_response):
 
     from src.api.routes import _jobs as routes_jobs
     from src.core.schemas import JobResult
-    routes_jobs[job_id] = JobResult(job_id=job_id, status=JobStatus.pending)
+    routes_jobs.set(job_id, JobResult(job_id=job_id, status=JobStatus.pending))
 
     from src.core.logging_config import get_logger
     log = get_logger(correlation_id=job_id)
 
-    await _run_pipeline(job_id, video_path, temp_dir, log)
+    await run_pipeline(job_id, video_path, temp_dir, routes_jobs, log=log)
 
-    from src.api.routes import _jobs
-    result = _jobs.get(job_id)
+    result = routes_jobs.get(job_id)
     assert result is not None
     assert result.status == JobStatus.done
     assert result.metrics is not None

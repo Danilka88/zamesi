@@ -44,14 +44,14 @@
     </M-CORE>
 
     <M-AUDIO NAME="Audio Engine" TYPE="PROCESSOR">
-      <Purpose>Извлечение аудио (ffmpeg subprocess), ASR (Whisper), диаризация (PyAnnote), сборка таймлайна</Purpose>
+      <Purpose>Извлечение аудио (ffmpeg subprocess), ASR (Whisper), диаризация (SpeechBrain ECAPA-TDNN + Silero VAD), сборка таймлайна</Purpose>
       <Source path="src/audio_engine/"/>
       <Test path="tests/audio_engine/"/>
       <Exports>
         <fn-extract_audio>Извлечение аудиодорожки (ffmpeg) → WAV 16kHz mono</fn-extract_audio>
         <fn-extract_iframes>Извлечение I-frame (ffmpeg) по таймштампам</fn-extract_iframes>
         <fn-transcribe>Whisper.cpp ASR → сегменты с текстом и таймстампами</fn-transcribe>
-        <fn-diarize>PyAnnote диаризация → маппинг спикеров на таймлайне</fn-diarize>
+        <fn-diarize>SpeechBrain ECAPA-TDNN диаризация → маппинг спикеров на таймлайне</fn-diarize>
         <fn-merge_timeline>Слияние ASR + диаризация → TimelineSegment[]</fn-merge_timeline>
       </Exports>
       <CrossLinks>

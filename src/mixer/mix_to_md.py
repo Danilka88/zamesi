@@ -1,6 +1,7 @@
 from src.core.schemas import Mix
 from src.core.time_utils import fmt_sec
 
+
 # START_BLOCK: M-MIXER/MD/MIX_TO_MARKDOWN
 def mix_to_markdown(mix: Mix) -> str:
     lines: list[str] = []

@@ -6,12 +6,13 @@ from fastapi.responses import PlainTextResponse
 
 from src.core.logging_config import get_logger
 from src.core.schemas import Mix, MixRequest
+from src.core.store import MemoryStore
 from src.mixer.mix_composer import compose_mix
 from src.mixer.mix_to_md import mix_to_markdown
 from src.mixer.stage_planner import plan_stages
 
 router = APIRouter(prefix="/mix", tags=["mix"])
-_mixes: dict[str, Mix] = {}
+_mixes: MemoryStore[Mix] = MemoryStore()
 
 
 # START_BLOCK: M-MIXER/ROUTES/CREATE_MIX
@@ -60,7 +61,7 @@ async def _run_mix(mix_id: str, request: MixRequest, log) -> None:
             log=log,
         )
         mix.mix_id = mix_id
-        _mixes[mix_id] = mix
+        _mixes.set(mix_id, mix)
 
         log.info("[M-MIXER][ROUTES][MIX_DONE]", mix_id=mix_id, stages=len(mix.stages))
     except Exception as e:

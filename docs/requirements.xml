@@ -5,13 +5,13 @@
 
   <UseCases>
     <UseCase id="UC-1" name="Audio-First ASR Pipeline" priority="high">
-      <description>Извлечение аудиодорожки из MP4, транскрибация через Whisper large-v3, диаризация спикеров через PyAnnote 3.1</description>
+      <description>Извлечение аудиодорожки из MP4, транскрибация через Whisper large-v3, диаризация спикеров через SpeechBrain ECAPA-TDNN + Silero VAD</description>
       <actor>Video Uploader (API client)</actor>
       <precondition>Видеофайл загружен, пайплайн запущен</precondition>
       <steps>
         <step order="1">ffmpeg subprocess: извлечение аудио (16kHz, mono) + I-frame extraction</step>
         <step order="2">Whisper.cpp (large-v3) выполняет ASR → текст с таймстампами</step>
-        <step order="3">PyAnnote 3.1 выполняет диаризацию спикеров</step>
+        <step order="3">SpeechBrain ECAPA-TDNN + Silero VAD выполняет диаризацию спикеров</step>
         <step order="4">Слияние ASR + диаризация → структурированный таймлайн</step>
       </steps>
       <postcondition>Получен структурированный аудио-таймлайн с текстом и спикерами</postcondition>
@@ -97,7 +97,7 @@
       <description>VLM вызовы не должны превышать 6% от общего числа сегментов; себестоимость анализа &lt;$0.0025/час видео.</description>
     </Requirement>
     <Requirement id="NFR-3" category="reliability">
-      <description>Каждый внешний вызов (Whisper, Ollama, PyAnnote) защищён TimeoutManager с retry (circuit breaker) + fallback chain (shorten_prompt, skip_vision). При падении всех retry — LLM fallback с fallback_used=llm_failed (без rule-based генерации монетизационных тегов).</description>
+      <description>Каждый внешний вызов (Whisper, Ollama, SpeechBrain) защищён TimeoutManager с retry (circuit breaker) + fallback chain (shorten_prompt, skip_vision). При падении всех retry — LLM fallback с fallback_used=llm_failed (без rule-based генерации монетизационных тегов).</description>
     </Requirement>
     <Requirement id="NFR-4" category="observability">
       <description>Структурированное логирование (structlog JSON) с correlation_id на job. Prometheus-метрики: latency_histogram, VLM calls счётчики, error rate по модулям.</description>

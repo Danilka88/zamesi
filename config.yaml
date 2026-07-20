@@ -12,9 +12,8 @@ models:
       max_tokens: 4096
 
   whisper:
-    binary: "whisper-cli"
-    model: "large-v3"
-    model_path: ""  # auto-resolve by whisper-cli
+    binary: "/Users/danil_ka88/bin/whisper-cli"
+    model: "/Users/danil_ka88/whisper.cpp/models/ggml-large-v3.bin"
 
   pyannote:
     model: "pyannote/speaker-diarization-3.1"

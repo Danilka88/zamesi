@@ -13,6 +13,24 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 Асинхронный пайплайн преобразует загруженное видео в структурированный Markdown-документ с YAML-frontmatter и таймлайном, аннотированным монетизационными точками. Все модели запускаются локально — данные не покидают машину.
 
+- **Монетизация каждой сцены** — Gemma4:e4b классифицирует каждую сцену в `AD_SLOT`, `ECOM_ITEM` или `CLIP_CANDIDATE` с confidence score. Semantic Search (qwen3-embedding + ChromaDB) находит сцены по типу метки для programmatic placement рекламы. Mixer (Gemma4:e4b planning + matcher) собирает сцены в готовые монетизируемые плейлисты. Влияние на ARPU измеримо A/B-тестом: сравнивается вовлечённость и доход с автоматически размеченными сценами против контрольной группы.
+
+- **Юнит-экономика $0.015/ч на CPU** — ключевой фактор: VLM Gatekeeper (DomainRouter + Inquisitive SLM + OCR-дедупликация) сокращает VLM-вызовы со 100% до ≤6% сегментов. Gemma4:e4b не тратит время на thinking-токены (в 4× быстрее Qwen3.5:4b). RapidOCR v4 на ONNX — ~30 ms/кадр. Себестоимость анализа 1 часа видео ~$0.015 на CPU, целевая — <$0.0025/ч с GPU (Metal/CUDA ускоряет VLM и SLM в 5-10×). P&L сходится на масштабе.
+
+- **Audio-first архитектура** — в отличие от конкурентов, которые гонят 100% кадров через VLM, пайплайн стартует с аудиодорожки. Whisper large-v3 (WER 4.2% на русском, 0.3× real-time через Metal) + PyAnnote 3.1 speaker diarization (CPU, 0.05× RT) → TimelineMerger → Gemma4:e4b текстовый анализ покрывает 94% сцен. Vision-модель Qwen3.5:9b вызывается только для ≤6% неопределённых сцен.
+
+- **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), PyAnnote 3.1, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
+
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 103 теста с изоляцией внешних вызовов (monkeypatch, AsyncMock). 8 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
+
+- **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs), structlog с 54 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
+
+- **Векторный семантический поиск** — qwen3-embedding:0.6b (мультиязычная, 639 MB, 1024-dim, MTEB 64.33) через Ollama `/api/embed`. ChromaDB 1.5+ (Rust core, embedded persistent mode). Каждая сцена индексируется с полями speaker, ASR, summary, monetization_types. Поиск по смыслу, не по ключевым словам. Фильтр по genre, сортировка по косинусной близости. Переиндексация через единый endpoint без даунтайма.
+
+- **Масштабируемость P&L** — при росте объёмов стоимость за час видео **падает**, а не растёт. GPU-акселерация (Metal/CUDA) ускоряет Whisper до 0.3× RT, SLM/VLM в 5-10×. В отличие от моделей, зависящих от платных данных (стоимость привлечения лида), ценность извлекается из самого контента — дешёвая аудитория не нужна.
+
+- **API-first архитектура для интеграции** — 3 группы эндпоинтов: анализ (`POST /analyze` → статус → passport + markdown), семантический поиск (`GET /search`, `POST /search/reindex`), подборки (`POST /mix` → `GET /mix/{id}/markdown`). Search и Mixer — опциональные модули, подключаемые через config.yaml. OpenAPI spec — интеграторам не нужна отдельная документация.
+
 ### Экономическая эффективность
 
 VLM Gatekeeper (трёхуровневая фильтрация перед вызовом vision-модели) сокращает число VLM-вызовов со 100% до ≤6% сегментов:

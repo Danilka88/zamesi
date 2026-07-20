@@ -1,5 +1,6 @@
+import asyncio
 import json
-import subprocess
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -8,59 +9,85 @@ from src.core.exceptions import ASRError
 
 
 def _make_whisper_json(text: str = "Привет мир", start: float = 0.0, end: float = 2.0) -> str:
+    start_ms = int(start * 1000)
+    end_ms = int(end * 1000)
     return json.dumps({
-        "segments": [{
-            "start": start,
-            "end": end,
+        "transcription": [{
             "text": text,
-            "words": [
-                {"word": "Привет", "start": 0.0, "end": 1.0},
-                {"word": "мир", "start": 1.0, "end": 2.0},
+            "offsets": {"from": start_ms, "to": end_ms},
+            "tokens": [
+                {"text": " При", "offsets": {"from": start_ms, "to": start_ms + 300}},
+                {"text": "вет", "offsets": {"from": start_ms + 300, "to": 1000}},
+                {"text": " мир", "offsets": {"from": 1000, "to": end_ms}},
             ],
         }],
     })
 
 
-def test_transcribe_success(tmp_path, monkeypatch):
+@pytest.fixture(autouse=True)
+def _fake_whisper_proc(monkeypatch):
+    async def fake_create_subprocess_exec(*args, **kwargs):
+        proc = MagicMock()
+        proc.returncode = 0
+        proc.communicate = AsyncMock(return_value=(b"", b""))
+        return proc
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+
+
+@pytest.mark.asyncio
+async def test_transcribe_success(tmp_path):
     audio = tmp_path / "test.wav"
     audio.write_text("fake audio")
-
-    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: type("R", (), {"returncode": 0})())
     json_path = audio.with_suffix(".json")
     json_path.write_text(_make_whisper_json())
 
-    segments = transcribe(str(audio))
+    segments = await transcribe(str(audio))
     assert len(segments) == 1
     assert segments[0].text == "Привет мир"
     assert len(segments[0].word_timestamps) == 2
 
 
-def test_transcribe_file_not_found():
+@pytest.mark.asyncio
+async def test_transcribe_file_not_found():
     with pytest.raises(ASRError, match="not found"):
-        transcribe("/nonexistent/audio.wav")
+        await transcribe("/nonexistent/audio.wav")
 
 
-def test_transcribe_ffmpeg_fails(tmp_path, monkeypatch):
+@pytest.mark.asyncio
+async def test_transcribe_ffmpeg_fails(monkeypatch):
+    async def failing_proc(*args, **kwargs):
+        proc = MagicMock()
+        proc.returncode = 1
+        proc.communicate = AsyncMock(return_value=(b"", b"error occurred"))
+        return proc
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", failing_proc)
+    audio = "/tmp/__test_whisper_fail.wav"
+    try:
+        with open(audio, "w") as f:
+            f.write("x")
+        with pytest.raises(ASRError, match="whisper.cpp failed"):
+            await transcribe(audio)
+    finally:
+        import os
+        if os.path.exists(audio):
+            os.unlink(audio)
+
+
+@pytest.mark.asyncio
+async def test_transcribe_no_output_json(tmp_path):
     audio = tmp_path / "test.wav"
     audio.write_text("fake")
-    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: type("R", (), {"returncode": 1, "stderr": "error"})())
-    with pytest.raises(ASRError, match="whisper.cpp failed"):
-        transcribe(str(audio))
-
-
-def test_transcribe_no_output_json(tmp_path, monkeypatch):
-    audio = tmp_path / "test.wav"
-    audio.write_text("fake")
-    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: type("R", (), {"returncode": 0})())
     with pytest.raises(ASRError, match="output JSON not found"):
-        transcribe(str(audio))
+        await transcribe(str(audio))
 
 
-def test_transcribe_empty_segments(tmp_path, monkeypatch):
+@pytest.mark.asyncio
+async def test_transcribe_empty_segments(tmp_path):
     audio = tmp_path / "test.wav"
     audio.write_text("fake")
-    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: type("R", (), {"returncode": 0})())
     json_path = audio.with_suffix(".json")
     json_path.write_text(json.dumps({"segments": []}))
-    segments = transcribe(str(audio))
+    segments = await transcribe(str(audio))
     assert segments == []

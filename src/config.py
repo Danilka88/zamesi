@@ -77,11 +77,13 @@ class Config:
 
     @property
     def whisper_binary(self) -> str:
-        return self._get("models", "whisper", "binary", default="whisper-cli")
+        val = self._get("models", "whisper", "binary", default="whisper-cli")
+        return str(Path(val).expanduser())
 
     @property
     def whisper_model(self) -> str:
-        return self._get("models", "whisper", "model", default="large-v3")
+        val = self._get("models", "whisper", "model", default="large-v3")
+        return str(Path(val).expanduser())
 
     @property
     def audio_sample_rate(self) -> int:
@@ -127,8 +129,12 @@ class Config:
         return int(self._get("circuit_breaker", "recovery_timeout_sec", default=60))
 
     @property
+    def circuit_breaker_half_open_max(self) -> int:
+        return int(self._get("circuit_breaker", "half_open_max_requests", default=1))
+
+    @property
     def fallback_chain(self) -> list[str]:
-        return list(self._get("fallback_chain", default=["retry_same", "shorten_prompt", "skip_vision", "rule_based"]))
+        return list(self._get("fallback_chain", default=["retry_same", "shorten_prompt", "skip_vision"]))
 
     @property
     def search_embedding_model(self) -> str:
@@ -145,6 +151,10 @@ class Config:
     @property
     def search_collection(self) -> str:
         return self._get("search", "collection", default="rutube_scenes")
+
+    @property
+    def passport_output_dir(self) -> str:
+        return self._get("passport", "output_dir", default="./output")
 
     @property
     def mixer_llm_model(self) -> str:

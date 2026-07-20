@@ -1,5 +1,5 @@
+import asyncio
 import json
-import subprocess
 from pathlib import Path
 
 from src.config import config
@@ -8,8 +8,35 @@ from src.core.logging_config import get_logger
 from src.core.schemas import TimelineSegment, WordTimestamp
 
 
+def _parse_tokens_to_words(tokens: list[dict]) -> list[WordTimestamp]:
+    words: list[WordTimestamp] = []
+    buf = ""
+    buf_start = 0.0
+    buf_end = 0.0
+    for t in tokens:
+        text = t.get("text", "")
+        if text.startswith("[_") and text.endswith("_]"):
+            continue
+        offsets = t.get("offsets", {})
+        ts = offsets.get("from", 0) / 1000.0
+        te = offsets.get("to", 0) / 1000.0
+        if not buf and ts > 0:
+            buf_start = ts
+        if text.startswith(" "):
+            if buf:
+                words.append(WordTimestamp(word=buf.strip(), start_sec=buf_start, end_sec=buf_end))
+            buf = text.lstrip()
+            buf_start = ts
+        else:
+            buf += text
+        buf_end = te
+    if buf:
+        words.append(WordTimestamp(word=buf.strip(), start_sec=buf_start, end_sec=buf_end))
+    return words
+
+
 # START_BLOCK: M-AUDIO/WHISPER/TRANSCRIBE
-def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
+async def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
     log = log or get_logger()
     audio_path = Path(audio_path)
     if not audio_path.exists():
@@ -21,14 +48,24 @@ def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
         "-m", config.whisper_model,
         "-f", str(audio_path),
         "--language", "ru",
-        "--word-timestamps", "True",
-        "--output-json",
+        "-ojf",
         "-of", str(output_path.with_suffix("")),
     ]
     log.info("[M-AUDIO][WHISPER][START]", cmd=" ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=config.timeout("whisper_asr"))
-    if result.returncode != 0:
-        raise ASRError(f"whisper.cpp failed: {result.stderr}")
+
+    timeout = config.timeout("whisper_asr")
+    proc = await asyncio.create_subprocess_exec(
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+    )
+    try:
+        _, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+    except asyncio.TimeoutError:
+        proc.kill()
+        await proc.wait()
+        raise ASRError(f"whisper.cpp timed out after {timeout}s")
+
+    if proc.returncode != 0:
+        raise ASRError(f"whisper.cpp failed: {stderr.decode('utf-8', errors='replace')}")
 
     json_path = output_path
     if not json_path.exists():
@@ -40,18 +77,17 @@ def transcribe(audio_path: str | Path, log=None) -> list[TimelineSegment]:
         data = json.load(f)
 
     segments = []
-    for seg in data.get("segments", []):
-        words = []
-        for w in seg.get("words", []):
-            words.append(WordTimestamp(
-                word=w.get("word", ""),
-                start_sec=w.get("start", seg["start"]),
-                end_sec=w.get("end", seg["end"]),
-            ))
+    raw_segments = data.get("transcription") or data.get("segments", [])
+    for seg in raw_segments:
+        offsets = seg.get("offsets", {})
+        start_ms = offsets.get("from", 0)
+        end_ms = offsets.get("to", 0)
+        tokens = seg.get("tokens", [])
+        words = _parse_tokens_to_words(tokens) if tokens else []
         segments.append(TimelineSegment(
             speaker="unknown",
-            start_sec=seg.get("start", 0),
-            end_sec=seg.get("end", 0),
+            start_sec=start_ms / 1000.0,
+            end_sec=end_ms / 1000.0,
             text=seg.get("text", "").strip(),
             word_timestamps=words,
         ))

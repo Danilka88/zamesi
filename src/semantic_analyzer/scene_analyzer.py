@@ -44,7 +44,8 @@ async def analyze_scenes(
                             image_path=frame_path,
                             log=log,
                         )
-                        parsed["scene_summary"] += f" [Видео: {vision_desc[:200]}]"
+                        if vision_desc:
+                            parsed["scene_summary"] += f" [Видео: {vision_desc[:200]}]"
                         vlm_calls += 1
 
             result = SceneAnalysisResult(

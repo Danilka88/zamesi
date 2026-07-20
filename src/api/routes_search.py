@@ -1,6 +1,4 @@
 # START_BLOCK: M-SEARCH/ROUTES/SEARCH
-import asyncio
-
 from fastapi import APIRouter, Query
 
 from src.core.logging_config import get_logger
@@ -16,7 +14,7 @@ async def search(q: str = Query(...), top_k: int = 20, genre: str | None = None)
     log = get_logger()
     log.info("[M-SEARCH][ROUTES][SEARCH_QUERY]", query=q)
     filter_dict = {"genre": genre} if genre else None
-    results = search_scenes(q, top_k=top_k, filter=filter_dict, log=log)
+    results = await search_scenes(q, top_k=top_k, filter=filter_dict, log=log)
     return results
 # END_BLOCK: M-SEARCH/ROUTES/SEARCH
 
@@ -25,6 +23,6 @@ async def search(q: str = Query(...), top_k: int = 20, genre: str | None = None)
 @router.post("/reindex")
 async def reindex() -> dict:
     log = get_logger()
-    total = await asyncio.to_thread(reindex_all, log=log)
+    total = await reindex_all(log=log)
     return {"status": "ok", "indexed": total}
 # END_BLOCK: M-SEARCH/ROUTES/REINDEX

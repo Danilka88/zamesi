@@ -31,7 +31,7 @@ class CircuitBreaker:
         self.last_failure_time = 0.0
         self.threshold = config.circuit_breaker_threshold
         self.recovery_sec = config.circuit_breaker_recovery_sec
-        self.half_open_max = int(config._get("circuit_breaker", "half_open_max_requests", default=1))
+        self.half_open_max = config.circuit_breaker_half_open_max
         self._half_open_requests = 0
 
     def _allow_request(self) -> bool:

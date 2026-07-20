@@ -1,11 +1,11 @@
-import re
+from pathlib import Path
 
+from src.config import config
 from src.core.logging_config import get_logger
 from src.core.schemas import Passport, SceneAnalysisResult, TimelineSegment
+from src.core.time_utils import fmt_sec
 from src.passport_builder.frontmatter_generator import build_frontmatter
 from src.passport_builder.validator import validate
-
-_NON_PRINTABLE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 
 
 def _escape_yaml_value(s: str) -> str:
@@ -59,15 +59,13 @@ def _scene_to_md(i: int, scene: SceneAnalysisResult, seg: TimelineSegment | None
                 lines.append(f"  * Контекст: {m.reason}")
 
     if scene.clip_candidate:
-        def _ts(sec: float) -> str:
-            return f"{int(sec) // 60:02d}:{int(sec) % 60:02d}"
         t1, t2 = scene.clip_candidate.time_range_start, scene.clip_candidate.time_range_end
-        lines.append(f"* **[CLIP_CANDIDATE: {_ts(t1)} - {_ts(t2)}]**")
+        lines.append(f"* **[CLIP_CANDIDATE: {fmt_sec(t1)} - {fmt_sec(t2)}]**")
         lines.append(f"  * Хук: {scene.clip_candidate.hook}")
         lines.append(f"  * Виральный потенциал: {scene.clip_candidate.virality_potential}")
 
     if scene.fallback_used:
-        lines.append(f"  * ⚠ Fallback: {scene.fallback_used}")
+        lines.append(f"  * [FALLBACK]: {scene.fallback_used}")
 
     lines.append("\n---\n")
     return "\n".join(lines)
@@ -97,10 +95,10 @@ async def build_passport(
 
     try:
         from src.search.indexer import index_passport
-        indexed = index_passport(passport, log=log)
+        indexed = await index_passport(passport, log=log)
         log.info("[M-PASSPORT][BUILDER][INDEXED]", scenes=indexed)
-    except ImportError:
-        pass
+    except ImportError as e:
+        log.warning("[M-PASSPORT][BUILDER][INDEX_UNAVAILABLE]", error=str(e))
     except Exception as e:
         log.warning("[M-PASSPORT][BUILDER][INDEX_FAILED]", error=str(e))
 
@@ -128,3 +126,17 @@ def passport_to_markdown(passport: Passport) -> str:
         timeline_md=timeline_md,
     )
 # END_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
+
+
+# START_BLOCK: M-PASSPORT/BUILDER/SAVE_PASSPORT
+def save_passport_to_disk(passport: Passport, log=None) -> None:
+    log = log or get_logger()
+    output_dir = Path(config.passport_output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    video_id = passport.frontmatter.video_id
+    json_path = output_dir / f"{video_id}.json"
+    json_path.write_text(passport.model_dump_json(indent=2), encoding="utf-8")
+    md_path = output_dir / f"{video_id}.md"
+    md_path.write_text(passport_to_markdown(passport), encoding="utf-8")
+    log.info("[M-PASSPORT][BUILDER][SAVED]", video_id=video_id, json=str(json_path), md=str(md_path))
+# END_BLOCK: M-PASSPORT/BUILDER/SAVE_PASSPORT

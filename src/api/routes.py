@@ -1,4 +1,5 @@
 import asyncio
+import shutil
 import time
 import uuid
 from pathlib import Path
@@ -26,6 +27,27 @@ from src.core.schemas import (
 router = APIRouter()
 
 _jobs: dict[str, JobResult] = {}
+_TTL_SEC = 3600  # 1 hour
+
+
+def _set_job(job_id: str, **kwargs):
+    job = _jobs.get(job_id)
+    if job:
+        for k, v in kwargs.items():
+            setattr(job, k, v)
+        job.updated_at = time.time()
+
+
+async def _cleanup_expired_jobs():
+    while True:
+        await asyncio.sleep(3600)
+        now = time.time()
+        expired = [
+            jid for jid, j in list(_jobs.items())
+            if j.status in (JobStatus.done, JobStatus.error) and j.updated_at and (now - j.updated_at) > _TTL_SEC
+        ]
+        for jid in expired:
+            del _jobs[jid]
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
@@ -44,11 +66,11 @@ async def analyze(file: UploadFile = File(...)):
     log.info("[M-API][ROUTES][VIDEO_SAVED]", path=str(video_path), size_mb=round(len(content) / 1e6, 2))
     del content
 
-    _jobs[job_id] = JobResult(job_id=job_id, status=JobStatus.pending)
+    _jobs[job_id] = JobResult(job_id=job_id, status=JobStatus.pending, updated_at=time.time())
     jobs_total.labels(status="pending").inc()
     jobs_active.inc()
 
-    asyncio.create_task(_run_pipeline(job_id, str(video_path), log))
+    asyncio.create_task(_run_pipeline(job_id, str(video_path), temp_dir, log))
 
     return AnalyzeResponse(job_id=job_id)
 
@@ -92,13 +114,13 @@ async def get_markdown(job_id: str):
 
 
 # START_BLOCK: M-API/PIPELINE/RUN
-async def _run_pipeline(job_id: str, video_path: str, log) -> None:
+async def _run_pipeline(job_id: str, video_path: str, temp_dir: Path, log) -> None:
     # Lazy imports — heavy dependencies loaded only at runtime
     from src.audio_engine.pyannote_diarization import diarize
     from src.audio_engine.pyav_reader import extract_audio, extract_iframes
     from src.audio_engine.timeline_merger import merge
     from src.audio_engine.whisper_asr import transcribe
-    from src.passport_builder.passport_builder import build_passport
+    from src.passport_builder.passport_builder import build_passport, save_passport_to_disk
     from src.semantic_analyzer.scene_analyzer import analyze_scenes
     from src.vision_scanner.domain_router import detect_genre, is_vision_blocked
     from src.vision_scanner.ocr_buffer import OCRBuffer
@@ -112,9 +134,9 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
 
         audio_path = await extract_audio(video_path, log=log)
 
-        asr_segments = transcribe(audio_path, log=log)
+        asr_segments = await transcribe(audio_path, log=log)
 
-        speaker_segments = diarize(audio_path, log=log)
+        speaker_segments = await diarize(audio_path, log=log)
 
         timeline = merge(asr_segments, speaker_segments, log=log)
 
@@ -147,10 +169,11 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
             scene_results=scene_results,
             log=log,
         )
+        save_passport_to_disk(passport, log=log)
 
         total_sec = time.monotonic() - pipeline_start
         ad_count = sum(1 for s in scene_results if any(m.type == "ad_slot" for m in s.monetization))
-        ecom_count = sum(len(s.monetization) for s in scene_results)
+        ecom_count = sum(1 for s in scene_results for m in s.monetization if m.type == "ecom_item")
         clip_count = sum(1 for s in scene_results if s.clip_candidate is not None)
         fallbacks = sum(1 for s in scene_results if s.fallback_used is not None)
 
@@ -166,12 +189,7 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
             fallbacks_used=fallbacks,
         )
 
-        _jobs[job_id] = JobResult(
-            job_id=job_id,
-            status=JobStatus.done,
-            passport=passport,
-            metrics=metrics,
-        )
+        _set_job(job_id, status=JobStatus.done, passport=passport, metrics=metrics)
         jobs_total.labels(status="done").inc()
 
         processing_duration_seconds.observe(total_sec)
@@ -187,17 +205,18 @@ async def _run_pipeline(job_id: str, video_path: str, log) -> None:
 
     except asyncio.CancelledError:
         log.warning("[M-API][PIPELINE][CANCELLED]")
-        _jobs[job_id].status = JobStatus.error
-        _jobs[job_id].error = "Pipeline cancelled"
+        _set_job(job_id, status=JobStatus.error, error="Pipeline cancelled")
         jobs_total.labels(status="error").inc()
         raise
 
     except Exception as e:
         log.error("[M-API][PIPELINE][FAILED]", error=str(e))
-        _jobs[job_id].status = JobStatus.error
-        _jobs[job_id].error = str(e)
+        _set_job(job_id, status=JobStatus.error, error=str(e))
         jobs_total.labels(status="error").inc()
 
     finally:
         jobs_active.dec()
+        if str(temp_dir).startswith("/tmp/rutube-jobs/") and temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            log.info("[M-API][ROUTES][TEMP_CLEANED]", path=str(temp_dir))
 # END_BLOCK: M-API/PIPELINE/RUN

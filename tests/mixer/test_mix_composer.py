@@ -5,7 +5,7 @@ from src.core.schemas import Stage
 
 @pytest.mark.asyncio
 async def test_compose_mix_basic(monkeypatch):
-    def mock_search(*a, **kw):
+    async def mock_search(*a, **kw):
         from src.core.schemas import SearchResult
         return [SearchResult(
             video_id="v1", scene_index=0,
@@ -30,7 +30,7 @@ async def test_compose_mix_basic(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_compose_mix_empty_stage(monkeypatch):
-    def mock_search(*a, **kw):
+    async def mock_search(*a, **kw):
         return []
 
     monkeypatch.setattr("src.mixer.mix_composer.search_scenes", mock_search)
@@ -44,7 +44,7 @@ async def test_compose_mix_empty_stage(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_compose_mix_match(monkeypatch):
-    def mock_search(*a, **kw):
+    async def mock_search(*a, **kw):
         from src.core.schemas import SearchResult
         return [
             SearchResult(video_id="v1", scene_index=0, start_sec=0.0, end_sec=10.0, summary="A"),

@@ -11,19 +11,27 @@ from src.core.schemas import JobStatus
     reason="No test video files found in tests/fixtures/videos/",
 )
 @pytest.mark.asyncio
-async def test_pipeline_howto_video(mock_ollama_response):
-    videos = list(Path(__file__).parent.glob("fixtures/videos/*howto*.mp4"))
+async def test_pipeline_howto_video(mock_ollama_response, monkeypatch):
+    async def mock_diarize(*a, **kw):
+        return []
+    monkeypatch.setattr("src.audio_engine.pyannote_diarization.diarize", mock_diarize)
+    videos = list(Path(__file__).parent.glob("fixtures/videos/how_to_*.mp4"))
     if not videos:
         videos = list(Path(__file__).parent.glob("fixtures/videos/*.mp4"))
     if not videos:
         pytest.skip("No video files available")
     video_path = str(videos[0])
+    temp_dir = Path(video_path).parent
     job_id = "test_howto_001"
+
+    from src.api.routes import _jobs as routes_jobs
+    from src.core.schemas import JobResult
+    routes_jobs[job_id] = JobResult(job_id=job_id, status=JobStatus.pending)
 
     from src.core.logging_config import get_logger
     log = get_logger(correlation_id=job_id)
 
-    await _run_pipeline(job_id, video_path, log)
+    await _run_pipeline(job_id, video_path, temp_dir, log)
 
     from src.api.routes import _jobs
     result = _jobs.get(job_id)

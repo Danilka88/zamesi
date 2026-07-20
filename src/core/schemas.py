@@ -118,6 +118,7 @@ class JobResult(BaseModel):
     passport: Passport | None = None
     metrics: JobMetrics | None = None
     error: str | None = None
+    updated_at: float = 0.0
 
 
 class AnalyzeResponse(BaseModel):

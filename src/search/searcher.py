@@ -2,16 +2,16 @@
 from src.config import config
 from src.core.logging_config import get_logger
 from src.core.schemas import SearchResult
-from src.search.indexer import _embed_text, _get_client
+from src.core.embedding import embed_text, get_chroma_client
 
 
 # START_BLOCK: M-SEARCH/SEARCHER/SEARCH_SCENES
-def search_scenes(query: str, top_k: int = 20, filter: dict | None = None, log=None) -> list[SearchResult]:
+async def search_scenes(query: str, top_k: int = 20, filter: dict | None = None, log=None) -> list[SearchResult]:
     log = log or get_logger()
     log.info("[M-SEARCH][SEARCHER][QUERY]", query=query, top_k=top_k)
 
-    embedding = _embed_text(query)
-    client = _get_client()
+    embedding = await embed_text(query)
+    client = get_chroma_client()
     collection = client.get_or_create_collection(name=config.search_collection)
 
     results = collection.query(

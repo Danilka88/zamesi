@@ -1,5 +1,5 @@
 from src.core.schemas import Mix
-
+from src.core.time_utils import fmt_sec
 
 # START_BLOCK: M-MIXER/MD/MIX_TO_MARKDOWN
 def mix_to_markdown(mix: Mix) -> str:
@@ -13,7 +13,7 @@ def mix_to_markdown(mix: Mix) -> str:
         lines.append("")
 
         for scene in stage.scenes:
-            ts = f"{_fmt_sec(scene.start_sec)}-{_fmt_sec(scene.end_sec)}"
+            ts = f"{fmt_sec(scene.start_sec)}-{fmt_sec(scene.end_sec)}"
             lines.append(f"### {scene.video_id} — {scene.summary} ({ts})")
             if scene.text:
                 lines.append(f"*Контекст:* \"{scene.text[:300]}\"")
@@ -27,8 +27,4 @@ def mix_to_markdown(mix: Mix) -> str:
     return "\n".join(lines)
 
 
-def _fmt_sec(sec: float) -> str:
-    m = int(sec) // 60
-    s = int(sec) % 60
-    return f"{m:02d}:{s:02d}"
 # END_BLOCK: M-MIXER/MD/MIX_TO_MARKDOWN

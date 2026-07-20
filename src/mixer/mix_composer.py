@@ -21,7 +21,7 @@ async def compose_mix(
     total_duration = 0.0
 
     for stage in stages:
-        scenes = search_scenes(
+        scenes = await search_scenes(
             stage.description,
             top_k=max_videos_per_stage * 2,
             log=log,

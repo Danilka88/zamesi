@@ -1,36 +1,41 @@
+import pytest
+
 from src.search.searcher import search_scenes
 
 
-def test_search_empty(monkeypatch):
-    def mock_embed(*a, **kw):
+@pytest.mark.asyncio
+async def test_search_empty(monkeypatch):
+    async def mock_embed(*a, **kw):
         return [0.0] * 1024
 
     def mock_query(*a, **kw):
         return {"ids": [[]], "distances": [[]], "metadatas": [[]], "documents": [[]]}
 
-    monkeypatch.setattr("src.search.searcher._embed_text", mock_embed)
-    monkeypatch.setattr("src.search.searcher._get_client", lambda: FakeClient(mock_query))
+    monkeypatch.setattr("src.search.searcher.embed_text", mock_embed)
+    monkeypatch.setattr("src.search.searcher.get_chroma_client", lambda: FakeClient(mock_query))
 
-    results = search_scenes("", top_k=5)
+    results = await search_scenes("", top_k=5)
     assert isinstance(results, list)
 
 
-def test_search_no_results(monkeypatch):
-    def mock_embed(*a, **kw):
+@pytest.mark.asyncio
+async def test_search_no_results(monkeypatch):
+    async def mock_embed(*a, **kw):
         return [0.0] * 1024
 
     def mock_query(*a, **kw):
         return {"ids": [[]], "distances": [[]], "metadatas": [[]], "documents": [[]]}
 
-    monkeypatch.setattr("src.search.searcher._embed_text", mock_embed)
-    monkeypatch.setattr("src.search.searcher._get_client", lambda: FakeClient(mock_query))
+    monkeypatch.setattr("src.search.searcher.embed_text", mock_embed)
+    monkeypatch.setattr("src.search.searcher.get_chroma_client", lambda: FakeClient(mock_query))
 
-    results = search_scenes("nothing", top_k=5)
+    results = await search_scenes("nothing", top_k=5)
     assert results == []
 
 
-def test_search_with_results(monkeypatch):
-    def mock_embed(*a, **kw):
+@pytest.mark.asyncio
+async def test_search_with_results(monkeypatch):
+    async def mock_embed(*a, **kw):
         return [0.0] * 1024
 
     def mock_query(*a, **kw):
@@ -48,17 +53,18 @@ def test_search_with_results(monkeypatch):
             "documents": [["doc0", "doc1"]],
         }
 
-    monkeypatch.setattr("src.search.searcher._embed_text", mock_embed)
-    monkeypatch.setattr("src.search.searcher._get_client", lambda: FakeClient(mock_query))
+    monkeypatch.setattr("src.search.searcher.embed_text", mock_embed)
+    monkeypatch.setattr("src.search.searcher.get_chroma_client", lambda: FakeClient(mock_query))
 
-    results = search_scenes("test", top_k=5)
+    results = await search_scenes("test", top_k=5)
     assert len(results) == 2
     assert results[0].video_id == "vid1"
     assert results[0].scene_index == 0
 
 
-def test_search_with_filter(monkeypatch):
-    def mock_embed(*a, **kw):
+@pytest.mark.asyncio
+async def test_search_with_filter(monkeypatch):
+    async def mock_embed(*a, **kw):
         return [0.0] * 1024
 
     captured_filter = []
@@ -67,10 +73,10 @@ def test_search_with_filter(monkeypatch):
         captured_filter.append(kw.get("where"))
         return {"ids": [[]], "distances": [[]], "metadatas": [[]], "documents": [[]]}
 
-    monkeypatch.setattr("src.search.searcher._embed_text", mock_embed)
-    monkeypatch.setattr("src.search.searcher._get_client", lambda: FakeClient(mock_query))
+    monkeypatch.setattr("src.search.searcher.embed_text", mock_embed)
+    monkeypatch.setattr("src.search.searcher.get_chroma_client", lambda: FakeClient(mock_query))
 
-    search_scenes("test", top_k=5, filter={"genre": "how_to"})
+    await search_scenes("test", top_k=5, filter={"genre": "how_to"})
     assert len(captured_filter) == 1
     assert captured_filter[0] == {"genre": "how_to"}
 

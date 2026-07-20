@@ -19,7 +19,7 @@ async def test_search_endpoint_no_query(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_search_endpoint_with_query(monkeypatch):
-    def mock_search(*a, **kw):
+    async def mock_search(*a, **kw):
         return []
 
     monkeypatch.setattr("src.api.routes_search.search_scenes", mock_search)
@@ -33,7 +33,7 @@ async def test_search_endpoint_with_query(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_reindex_endpoint(monkeypatch):
-    def mock_reindex(*a, **kw):
+    async def mock_reindex(*a, **kw):
         return 5
 
     monkeypatch.setattr("src.api.routes_search.reindex_all", mock_reindex)

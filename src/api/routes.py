@@ -116,7 +116,7 @@ async def get_markdown(job_id: str):
 # START_BLOCK: M-API/PIPELINE/RUN
 async def _run_pipeline(job_id: str, video_path: str, temp_dir: Path, log) -> None:
     # Lazy imports — heavy dependencies loaded only at runtime
-    from src.audio_engine.pyannote_diarization import diarize
+    from src.audio_engine.diarization_speechbrain import diarize
     from src.audio_engine.pyav_reader import extract_audio, extract_iframes
     from src.audio_engine.timeline_merger import merge
     from src.audio_engine.whisper_asr import transcribe

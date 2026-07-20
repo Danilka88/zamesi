@@ -11,10 +11,7 @@ from src.core.schemas import JobStatus
     reason="No test video files found in tests/fixtures/videos/",
 )
 @pytest.mark.asyncio
-async def test_pipeline_howto_video(mock_ollama_response, monkeypatch):
-    async def mock_diarize(*a, **kw):
-        return []
-    monkeypatch.setattr("src.audio_engine.pyannote_diarization.diarize", mock_diarize)
+async def test_pipeline_howto_video(mock_ollama_response):
     videos = list(Path(__file__).parent.glob("fixtures/videos/how_to_*.mp4"))
     if not videos:
         videos = list(Path(__file__).parent.glob("fixtures/videos/*.mp4"))

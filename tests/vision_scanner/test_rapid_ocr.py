@@ -24,7 +24,7 @@ def test_process_frames_success(tmp_path):
     assert len(results) == 1
     assert results[0].text == "текст на экране"
     assert results[0].timestamp_sec == 5.0
-    assert not frame_path.exists()
+    assert frame_path.exists()
 
 
 def test_process_frames_empty_input():

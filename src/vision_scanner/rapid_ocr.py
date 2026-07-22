@@ -40,8 +40,6 @@ def process_frames(frame_paths: list[dict], log=None) -> list[OCRResult]:
                             confidence=float(confidence),
                             bbox=[float(x) for x in box.flatten()] if hasattr(box, "flatten") else None,
                         ))
-            if fpath.suffix == ".jpg":
-                fpath.unlink(missing_ok=True)
         except Exception as e:
             log.warning("[M-VISION][OCR][ERROR]", path=str(fpath), error=str(e))
 

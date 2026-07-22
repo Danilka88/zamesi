@@ -10,17 +10,37 @@ def extract_json(text: str) -> str:
         if first_newline != -1:
             text = text[first_newline + 1 :]
         text = re.sub(r"```\s*$", "", text).strip()
-    start = text.find("{")
-    end = text.rfind("}")
-    if start != -1 and end != -1:
-        candidate = text[start : end + 1]
-        json.loads(candidate)
-        return candidate
-    start = text.find("[")
-    end = text.rfind("]")
-    if start != -1 and end != -1:
-        candidate = text[start : end + 1]
-        json.loads(candidate)
-        return candidate
+
+    def _outermost_from(pos: int) -> str | None:
+        ch = text[pos]
+        if ch not in ("{", "["):
+            return None
+        close = "}" if ch == "{" else "]"
+        depth = 0
+        in_str = False
+        for j in range(pos, len(text)):
+            c = text[j]
+            if c == '"' and (j == 0 or text[j-1] != '\\'):
+                in_str = not in_str
+            if in_str:
+                continue
+            if c == ch:
+                depth += 1
+            elif c == close:
+                depth -= 1
+                if depth == 0:
+                    candidate = text[pos : j + 1]
+                    json.loads(candidate)
+                    return candidate
+        return None
+
+    i = 0
+    while i < len(text):
+        if text[i] in ("{", "["):
+            result = _outermost_from(i)
+            if result:
+                return result
+        i += 1
+
     raise ValueError(f"No JSON found in response: {text[:200]}")
 # END_BLOCK: M-CORE/JSON/EXTRACT

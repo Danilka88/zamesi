@@ -72,6 +72,10 @@ class Config:
         return int(self._get("models", "ollama", "vision_max_image_bytes", default=2097152))
 
     @property
+    def vision_max_tokens(self) -> int:
+        return int(self._get("models", "ollama", "vision_max_tokens", default=8192))
+
+    @property
     def genres(self) -> list[dict]:
         return self._get("genres", "labels", default=[])
 

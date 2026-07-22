@@ -6,6 +6,7 @@ models:
     classifier_model: "qwen3.5:0.8b"
     classifier_max_tokens: 8192
     vision_max_image_bytes: 2097152  # 2 MB — I-frames larger than this skip VLM
+    vision_max_tokens: 8192  # Qwen3.5:9b тратит токены на thinking, нужен запас
     default_params:
       temperature: 0.1
       top_p: 0.9
@@ -23,11 +24,11 @@ timeouts:
   speechbrain_diarization: 120
   rapidocr_inference: 30
   qwen_pass1_text: 180
-  qwen_pass2_vision: 300
+  qwen_pass2_vision: 600  # Qwen3.5:9b тратит время на thinking
   qwen_frontmatter: 180
   llm_general_default: 120
   domain_router: 120
-  pipeline_total: 3600
+  pipeline_total: 7200  # увеличен из-за медленного thinking VLM
 
 retry:
   max_attempts: 3

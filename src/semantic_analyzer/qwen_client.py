@@ -57,6 +57,8 @@ async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> st
         image_base64=image_b64,
         timeout_name="qwen_pass2_vision",
         call_name="pass2_vision",
+        model=config.ollama_vision_model,
+        max_tokens=config.vision_max_tokens,
         log=log,
     )
     return raw

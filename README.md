@@ -154,7 +154,7 @@ MP4
 #### RapidOCR v4 (ONNX)
 
 - **Почему:** ONNX-рантайм, работает на CPU без GPU. Модель PP-OCRv4 с кириллической поддержкой. Альтернативы (Tesseract, EasyOCR) в 3–10× медленнее на CPU.
-- **Реализация:** `RapidOCR()` (singleton для всего пайплайна) → `engine(str(fpath))` → `(box, text, confidence)`. Фильтр уверенности: ≥0,5 (настраивается в `config.yaml`). JPG-кадры удаляются после обработки.
+- **Реализация:** `RapidOCR()` (singleton для всего пайплайна) → `engine(str(fpath))` → `(box, text, confidence)`. Фильтр уверенности: ≥0,5 (настраивается в `config.yaml`). JPG-кадры сохраняются до конца пайплайна (нужны для VLM).
 - **Время:** ~30 ms на кадр (CPU).
 - **Зачем:** если на I-frame уже есть текст, VLM не нужен — OCRBuffer обеспечивает экономию 5–15% VLM-вызовов на утилитарных видео (how_to, review).
 
@@ -174,9 +174,10 @@ MP4
 
 #### Gemma4:e4b (SLM — Small Language Model)
 
-- **Почему:** Gemma4:e4b — эволюция Gemma2 от Google DeepMind. Ключевое отличие от предшественника (Qwen3.5:4b): **нет токенов на thinking**.
+- **Почему:** Gemma4:e4b — эволюция Gemma2 от Google DeepMind. Ключевое отличие от предшественника (Qwen3.5:4b): **не тратит токены на thinking** (хотя capability `thinking` присутствует — на практике ответ без рассуждений).
   - Qwen3.5:4b тратил ~160 с/call на thinking → Gemma4:e4b ~35–43 с/call (**4× быстрее**).
   - Промпт не требует специального форматирования — Gemma4 не чувствителен к шаблону `<|im_start|>`.
+  - Важно: у Gemma4:e4b и Qwen3.5:9b в Ollama есть capability `thinking`. Gemma4 выдаёт ответ без лишних рассуждений, а Qwen3.5:9b генерирует скрытые thinking-токены, которые Ollama отрезает через PARSER qwen3.5. Из-за этого vision-запросы требуют запаса `vision_max_tokens: 8192`.
 - **Реализация:** до 180 вызовов на 1 ч видео (по одному на сегмент таймлайна). Возвращает структурированный JSON:
 
 ```json
@@ -196,7 +197,8 @@ MP4
 
 - **Почему:** единственная локальная vision-модель Ollama, влезающая в 16 GB RAM. Принимает base64-изображение вместе с ASR-контекстом. Вызывается только для ≤6% сегментов.
 - **Защита:** I-frame >2 MB → вызов пропускается (base64-чтение без лимита может вызвать OOM на 4K-кадрах). Размер проверяется через `os.path.getsize()` до чтения.
-- **Время:** ~60 с/call на CPU.
+- **Thinking:** Qwen3.5:9b в Ollama имеет capability `thinking` — модель генерирует скрытые токены рассуждения перед ответом. Ollama отрезает их через `PARSER qwen3.5`, поэтому видимый ответ может быть пустым, если не хватило `num_predict`. Решение: `vision_max_tokens: 8192` в config.yaml.
+- **Время:** ~60-120 с/call на CPU (с учётом thinking-токенов).
 
 #### Prompt Templates (шаблоны промптов)
 
@@ -364,10 +366,10 @@ call_ollama(prompt, timeout_name, call_name, model, max_tokens)
 | Whisper.cpp | 300 с | — (одна попытка) |
 | SpeechBrain | 120 с | — (ошибка → пустой speaker) |
 | Gemma4:e4b (pass1) | 180 с | retry → shorten_prompt → `fallback_used=llm_failed` |
-| Qwen3.5:9b (VLM) | 300 с | retry → skip_vision |
+| Qwen3.5:9b (VLM) | 600 с | retry → skip_vision |
 | Genre classifier | 120 с | retry → keyword fallback |
 | Qwen3.5:0.8b (frontmatter) | 180 с | retry → fallback frontmatter (unknown) |
-| **Pipeline total** | **3600 с** | Обрыв → статус `error` |
+| **Pipeline total** | **7200 с** | Обрыв → статус `error` |
 
 ### Поведение при отказе LLM
 
@@ -425,6 +427,25 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
 - **Release gate:** полный suite + VLM ratio check (<6%)
 
+### Тестовые видео
+
+В `tests/fixtures/videos/` — 11 тестовых видео: 6 легаси (85–150 KB) + 5 синтезированных через TTS (`say -v Milena`) + ffmpeg:
+
+| Видео | Длительность | Жанр | Особенность |
+|------|-------------|------|-------------|
+| `car_repair_guide.mp4` | 61 с | how_to | Сплошной фон, только голос |
+| `tech_podcast.mp4` | 58 с | podcast | 2 спикера (pitch-shift) |
+| `smartphone_review.mp4` | 37 с | review | Обзор техники |
+| `diy_with_text.mp4` | 46 с | diy | OCR-оверлей через PIL+ffmpeg |
+| `minecraft_stream.mp4` | 27 с | stream | Тёмный фон, гейминг |
+
+Скрипт генерации: `scripts/generate_test_videos.sh`. Для регенерации всех тестовых видео:
+```bash
+bash scripts/generate_test_videos.sh
+```
+
+Результат E2E-прогона на `diy_with_text`: паспорт `output/diy_with_text.md`, микс `mix_passport.md`, 0 VLM (OCR перекрыл), все 8 сцен проиндексированы в ChromaDB.
+
 ---
 
 ## Приватность и безопасность
@@ -432,7 +453,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 - **Все вычисления локальные.** Никакие данные (видео, аудио, текст) не отправляются во внешние API. Whisper.cpp, Ollama, SpeechBrain, RapidOCR — всё запускается на машине, где развёрнут сервер.
 - **Логи не содержат PII.** structlog-логи содержат только `correlation_id` (job_id), метаданные (длительность, количество сцен), тайминги. Сырые аудио/видео данные не логируются.
 - **ФЗ-152 «О персональных данных».** Решение не зависит от персональных данных пользователей — все метки монетизации извлекаются из контента (видео + аудиодорожка), а не из профилей.
-- **Обработка файлов.** Загруженные видео сохраняются в `/tmp/rutube-jobs/{job_id}` и удаляются при очистке temp-директории. I-frame — временные .jpg, удаляются после OCR.
+- **Обработка файлов.** Загруженные видео сохраняются в `/tmp/rutube-jobs/{job_id}` и удаляются при очистке temp-директории. I-frame — временные .jpg, удаляются после завершения всего пайплайна (нужны и для OCR, и для VLM).
 
 ---
 
@@ -516,6 +537,7 @@ models:
     classifier_model: "qwen3.5:0.8b"
     classifier_max_tokens: 8192
     vision_max_image_bytes: 2097152  # 2 MB
+    vision_max_tokens: 8192  # Qwen3.5:9b тратит на thinking
 ```
 
 ---
@@ -866,15 +888,50 @@ ad_targeting_keywords: ["нейросети", "AI", "медицинские те
 
 ---
 
+### Пример 5: Реальный E2E-паспорт (diy_with_text)
+
+Видео `diy_with_text.mp4` (46 с, diy с OCR-слоем) → паспорт в `output/diy_with_text.md`:
+
+```
+Video: diy_with_text.mp4 (46.0s, diy)
+Frontmatter:
+  creator: RUTUBE Video Analyzer
+  genre: diy
+  speakers: 1
+  language: ru
+  duration_sec: 46.0
+
+Scene breakdown (8 scenes):
+  [scene_01] 00.0-06.4s — требуется клей ПВА
+  [scene_02] 06.4-12.8s — нарезать ...
+  [scene_03] 12.8-19.2s — намазываем ...
+  [scene_04] 19.2-25.6s — кладём ...
+  [scene_05] 25.6-32.0s — приклеиваем ...
+  [scene_06] 32.0-38.4s — загибаем ...
+  [scene_07] 38.4-44.8s — нужна фотография ...
+  [scene_08] 44.8-50.0s — фоторамка ...
+
+Monetization:
+  AD_SLOT — 6 placements (супер клей, строительный магазин, зоотовары, канцелярия, фототовары, рынок подарков)
+  ECOM_ITEM — 6 items (клей ПВА, фотобумага, картон, декор, фоторамка, подарочный набор)
+  CLIP_CANDIDATE — 2 clips (финальный результат, подбор материалов)
+
+VLM ratio: 0% — OCR на I-frame покрыл весь текст. 0 VLM calls из 8 сцен.
+```
+
+Mixer на запрос `"фоторамка из картона своими руками"` → 4 этапа, 7 сцен. Markdown в `mix_passport.md`. Статус проверяется через `GET /mix/{id}` → пока stages пустой — ещё не готов.
+
+---
+
 ## План развития
 
 1. ✅ **Семантический поиск (VideoRAG)** — ChromaDB + qwen3-embedding (реализовано)
 2. ✅ **Mixer (Замеси)** — multi-video подборки через LLM (реализовано)
-3. **Интеграционное тестирование** — поместить демо-видео (≤30 с, ~5 MB) в `tests/fixtures/videos/` и запустить `pytest tests/test_integration.py --timeout=3600`
+3. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
 4. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
 5. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
 6. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
 
 ---
 
-*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 38 semantic block pairs, 33 verification scenarios.*
+*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 38 semantic block pairs, 33 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

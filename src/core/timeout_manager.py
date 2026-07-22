@@ -168,10 +168,11 @@ class TimeoutManager:
     ) -> str:
         fallbacks_total.labels(strategy=strategy).inc()
         if strategy == "shorten_prompt":
-            if "prompt" in kwargs and len(kwargs["prompt"]) > 500:
-                kwargs["prompt"] = kwargs["prompt"][:500] + "\n[truncated]"
+            prompt = kwargs.get("prompt", "")
+            if len(prompt) > 500 and "_shortened" not in call_name:
+                kwargs["prompt"] = prompt[:500] + "\n[truncated]"
                 return await self.call_with_retry(
-                    call_name + "_shortened", timeout_name, func, timeout_sec=10, log=log, **kwargs,
+                    call_name + "_shortened", timeout_name, func, timeout_sec=30, log=log, **kwargs,
                 )
         elif strategy == "skip_vision":
             if "image_base64" in kwargs:

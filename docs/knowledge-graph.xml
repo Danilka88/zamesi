@@ -2,8 +2,9 @@
 <knowledge-graph project="RUTUBE Video Analyzer" version="0.1.0">
   <Modules>
     <M-CORE NAME="Core Types &amp; Contracts" TYPE="LIBRARY">
-      <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager — общие для всех модулей</Purpose>
+      <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager, MemoryStore, метрики — общие для всех модулей</Purpose>
       <Source path="src/core/"/>
+      <Source path="src/config.py"/>
       <Test path="tests/core/"/>
       <Exports>
         <type-VideoGenre>Enum жанров: how_to_repair, podcast, lecture, gameplay, interview, vlog, review, unboxing, cooking, travel, sports, news, tutorial, other</type-VideoGenre>
@@ -29,15 +30,40 @@
         <type-MixStage>Этап микса со сценами: title, description, scenes[]</type-MixStage>
         <type-Mix>Готовый микс: mix_id, query, stages[], total_duration_sec</type-Mix>
         <type-AppConfig>Загрузка и валидация config.yaml</type-AppConfig>
-        <fn-load_config>Загрузка конфигурации</fn-load_config>
+        <type-MemoryStore>Generic TTL-кеш с автоматической очисткой</type-MemoryStore>
+        <class-PipelineError>Базовое исключение пайплайна</class-PipelineError>
+        <class-TimeoutError>Таймаут операции</class-TimeoutError>
+        <class-RetryExhaustedError>Исчерпаны попытки retry</class-RetryExhaustedError>
+        <class-CircuitBreakerOpenError>Circuit breaker разомкнут</class-CircuitBreakerOpenError>
+        <class-LLMResponseError>Ошибка ответа LLM</class-LLMResponseError>
+        <class-JSONParseError>Ошибка парсинга JSON из LLM</class-JSONParseError>
+        <class-FallbackTriggered>Сработал fallback</class-FallbackTriggered>
+        <class-AudioExtractionError>Ошибка извлечения аудио</class-AudioExtractionError>
+        <class-ASRError>Ошибка ASR</class-ASRError>
+        <class-DiarizationError>Ошибка диаризации</class-DiarizationError>
+        <class-OCRError>Ошибка OCR</class-OCRError>
+        <class-ValidationError>Ошибка валидации</class-ValidationError>
+        <class-ConfigError>Ошибка конфигурации</class-ConfigError>
+        <fn-load_config>Загрузка конфигурации (src/config.py)</fn-load_config>
         <fn-timeout_manager>TimeoutManager: retry, circuit breaker, fallback chain</fn-timeout_manager>
+        <class-CircuitBreaker>Circuit breaker с 3 состояниями: closed/open/half-open</class-CircuitBreaker>
         <fn-extract_json>Извлечение JSON из markdown code fences</fn-extract_json>
+        <fn-embed_text>qwen3-embedding через Ollama httpx</fn-embed_text>
+        <fn-get_chroma_client>ChromaDB PersistentClient singleton</fn-get_chroma_client>
+        <fn-setup_logging>structlog JSON-конфигурация</fn-setup_logging>
+        <fn-get_logger>structlog.BoundLogger с correlation_id</fn-get_logger>
+        <fn-fmt_sec>Форматирование секунд → MM:SS или H:MM:SS</fn-fmt_sec>
+        <const-json_errors_total>Prometheus Counter: JSON parse errors</const-json_errors_total>
+        <const-timeouts_total>Prometheus Counter: timeouts по операции</const-timeouts_total>
+        <const-fallbacks_total>Prometheus Counter: fallbacks по стратегии</const-fallbacks_total>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-AUDIO" relation="defines-types-for"/>
         <CrossLink ref="M-VISION" relation="defines-types-for"/>
         <CrossLink ref="M-SEMANTIC" relation="defines-types-for"/>
         <CrossLink ref="M-PASSPORT" relation="defines-types-for"/>
+        <CrossLink ref="M-SEARCH" relation="defines-types-for"/>
+        <CrossLink ref="M-MIXER" relation="defines-types-for"/>
         <CrossLink ref="M-API" relation="defines-types-for"/>
       </CrossLinks>
       <Verification ref="V-M-CORE"/>
@@ -114,6 +140,7 @@
         <CrossLink ref="M-CORE" relation="uses-types"/>
         <CrossLink ref="M-SEMANTIC" relation="receives-monetization-from"/>
         <CrossLink ref="M-AUDIO" relation="receives-timeline-from"/>
+        <CrossLink ref="M-SEARCH" relation="feeds-passports-into"/>
       </CrossLinks>
       <Verification ref="V-M-PASSPORT"/>
     </M-PASSPORT>

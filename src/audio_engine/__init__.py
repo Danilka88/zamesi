@@ -4,3 +4,5 @@
 # SCOPE: extract_audio, extract_iframes, transcribe, diarize, merge_timeline. TimelineSegment, SpeakerSegment.
 # DEPENDS: M-CORE
 # LINKS: docs/knowledge-graph.xml | docs/development-plan.xml | docs/verification-plan.xml
+# START_BLOCK: M-AUDIO/INIT
+# END_BLOCK: M-AUDIO/INIT

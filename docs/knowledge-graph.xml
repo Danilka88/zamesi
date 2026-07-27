@@ -13,7 +13,10 @@
         <type-WordTimestamp>Слово с таймстампом: word, start_sec, end_sec, probability</type-WordTimestamp>
         <type-SpeakerSegment>Сегмент спикера: speaker, start_sec, end_sec</type-SpeakerSegment>
         <type-SceneAnalysisResult>Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[]</type-SceneAnalysisResult>
-        <type-MonetizationItem>Точка монетизации: ad_slot, ecom_item, clip_candidate</type-MonetizationItem>
+        <type-MonetizationItem>Точка монетизации: ad_slot, ecom_item, clip_candidate, music_track, artist_merch, event_ticket, celebrity_appearance</type-MonetizationItem>
+        <type-MusicMatch>Результат распознавания музыки: track_name, artist, confidence, genre</type-MusicMatch>
+        <type-CelebrityVoice>Распознанный голос знаменитости: name, profession, confidence</type-CelebrityVoice>
+        <type-TrackMetadata>Метаданные трека: artist, track_name, afisha_urls, merch_urls, events</type-TrackMetadata>
         <type-ClipCandidate>Кандидат на нарезку: hook, time_range, virality_potential</type-ClipCandidate>
         <type-OCRResult>Результат OCR: text, confidence, bbox, timestamp</type-OCRResult>
         <type-Passport>Финальный .md паспорт с фронтмэттером и таймлайном</type-Passport>
@@ -49,14 +52,20 @@
         <class-CircuitBreaker>Circuit breaker с 3 состояниями: closed/open/half-open</class-CircuitBreaker>
         <fn-extract_json>Извлечение JSON из markdown code fences</fn-extract_json>
         <fn-embed_text>qwen3-embedding через Ollama httpx</fn-embed_text>
+        <class-CircuitBreakerState>Трёхсостояние closed/open/half_open</class-CircuitBreakerState>
         <fn-get_chroma_client>ChromaDB PersistentClient singleton</fn-get_chroma_client>
         <fn-setup_logging>structlog JSON-конфигурация</fn-setup_logging>
         <fn-get_logger>structlog.BoundLogger с correlation_id</fn-get_logger>
         <fn-fmt_sec>Форматирование секунд → MM:SS или H:MM:SS</fn-fmt_sec>
+        <fn-circuit_breaker>CircuitBreaker: изолирован в core/circuit_breaker.py</fn-circuit_breaker>
+        <class-CircuitState>Enum closed/open/half_open</class-CircuitState>
         <const-json_errors_total>Prometheus Counter: JSON parse errors</const-json_errors_total>
         <const-timeouts_total>Prometheus Counter: timeouts по операции</const-timeouts_total>
         <const-fallbacks_total>Prometheus Counter: fallbacks по стратегии</const-fallbacks_total>
+        <type-ModerationFlag>Флаг модерации: category, severity, timestamp, evidence</type-ModerationFlag>
+        <type-ModerationReport>Отчёт модерации: age_rating, verdict, flags[], summary</type-ModerationReport>
       </Exports>
+      <Source path="src/core/circuit_breaker.py"/>
       <CrossLinks>
         <CrossLink ref="M-AUDIO" relation="defines-types-for"/>
         <CrossLink ref="M-VISION" relation="defines-types-for"/>
@@ -65,6 +74,7 @@
         <CrossLink ref="M-SEARCH" relation="defines-types-for"/>
         <CrossLink ref="M-MIXER" relation="defines-types-for"/>
         <CrossLink ref="M-API" relation="defines-types-for"/>
+        <CrossLink ref="M-MODERATOR" relation="defines-types-for"/>
       </CrossLinks>
       <Verification ref="V-M-CORE"/>
     </M-CORE>
@@ -79,6 +89,13 @@
         <fn-transcribe>Whisper.cpp ASR → сегменты с текстом и таймстампами</fn-transcribe>
         <fn-diarize>SpeechBrain ECAPA-TDNN диаризация → маппинг спикеров на таймлайне</fn-diarize>
         <fn-merge_timeline>Слияние ASR + диаризация → TimelineSegment[]</fn-merge_timeline>
+        <fn-fingerprint_audio>librosa spectrogram → peaks → hash pairs</fn-fingerprint_audio>
+        <fn-match_audio>Hash-based matching against known tracks</fn-match_audio>
+        <fn-index_track>Add track to fingerprint DB</fn-index_track>
+        <fn-detect_celebrity>ECAPA-TDNN embedding → ChromaDB known_voices → CelebrityVoice</fn-detect_celebrity>
+        <fn-index_celebrity_voice>Add voice embedding to known_voices collection</fn-index_celebrity_voice>
+        <fn-analyze_audio_for_monetization>Combined music + celebrity pipeline</fn-analyze_audio_for_monetization>
+        <class-FingerprintDB>JSON-based hash storage with TrackMetadata</class-FingerprintDB>
       </Exports>
       <CrossLinks>
         <CrossLink ref="M-CORE" relation="uses-types"/>
@@ -141,6 +158,7 @@
         <CrossLink ref="M-SEMANTIC" relation="receives-monetization-from"/>
         <CrossLink ref="M-AUDIO" relation="receives-timeline-from"/>
         <CrossLink ref="M-SEARCH" relation="feeds-passports-into"/>
+        <CrossLink ref="M-MODERATOR" relation="receives-moderation-from"/>
       </CrossLinks>
       <Verification ref="V-M-PASSPORT"/>
     </M-PASSPORT>
@@ -207,5 +225,20 @@
       </CrossLinks>
       <Verification ref="V-M-API"/>
     </M-API>
+    <M-MODERATOR NAME="Moderation Judge" TYPE="PROCESSOR">
+      <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений. Один LLM-вызов при сборке паспорта.</Purpose>
+      <Source path="src/moderator/"/>
+      <Test path="tests/moderator/"/>
+      <Exports>
+        <fn-assess_moderation>LLM-оценка модерации: транскрипт + сцены → ModerationReport</fn-assess_moderation>
+      </Exports>
+      <CrossLinks>
+        <CrossLink ref="M-CORE" relation="uses-types"/>
+        <CrossLink ref="M-AUDIO" relation="uses-music-celebrity"/>
+        <CrossLink ref="M-SEMANTIC" relation="uses-scene-summaries"/>
+        <CrossLink ref="M-PASSPORT" relation="feeds-into"/>
+      </CrossLinks>
+      <Verification ref="V-M-MODERATOR"/>
+    </M-MODERATOR>
   </Modules>
 </knowledge-graph>

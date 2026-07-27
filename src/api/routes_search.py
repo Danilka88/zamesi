@@ -1,4 +1,4 @@
-# START_BLOCK: M-SEARCH/ROUTES/SEARCH
+# START_BLOCK: M-API/ROUTES_SEARCH/SEARCH
 from fastapi import APIRouter, Query
 
 from src.core.logging_config import get_logger
@@ -16,13 +16,13 @@ async def search(q: str = Query(...), top_k: int = 20, genre: str | None = None)
     filter_dict = {"genre": genre} if genre else None
     results = await search_scenes(q, top_k=top_k, filter=filter_dict, log=log)
     return results
-# END_BLOCK: M-SEARCH/ROUTES/SEARCH
+# END_BLOCK: M-API/ROUTES_SEARCH/SEARCH
 
 
-# START_BLOCK: M-SEARCH/ROUTES/REINDEX
+# START_BLOCK: M-API/ROUTES_SEARCH/REINDEX
 @router.post("/reindex")
 async def reindex() -> dict:
     log = get_logger()
     total = await reindex_all(log=log)
     return {"status": "ok", "indexed": total}
-# END_BLOCK: M-SEARCH/ROUTES/REINDEX
+# END_BLOCK: M-API/ROUTES_SEARCH/REINDEX

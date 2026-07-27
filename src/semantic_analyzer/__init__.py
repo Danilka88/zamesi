@@ -4,3 +4,5 @@
 # SCOPE: analyze_scenes, text/vision analysis, generate_frontmatter. SceneAnalysisResult, MonetizationItem.
 # DEPENDS: M-CORE, M-AUDIO, M-VISION
 # LINKS: docs/knowledge-graph.xml | docs/development-plan.xml | docs/verification-plan.xml
+# START_BLOCK: M-SEMANTIC/INIT
+# END_BLOCK: M-SEMANTIC/INIT

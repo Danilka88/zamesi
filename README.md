@@ -21,7 +21,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 144 теста с изоляцией внешних вызовов (monkeypatch, AsyncMock). 8 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 149 тестов с изоляцией внешних вызовов (monkeypatch, AsyncMock). 9 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs), structlog с 54 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -60,6 +60,10 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | `AD_SLOT` | Сегмент подходит для контекстной рекламной врезки |
 | `ECOM_ITEM` | Назван конкретный товар, бренд или инструмент |
 | `CLIP_CANDIDATE` | Сцена содержит лайфхак, ошибку или неожиданный сюжетный поворот |
+| `MUSIC_TRACK` | Обнаружена фоновая музыка (librosa fingerprinting) |
+| `ARTIST_MERCH` | Упоминание исполнителя/группы в контексте мерча |
+| `EVENT_TICKET` | Анонс концерта, тура или ивента |
+| `CELEBRITY_APPEARANCE` | Обнаружен celebrity voice (ECAPA embeddings) |
 
 **Как Search и Mixer работают с метками:**
 
@@ -72,7 +76,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 |---|---|---|
 | Влияние на метрики монетизации | Типы меток, схема работы, Search + Mixer |
 | Юнит-экономика | Экономическая эффективность |
-| Воспроизводимость | Тестирование (144 теста) |
+| Воспроизводимость | Тестирование (149 тестов) |
 | Чувствительные данные | Приватность и безопасность |
 | Production-готовность | Отказоустойчивость, мониторинг |
 | UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
@@ -89,6 +93,9 @@ MP4
 │                                        SpeechBrain ECAPA-TDNN ──────────────► сегменты спикеров
 │                                              │
 │                                        TimelineMerger ────────────► timeline[]
+│                                              │
+│                                        Audio Fingerprinting ─────► music_matches + celebrity_hits
+│                                        librosa CQT → ChromaDB
 │
 ├── PyAV: extract_iframes() ──► RapidOCR v4 (все кадры) ──► OCRBuffer (окно ±5 с)
 │                                  │
@@ -107,6 +114,10 @@ MP4
                 │
                 ▼
             Qwen3.5:9b Vision (pass2: base64 I-frame) ─────────► .md passport
+
+    После сборки паспорта:
+        ► Moderation (LLM-as-Judge) ──► age_rating + verdict + flags
+        ► Итоговый паспорт (.md) с YAML frontmatter + moderation
 ```
 
 Три уровня Gatekeeper, решающих, вызывать ли VLM:
@@ -147,6 +158,20 @@ MP4
 
 Склеивает ASR-сегменты и speaker segments: каждому ASR-сегменту присваивается спикер, чей отрезок перекрывается по времени. При отсутствии перекрытия — `speaker="unknown"`.
 
+#### Audio Fingerprinting
+
+Анализ аудиодорожки через librosa (CQT fingerprints → ChromaDB) и ECAPA-TDNN embeddings для обнаружения музыки и celebrity voice:
+
+- **`analyze_audio_for_monetization()`** — entry point: запускает fingerprinting + celebrity detection + genre-анализ, возвращает `AudioMonetizationResult`
+- **`fingerprint_audio()`** — librosa CQT → peaks → хэши → поиск по ChromaDB. Возвращает `MusicMatch[]` (трек, исполнитель, таймстемпы, confidence)
+- **`detect_celebrity()`** — ECAPA-TDNN embedding → косинусное расстояние с эталонными celebrity-голосами → `CelebrityVoice[]`
+- **`match_audio()`** — запрос к ChromaDB (`audio_fingerprints`) по peaks-хэшам, `top_k=5`, distance < 0.25
+
+Данные fingerprinting передаются в PassportBuilder и попадают в метрики паспорта:
+`music_tracks`, `celebrity_hits`, `fingerprint_matches`.
+
+Результат: новые monetization-метки `MUSIC_TRACK`, `ARTIST_MERCH`, `EVENT_TICKET`, `CELEBRITY_APPEARANCE`.
+
 ---
 
 ### Визуальный анализатор
@@ -167,6 +192,25 @@ MP4
 #### OCRBuffer
 
 Кольцевой буфер OCR-результатов с окном ±5 с. При запросе `check(timestamp)` возвращает объединённый текст всех результатов в окне. `clear()` сбрасывает буфер между job'ами.
+
+---
+
+### Модерация контента (LLM-as-Judge)
+
+Отдельный модуль `M-MODERATOR` (`src/moderator/`), выполняющий анализ контента на предмет возрастных ограничений и запрещённых категорий. Запускается в `PassportBuilder.build_passport()` после завершения основного пайплайна — **не влияет** на существующие промты scene-анализа.
+
+- **`assess_moderation()`** — LLM-вызов к Gemma4:e4b с промтом `moderation_judge`. Возвращает `ModerationReport` (age_rating, verdict, flags[]).
+- **9 категорий флагов:** `violence`, `hate_speech`, `self_harm`, `nudity`, `drugs`, `profanity`, `spam`, `misinformation`, `adult_content`.
+- **Age rating:** `0+` / `6+` / `12+` / `16+` / `18+` / `unknown`.
+- **Verdict:** `allowed` / `restricted` / `banned`.
+- **Prompt:** system-prompt задаёт роль RUTUBE-модератора, user-prompt включает ASR-текст + OCR-контекст. Формат ответа — JSON.
+
+Результат сохраняется в `PassportFrontmatter.moderation` и отражается в метриках:
+- `moderation_verdict` — verdict прометей-метрики
+- `moderation_flags_count` — количество флагов
+- `moderation_age_rating` — возрастной рейтинг
+
+В YAML frontmatter паспорта появляется блок `moderation:` с полным отчётом.
 
 ---
 
@@ -285,7 +329,7 @@ MP4
 
 ## Архитектура (GRACE)
 
-Восемь изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
+Девять изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -293,16 +337,16 @@ MP4
 │  analyze + search + mix + metrics + health + pipeline           │
 └──┬───────────────┬────────────────────────┬─────────────────────┘
    │               │                        │
-┌──▼───────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
-│ M-PASSPORT   │ │ M-SEARCH        │  │  M-MIXER             │
-│ 4 файла      │ │ 3 файла         │  │  4 файла             │
-│ 16 тестов    │ │ 8 тестов        │  │  8 тестов            │
-│ build→md     │ │ index→search    │  │  plan→compose→render │
-│ validate     │ │ ChromaDB        │  │  LLM-матчинг         │
-└──┬───────────┘ └──┬──────────────┘  └──────┬───────────────┘
-   │                │                         │
-   └────────────────┼─────────────────────────┘
-                    │
+┌──▼───────────┐ ┌─────────────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
+│ M-PASSPORT   │ │  M-MODERATOR    │ │ M-SEARCH        │  │  M-MIXER             │
+│ 4 файла      │ │  3 файла        │ │ 3 файла         │  │  4 файла             │
+│ 16 тестов    │ │  4 теста        │ │ 8 тестов        │  │  8 тестов            │
+│ build→moder. │ │  LLM-as-Judge   │ │ index→search    │  │  plan→compose→render │
+│ validate     │ │  age_rating     │ │ ChromaDB        │  │  LLM-матчинг         │
+└──┬──────┬────┘ └─────────────────┘ └──┬──────────────┘  └──────┬───────────────┘
+   │      └──────┐                      │                         │
+   └─────────────┼──────────────────────┼─────────────────────────┘
+                 │                      │
 ┌───────────────────▼───────────────────────────────────────────┐
 │  M-SEMANTIC — 4 файла, 12 тестов                              │
 │  Gemma4:e4b (text) + Qwen3.5:9b (vision) + analyze_scenes    │
@@ -311,22 +355,23 @@ MP4
        │           │
 ┌──────▼────┐ ┌────▼──────────┐
 │ M-AUDIO   │ │ M-VISION      │
-│ 5 файлов  │ │ 5 файлов      │
+│ 6 файлов  │ │ 5 файлов      │
 │ 29 тестов │ │ 23 теста      │
 │ Whisper   │ │ OCR, Genre,   │
 │ SpeechBrain│ │ DomainRouter  │
 │ ffmpeg    │ │ OCRBuffer     │
+│ Fingerprint│ │               │
 └───────────┘ └───────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│  M-CORE — 10 файлов, 38 тестов                              │
+│  M-CORE — 11 файлов, 38 тестов                              │
 │  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
 │  Exceptions, logging_config, json_utils, time_utils,         │
-│  embedding, prometheus метрики                                │
+│  Moderation schemas, embedding, prometheus метрики            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 44 source-файла, 38 test-файлов, 82 файла Python.
+Всего: 49 source-файлов, 40 test-файлов, 89 файлов Python.
 
 ---
 
@@ -396,7 +441,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 144 теста, 0 failures, 1 skipped
+### Test suite: 149 тестов, 0 failures, 1 skipped
 
 Покрытие тестов по модулям:
 
@@ -410,6 +455,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-SEARCH | 8 | `test_indexer.py` (4), `test_searcher.py` (4) |
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
+| M-MODERATOR | 4 | `test_moderator.py` (parse, invalid, empty, flag) |
 | Интеграция | 1 | `test_integration.py` — **skipped** (ожидает demo video) |
 
 ### Методология
@@ -421,7 +467,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ### GRACE Verification
 
-33 verification scenarios, 3 gate levels:
+52 verification scenarios, 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
@@ -470,9 +516,11 @@ bash scripts/generate_test_videos.sh
 {"event": "[M-VISION][ROUTER][GENRE_DETECTED]", "genre": "how_to"}
 {"event": "[M-SEMANTIC][SCENE][ALL_DONE]", "total": 45, "vlm_calls": 2, "vlm_percent": 4.4}
 {"event": "[M-API][PIPELINE][DONE]", "duration_sec": 142.5, "scenes": 45, "vlm_pct": 5.2}
+{"event": "[M-AUDIO][FINGERPRINT][DONE]", "music_matches": 2, "celebrity_hits": 1}
+{"event": "[M-MODERATOR][ASSESS][DONE]", "verdict": "allowed", "age_rating": "16+", "flags": 0}
 ```
 
-54 log-маркера формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]` во всех source-файлах.
+56 log-маркеров формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]` во всех source-файлах.
 
 ### Prometheus-метрики
 
@@ -484,6 +532,11 @@ bash scripts/generate_test_videos.sh
 | `jobs_total` | Counter | `status` (pending/done/error) |
 | `jobs_active` | Gauge | — |
 | `json_errors_total` | Counter | — |
+| `moderation_verdict` | Counter | `verdict` (allowed/restricted/banned) |
+| `moderation_flags_count` | Counter | — |
+| `moderation_age_rating` | Gauge | — |
+| `fingerprint_matches_total` | Counter | — |
+| `celebrity_hits_total` | Counter | — |
 
 Endpoints:
 - `GET /metrics` — Prometheus scrape endpoint
@@ -491,7 +544,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-38 пар `START_BLOCK`/`END_BLOCK` в 44 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+65 пар `START_BLOCK`/`END_BLOCK` в 49 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
@@ -619,7 +672,13 @@ curl http://localhost:8000/metrics
     "ad_slots": 0,
     "ecom_items": 0,
     "clip_candidates": 0,
-    "fallbacks_used": 0
+    "music_tracks": 0,
+    "celebrity_hits": 0,
+    "fingerprint_matches": 0,
+    "fallbacks_used": 0,
+    "moderation_verdict": "allowed",
+    "moderation_age_rating": "0+",
+    "moderation_flags_count": 0
   },
   "error": "str | null"
 }
@@ -900,6 +959,12 @@ Frontmatter:
   speakers: 1
   language: ru
   duration_sec: 46.0
+  moderation:
+    age_rating: 0+
+    verdict: allowed
+    categories_flagged: []
+    flags_count: 0
+    summary: "DIY content, no restricted material"
 
 Scene breakdown (8 scenes):
   [scene_01] 00.0-06.4s — требуется клей ПВА
@@ -934,4 +999,4 @@ Mixer на запрос `"фоторамка из картона своими р
 
 ---
 
-*GRACE-governed project: 7 docs-артефактов, 8 MODULE_CONTRACT, 38 semantic block pairs, 33 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+*GRACE-governed project: 7 docs-артефактов, 9 MODULE_CONTRACT, 65 semantic block pairs, 52 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

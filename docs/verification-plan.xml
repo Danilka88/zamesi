@@ -153,6 +153,26 @@
             <assert>Текст в окне ±5с возвращается; вне окна — None; множественные результаты объединяются</assert>
           </evidence>
         </Scenario>
+        <Scenario id="S-M-VISION-4" type="success">
+          <description>Rapid OCR: распознавание текста на I-frames</description>
+          <commands>
+            <command>pytest tests/vision_scanner/test_rapid_ocr.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-VISION][OCR][DONE]</marker>
+            <assert>Успешное распознавание возвращает OCRResult с текстом; пустой вход → пустой список; отсутствующий файл → пропускается; низкая уверенность фильтруется; ошибка OCR не прерывает pipeline</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-VISION-5" type="success">
+          <description>Genre classifier: keyword fallback и LLM-классификация жанра</description>
+          <commands>
+            <command>pytest tests/vision_scanner/test_genre_classifier.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
+            <assert>_keyword_fallback определяет podcast/how_to по ключевым словам; classify возвращает VideoGenre через LLM; ошибка LLM → fallback на _keyword_fallback; невалидный JSON → unknown</assert>
+          </evidence>
+        </Scenario>
       </Scenarios>
       <RequiredMarkers>
         <marker>[M-VISION][*][*]</marker>
@@ -269,6 +289,26 @@
           <evidence>
             <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
             <assert>strict=True с ошибками → ValidationError</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-PASSPORT-5" type="success">
+          <description>build_frontmatter: генерация YAML frontmatter через LLM</description>
+          <commands>
+            <command>pytest tests/passport_builder/test_frontmatter_generator.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-PASSPORT][FRONTMATTER][DONE]</marker>
+            <assert>Успешный вызов возвращает PassportFrontmatter с корректными полями; ошибка LLM → fallback domain_type=unknown; пустой транскрипт → domain_type=unknown; brand_safety_score клиппируется до 100</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-PASSPORT-6" type="success">
+          <description>build_passport и passport_to_markdown: сборка паспорта и экспорт в .md</description>
+          <commands>
+            <command>pytest tests/passport_builder/test_passport_builder.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-PASSPORT][BUILDER][DONE]</marker>
+            <assert>build_passport создаёт Passport с frontmatter и timeline; пустая таймлайна → пустой список; passport_to_markdown содержит video_id, domain_type, ECOM_ITEM, AD_SLOT; YAML escaping корректно обрабатывает кавычки/табуляцию/переносы строк</assert>
           </evidence>
         </Scenario>
       </Scenarios>
@@ -408,11 +448,76 @@
             <assert>Статус 404 для несуществующего job_id</assert>
           </evidence>
         </Scenario>
+        <Scenario id="S-M-API-4" type="success">
+          <description>GET /search и POST /search/reindex endpoints</description>
+          <commands>
+            <command>pytest tests/api/test_routes_search.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
+            <assert>GET /search без q → 422; GET /search с q → 200; POST /search/reindex → 200 с status=ok и indexed count</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-API-5" type="success">
+          <description>POST /mix и GET /mix/{id} endpoints</description>
+          <commands>
+            <command>pytest tests/api/test_routes_mix.py -v</command>
+          </commands>
+          <evidence>
+            <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
+            <assert>POST /mix с query → 200 с mix_id; GET /mix/nonexistent → 404; GET /mix/nonexistent/markdown → 404</assert>
+          </evidence>
+        </Scenario>
       </Scenarios>
       <RequiredMarkers>
         <marker>[M-API][*][*]</marker>
       </RequiredMarkers>
     </V-M-API>
+
+    <V-M-MODERATOR module-ref="M-MODERATOR" priority="medium">
+      <description>LLM-as-Judge модерация: парсинг ответа, fallback при ошибке LLM, интеграция в паспорт</description>
+      <Scenarios>
+        <Scenario id="S-M-MODERATOR-1" type="unit">
+          <description>Распознавание ответа LLM: полный набор полей</description>
+          <commands>
+            <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_full"</command>
+          </commands>
+          <evidence>
+            <assert>age_rating, verdict, flags, brand_safety_score корректно извлекаются из JSON</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-MODERATOR-2" type="error">
+          <description>Обработка некорректных значений: age_rating/verdict fallback на default</description>
+          <commands>
+            <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_invalid_values"</command>
+          </commands>
+          <evidence>
+            <assert>Невалидные значения сбрасываются в 0+/approved/low</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-MODERATOR-3" type="edge">
+          <description>Пустой ответ LLM: пустой отчёт без флагов</description>
+          <commands>
+            <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_empty"</command>
+          </commands>
+          <evidence>
+            <assert>age_rating=0+, verdict=approved, flags=[]</assert>
+          </evidence>
+        </Scenario>
+        <Scenario id="S-M-MODERATOR-4" type="edge">
+          <description>Флаг без таймстампа: timestamp_sec=None не вызывает ошибку</description>
+          <commands>
+            <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_flag_without_timestamp"</command>
+          </commands>
+          <evidence>
+            <assert>Флаг создаётся с timestamp_sec=None</assert>
+          </evidence>
+        </Scenario>
+      </Scenarios>
+      <RequiredMarkers>
+        <marker>[M-MODERATOR][*][*]</marker>
+      </RequiredMarkers>
+    </V-M-MODERATOR>
   </Entries>
 
   <Gates>

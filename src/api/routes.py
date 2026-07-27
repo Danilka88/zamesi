@@ -18,6 +18,8 @@ from src.core.schemas import (
 )
 from src.core.store import MemoryStore
 
+# START_BLOCK: M-API/ROUTES/ALL
+
 router = APIRouter()
 
 _jobs: MemoryStore[JobResult] = MemoryStore()
@@ -84,3 +86,5 @@ async def get_markdown(job_id: str):
         raise HTTPException(status_code=404, detail="Result not ready")
     md = passport_to_markdown(job.passport)
     return PlainTextResponse(md, media_type="text/markdown")
+
+# END_BLOCK: M-API/ROUTES/ALL

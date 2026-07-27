@@ -2,23 +2,39 @@ import json
 import time
 
 from src.core.logging_config import get_logger
-from src.core.schemas import ClipCandidate, SceneAnalysisResult, TimelineSegment
+from src.core.schemas import CelebrityVoice, ClipCandidate, MusicMatch, SceneAnalysisResult, TimelineSegment
 from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_vision_segment
 from src.vision_scanner.ocr_buffer import OCRBuffer
 
 
 # START_BLOCK: M-SEMANTIC/SCENE/ANALYZE_SCENES
+def _fmt_music(matches: list[MusicMatch] | None) -> str:
+    if not matches:
+        return "(нет)"
+    parts = [f"{m.artist} — {m.track_name} (conf: {m.confidence})" for m in matches]
+    return "; ".join(parts)
+
+
+def _fmt_celebrity(voice: CelebrityVoice | None) -> str:
+    if not voice:
+        return "(нет)"
+    return f"{voice.name} ({voice.profession}, conf: {voice.confidence})"
+
+
 async def analyze_scenes(
     timeline: list[TimelineSegment],
     genre: str,
     vision_blocked: bool,
     ocr_buffer: OCRBuffer,
     iframe_map: dict[float, str],
+    music_matches: list[MusicMatch] | None = None,
+    celebrity_voice: CelebrityVoice | None = None,
     log=None,
 ) -> tuple[list[SceneAnalysisResult], int]:
     log = log or get_logger()
     results = []
     vlm_calls = 0
+    music_matches = music_matches or []
 
     for seg in timeline:
         start_time = time.monotonic()
@@ -30,6 +46,8 @@ async def analyze_scenes(
                 genre=genre,
                 asr_text=seg.text,
                 ocr_text=ocr_text,
+                music_context=_fmt_music(music_matches),
+                celebrity_context=_fmt_celebrity(celebrity_voice),
                 log=log,
             )
             parsed = json.loads(raw_json)

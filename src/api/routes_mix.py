@@ -15,7 +15,7 @@ router = APIRouter(prefix="/mix", tags=["mix"])
 _mixes: MemoryStore[Mix] = MemoryStore()
 
 
-# START_BLOCK: M-MIXER/ROUTES/CREATE_MIX
+# START_BLOCK: M-API/ROUTES_MIX/CREATE_MIX
 @router.post("/")
 async def create_mix(request: MixRequest) -> dict:
     mix_id = str(uuid.uuid4())[:8]
@@ -23,7 +23,7 @@ async def create_mix(request: MixRequest) -> dict:
     log.info("[M-MIXER][ROUTES][MIX_CREATED]", query=request.query, mix_id=mix_id)
     asyncio.create_task(_run_mix(mix_id, request, log))
     return {"mix_id": mix_id}
-# END_BLOCK: M-MIXER/ROUTES/CREATE_MIX
+# END_BLOCK: M-API/ROUTES_MIX/CREATE_MIX
 
 
 @router.get("/{mix_id}")
@@ -43,7 +43,7 @@ async def get_mix_markdown(mix_id: str) -> PlainTextResponse:
     return PlainTextResponse(md, media_type="text/markdown")
 
 
-# START_BLOCK: M-MIXER/ROUTES/RUN
+# START_BLOCK: M-API/ROUTES_MIX/RUN
 async def _run_mix(mix_id: str, request: MixRequest, log) -> None:
     try:
         log.info("[M-MIXER][ROUTES][RUN_START]", query=request.query)
@@ -66,4 +66,4 @@ async def _run_mix(mix_id: str, request: MixRequest, log) -> None:
         log.info("[M-MIXER][ROUTES][MIX_DONE]", mix_id=mix_id, stages=len(mix.stages))
     except Exception as e:
         log.error("[M-MIXER][ROUTES][MIX_FAILED]", error=str(e))
-# END_BLOCK: M-MIXER/ROUTES/RUN
+# END_BLOCK: M-API/ROUTES_MIX/RUN

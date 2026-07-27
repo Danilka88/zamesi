@@ -4,6 +4,7 @@ from typing import Generic, TypeVar
 T = TypeVar("T")
 
 
+# START_BLOCK: M-CORE/STORE/CLASS
 class MemoryStore(Generic[T]):
     def __init__(self, ttl_sec: int = 3600):
         self._data: dict[str, T] = {}
@@ -36,3 +37,4 @@ class MemoryStore(Generic[T]):
 
     def __setitem__(self, key: str, value: T) -> None:
         self.set(key, value)
+# END_BLOCK: M-CORE/STORE/CLASS

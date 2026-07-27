@@ -2,8 +2,15 @@ from pathlib import Path
 
 from src.config import config
 from src.core.logging_config import get_logger
-from src.core.schemas import Passport, SceneAnalysisResult, TimelineSegment
+from src.core.schemas import (
+    CelebrityVoice,
+    MusicMatch,
+    Passport,
+    SceneAnalysisResult,
+    TimelineSegment,
+)
 from src.core.time_utils import fmt_sec
+from src.moderator.moderator import assess_moderation
 from src.passport_builder.frontmatter_generator import build_frontmatter
 from src.passport_builder.validator import validate
 
@@ -28,6 +35,12 @@ seo_tags: {seo_tags}
 trending_cluster: "{trending_cluster}"
 auto_playlists: {auto_playlists}
 ad_targeting_keywords: {ad_targeting_keywords}
+moderation:
+  age_rating: "{moderation_age_rating}"
+  verdict: {moderation_verdict}
+  categories_flagged: {moderation_categories}
+  flags: {moderation_flags_count}
+  summary: "{moderation_summary}"
 ---
 
 # Таймлайн и монетизация
@@ -57,6 +70,22 @@ def _scene_to_md(i: int, scene: SceneAnalysisResult, seg: TimelineSegment | None
             lines.append(f"* **[AD_SLOT]** — Таргетинг: \"{m.search_query or ''}\"")
             if m.reason:
                 lines.append(f"  * Контекст: {m.reason}")
+        elif m.type == "music_track":
+            lines.append(f"* **[MUSIC_TRACK]** — {m.search_query or ''}")
+            if m.reason:
+                lines.append(f"  * Контекст: {m.reason}")
+        elif m.type == "artist_merch":
+            lines.append(f"* **[ARTIST_MERCH]** — {m.search_query or ''}")
+            if m.reason:
+                lines.append(f"  * Контекст: {m.reason}")
+        elif m.type == "event_ticket":
+            lines.append(f"* **[EVENT_TICKET]** — {m.search_query or ''}")
+            if m.reason:
+                lines.append(f"  * Контекст: {m.reason}")
+        elif m.type == "celebrity_appearance":
+            lines.append(f"* **[CELEBRITY_APPEARANCE]** — {m.search_query or ''}")
+            if m.reason:
+                lines.append(f"  * Контекст: {m.reason}")
 
     if scene.clip_candidate:
         t1, t2 = scene.clip_candidate.time_range_start, scene.clip_candidate.time_range_end
@@ -77,11 +106,30 @@ async def build_passport(
     timeline_segments: list[TimelineSegment],
     scene_results: list[SceneAnalysisResult],
     log=None,
+    music_matches: list[MusicMatch] | None = None,
+    celebrity_voice: CelebrityVoice | None = None,
+    genre: str = "unknown",
+    ocr_text: str = "",
 ) -> Passport:
     log = log or get_logger()
     full_transcript = "\n".join(s.text for s in timeline_segments if s.text)
 
     frontmatter = await build_frontmatter(video_id, full_transcript, log=log)
+
+    scene_summaries = "\n".join(
+        f"[{i}] {s.scene_summary}" for i, s in enumerate(scene_results)
+    )
+    moderation = await assess_moderation(
+        full_transcript=full_transcript,
+        scene_summaries=scene_summaries,
+        genre=genre,
+        ocr_text=ocr_text,
+        music_matches=music_matches,
+        celebrity_voice=celebrity_voice,
+        log=log,
+    )
+    frontmatter.moderation = moderation
+    frontmatter.brand_safety_score = moderation.brand_safety_score
 
     passport = Passport(
         frontmatter=frontmatter,
@@ -113,6 +161,7 @@ def passport_to_markdown(passport: Passport) -> str:
         for i, scene in enumerate(passport.timeline)
     )
 
+    mod = passport.frontmatter.moderation
     return _MD_TEMPLATE.format(
         video_id=f"video_id: \"{passport.frontmatter.video_id}\"",
         domain_type=passport.frontmatter.domain_type,
@@ -123,6 +172,11 @@ def passport_to_markdown(passport: Passport) -> str:
         trending_cluster=passport.frontmatter.trending_cluster,
         auto_playlists=passport.frontmatter.auto_playlists,
         ad_targeting_keywords=passport.frontmatter.ad_targeting_keywords,
+        moderation_age_rating=mod.age_rating if mod else "0+",
+        moderation_verdict=mod.verdict if mod else "approved",
+        moderation_categories=mod.categories_flagged if mod else [],
+        moderation_flags_count=len(mod.flags) if mod else 0,
+        moderation_summary=_escape_yaml_value(mod.summary) if mod else "",
         timeline_md=timeline_md,
     )
 # END_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD

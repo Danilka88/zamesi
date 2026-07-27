@@ -10,7 +10,14 @@ from src.core.timeout_manager import timeout_manager
 
 
 # START_BLOCK: M-SEMANTIC/QWEN/ANALYZE_TEXT
-async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=None) -> str:
+async def analyze_text_segment(
+    genre: str,
+    asr_text: str,
+    ocr_text: str,
+    music_context: str = "(нет)",
+    celebrity_context: str = "(нет)",
+    log=None,
+) -> str:
     log = log or get_logger()
     from src.semantic_analyzer.prompt_templates import PASS1_TEXT_SYSTEM, PASS1_TEXT_USER
 
@@ -18,6 +25,8 @@ async def analyze_text_segment(genre: str, asr_text: str, ocr_text: str, log=Non
         genre=genre,
         asr_text=asr_text[:1500],
         ocr_text=ocr_text[:500] or "(нет текста на экране)",
+        music_context=music_context[:300],
+        celebrity_context=celebrity_context[:300],
     )
     full_prompt = f"{PASS1_TEXT_SYSTEM}\n\n{user_prompt}"
 

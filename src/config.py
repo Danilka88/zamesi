@@ -5,6 +5,7 @@ import yaml
 from src.core.exceptions import ConfigError
 
 
+# START_BLOCK: M-CORE/CONFIG/CLASS
 class Config:
     _instance = None
     _loaded: bool = False
@@ -141,6 +142,26 @@ class Config:
         return list(self._get("fallback_chain", default=["retry_same", "shorten_prompt", "skip_vision"]))
 
     @property
+    def fingerprint_enabled(self) -> bool:
+        return bool(self._get("fingerprint", "enabled", default=True))
+
+    @property
+    def fingerprint_min_confidence(self) -> float:
+        return float(self._get("fingerprint", "min_confidence", default=0.7))
+
+    @property
+    def fingerprint_db_path(self) -> str:
+        return self._get("fingerprint", "db_path", default="./data/fingerprint_db.json")
+
+    @property
+    def celebrity_enabled(self) -> bool:
+        return bool(self._get("celebrity_recognition", "enabled", default=True))
+
+    @property
+    def celebrity_min_confidence(self) -> float:
+        return float(self._get("celebrity_recognition", "min_confidence", default=0.6))
+
+    @property
     def search_embedding_model(self) -> str:
         return self._get("search", "embedding_model", default="qwen3-embedding:0.6b")
 
@@ -170,3 +191,4 @@ class Config:
 
 
 config = Config()
+# END_BLOCK: M-CONFIG/CLASS

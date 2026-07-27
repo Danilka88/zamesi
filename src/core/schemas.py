@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+# START_BLOCK: M-CORE/SCHEMAS/ALL
 
 class VideoGenre(str, Enum):
     how_to = "how_to"
@@ -52,10 +53,39 @@ class OCRResult(BaseModel):
 
 
 class MonetizationItem(BaseModel):
-    type: Literal["ad_slot", "ecom_item", "clip_candidate"]
+    type: Literal[
+        "ad_slot", "ecom_item", "clip_candidate",
+        "music_track", "artist_merch", "event_ticket", "celebrity_appearance",
+    ]
     search_query: str | None = None
     reason: str | None = None
     confidence: float | None = None
+
+
+class MusicMatch(BaseModel):
+    track_name: str
+    artist: str
+    confidence: float = 0.0
+    genre: str = ""
+    album: str = ""
+    year: int | None = None
+
+
+class CelebrityVoice(BaseModel):
+    name: str
+    profession: str = ""
+    confidence: float = 0.0
+
+
+class TrackMetadata(BaseModel):
+    artist: str
+    track_name: str
+    genre: str = ""
+    album: str = ""
+    year: int | None = None
+    afisha_urls: list[str] = []
+    merch_urls: list[str] = []
+    events: list[dict] = []
 
 
 class ClipCandidate(BaseModel):
@@ -63,6 +93,22 @@ class ClipCandidate(BaseModel):
     time_range_start: float
     time_range_end: float
     virality_potential: Literal["low", "medium", "high"] = "medium"
+
+
+class ModerationFlag(BaseModel):
+    category: str
+    severity: Literal["low", "medium", "high"] = "low"
+    timestamp_sec: float | None = None
+    evidence: str | None = None
+
+
+class ModerationReport(BaseModel):
+    age_rating: Literal["0+", "6+", "12+", "16+", "18+"] = "0+"
+    verdict: Literal["approved", "flagged", "rejected"] = "approved"
+    categories_flagged: list[str] = []
+    flags: list[ModerationFlag] = []
+    brand_safety_score: int = Field(default=100, ge=0, le=100)
+    summary: str = ""
 
 
 class SceneAnalysisResult(BaseModel):
@@ -90,6 +136,7 @@ class PassportFrontmatter(BaseModel):
     trending_cluster: str = ""
     auto_playlists: list[dict] = []
     ad_targeting_keywords: list[str] = []
+    moderation: ModerationReport | None = None
 
 
 class Passport(BaseModel):
@@ -107,9 +154,15 @@ class JobMetrics(BaseModel):
     ad_slots: int = 0
     ecom_items: int = 0
     clip_candidates: int = 0
+    music_tracks: int = 0
+    event_tickets: int = 0
+    celebrity_hits: int = 0
+    fingerprint_matches: int = 0
     json_errors: int = 0
     fallbacks_used: int = 0
     timeouts_occurred: int = 0
+    moderation_verdict: str = ""
+    moderation_flags_count: int = 0
 
 
 class JobResult(BaseModel):
@@ -185,3 +238,5 @@ class Mix(BaseModel):
     query: str = ""
     stages: list[MixStage] = []
     total_duration_sec: float = 0.0
+
+# END_BLOCK: M-CORE/SCHEMAS/ALL

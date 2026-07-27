@@ -1,5 +1,6 @@
 from prometheus_client import Counter, Gauge, Histogram
 
+# START_BLOCK: M-API/METRICS/ALL
 processing_duration_seconds = Histogram(
     "pipeline_processing_duration_seconds",
     "Time to process a single video",
@@ -26,3 +27,4 @@ jobs_total = Counter(
     "Total jobs submitted",
     ["status"],
 )
+# END_BLOCK: M-API/METRICS/ALL

@@ -1,3 +1,4 @@
+# START_BLOCK: M-CORE/EXCEPTIONS/ALL
 class PipelineError(Exception):
     """Base exception for pipeline errors."""
 
@@ -36,3 +37,4 @@ class ValidationError(PipelineError):
 
 class ConfigError(PipelineError):
     """Configuration loading failed."""
+# END_BLOCK: M-CORE/EXCEPTIONS/ALL

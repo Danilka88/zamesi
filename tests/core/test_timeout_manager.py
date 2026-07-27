@@ -5,7 +5,8 @@ from src.core.exceptions import (
     RetryExhaustedError,
     TimeoutError,
 )
-from src.core.timeout_manager import CircuitBreaker, CircuitState, TimeoutManager
+from src.core.circuit_breaker import CircuitBreaker, CircuitState
+from src.core.timeout_manager import TimeoutManager
 
 
 @pytest.mark.asyncio

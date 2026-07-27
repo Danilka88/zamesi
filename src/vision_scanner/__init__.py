@@ -4,3 +4,5 @@
 # SCOPE: detect_genre, is_vision_blocked, classify, process_frames, OCRBuffer. OCRResult, VideoGenre.
 # DEPENDS: M-CORE, M-AUDIO
 # LINKS: docs/knowledge-graph.xml | docs/development-plan.xml | docs/verification-plan.xml
+# START_BLOCK: M-VISION/INIT
+# END_BLOCK: M-VISION/INIT

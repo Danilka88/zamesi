@@ -35,7 +35,8 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 
 ### @src
 - `src/core/schemas.py` — All Pydantic contracts (JobStatus, TimelineSegment, Passport, etc.)
-- `src/core/timeout_manager.py` — Timeout, retry, circuit breaker, fallback chain
+- `src/core/circuit_breaker.py` — CircuitBreaker (3 состояния: closed/open/half-open)
+- `src/core/timeout_manager.py` — Timeout, retry, fallback chain
 - `src/core/exceptions.py` — 13 custom exception types
 - `src/core/logging_config.py` — structlog config with correlation_id
 - `src/config.py` — YAML config loader
@@ -43,6 +44,7 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/audio_engine/whisper_asr.py` — Whisper.cpp ASR
 - `src/audio_engine/diarization_speechbrain.py` — Speaker diarization (SpeechBrain ECAPA)
 - `src/audio_engine/timeline_merger.py` — ASR + diarization merge
+- `src/audio_engine/audio_fingerprinter.py` — Music fingerprinting (librosa) + celebrity voice recognition (ECAPA embeddings)
 - `src/vision_scanner/rapid_ocr.py` — OCR on I-frames
 - `src/vision_scanner/domain_router.py` — Genre classification, VLM gate
 - `src/vision_scanner/ocr_buffer.py` — OCR dedup buffer ±5s

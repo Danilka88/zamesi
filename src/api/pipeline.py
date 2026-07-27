@@ -14,6 +14,7 @@ from src.core.logging_config import get_logger
 from src.core.schemas import JobMetrics, JobResult, JobStatus
 from src.core.store import MemoryStore
 
+# START_BLOCK: M-API/PIPELINE/ALL
 
 def _set_job(jobs: MemoryStore[JobResult], job_id: str, **kwargs):
     try:
@@ -57,9 +58,18 @@ async def run_pipeline(
         log.info("[M-API][PIPELINE][START]")
 
         audio_path = await extract_audio(video_path, log=log)
+
+        # Audio fingerprinting (music + celebrity) — runs in parallel with ASR
+        from src.audio_engine.audio_fingerprinter import analyze_audio_for_monetization
+
+        fp_task = asyncio.create_task(analyze_audio_for_monetization(audio_path, log=log))
+
         asr_segments = await transcribe(audio_path, log=log)
         speaker_segments = await diarize(audio_path, log=log)
         timeline = merge(asr_segments, speaker_segments, log=log)
+
+        music_matches, celebrity_voice = await fp_task
+        fingerprint_count = len(music_matches) + (1 if celebrity_voice else 0)
 
         timestamps = [(s.start_sec + s.end_sec) / 2 for s in timeline]
         frames = await extract_iframes(video_path, timestamps, log=log)
@@ -81,14 +91,22 @@ async def run_pipeline(
             vision_blocked=is_vision_blocked(genre),
             ocr_buffer=ocr_buffer,
             iframe_map=iframe_map,
+            music_matches=music_matches,
+            celebrity_voice=celebrity_voice,
             log=log,
         )
+
+        ocr_text = " ".join(r.text for r in ocr_results) if ocr_results else ""
 
         passport = await build_passport(
             video_id=Path(video_path).stem,
             timeline_segments=timeline,
             scene_results=scene_results,
             log=log,
+            music_matches=music_matches,
+            celebrity_voice=celebrity_voice,
+            genre=genre.value,
+            ocr_text=ocr_text,
         )
         save_passport_to_disk(passport, log=log)
 
@@ -96,6 +114,9 @@ async def run_pipeline(
         ad_count = sum(1 for s in scene_results if any(m.type == "ad_slot" for m in s.monetization))
         ecom_count = sum(1 for s in scene_results for m in s.monetization if m.type == "ecom_item")
         clip_count = sum(1 for s in scene_results if s.clip_candidate is not None)
+        music_count = sum(1 for s in scene_results for m in s.monetization if m.type == "music_track")
+        event_count = sum(1 for s in scene_results for m in s.monetization if m.type == "event_ticket")
+        celeb_count = sum(1 for s in scene_results for m in s.monetization if m.type == "celebrity_appearance")
         fallbacks = sum(1 for s in scene_results if s.fallback_used is not None)
 
         metrics = JobMetrics(
@@ -107,7 +128,13 @@ async def run_pipeline(
             ad_slots=ad_count,
             ecom_items=ecom_count,
             clip_candidates=clip_count,
+            music_tracks=music_count,
+            event_tickets=event_count,
+            celebrity_hits=celeb_count,
+            fingerprint_matches=fingerprint_count,
             fallbacks_used=fallbacks,
+            moderation_verdict=passport.frontmatter.moderation.verdict if passport.frontmatter.moderation else "",
+            moderation_flags_count=len(passport.frontmatter.moderation.flags) if passport.frontmatter.moderation else 0,
         )
 
         _set_job(jobs, job_id, status=JobStatus.done, passport=passport, metrics=metrics)
@@ -140,3 +167,5 @@ async def run_pipeline(
         if str(temp_dir).startswith("/tmp/rutube-jobs/") and temp_dir.exists():
             shutil.rmtree(temp_dir, ignore_errors=True)
             log.info("[M-API][ROUTES][TEMP_CLEANED]", path=str(temp_dir))
+
+# END_BLOCK: M-API/PIPELINE/ALL

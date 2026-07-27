@@ -1,5 +1,6 @@
 from prometheus_client import Counter
 
+# START_BLOCK: M-CORE/METRICS/COUNTERS
 json_errors_total = Counter(
     "pipeline_json_errors_total",
     "JSON parse errors from LLM",
@@ -16,3 +17,4 @@ fallbacks_total = Counter(
     "Total fallback activations",
     ["strategy"],
 )
+# END_BLOCK: M-CORE/METRICS/COUNTERS

@@ -180,7 +180,6 @@
       <Scope>ffmpeg subprocess (I-frame), RapidOCR v4 (ONNX), LLM-классификация жанра (qwen3.5:0.8b) с keyword fallback.</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
-        <Dependency ref="M-AUDIO"/>
       </Depends>
       <Source path="src/vision_scanner/"/>
       <Test path="tests/vision_scanner/"/>
@@ -192,7 +191,6 @@
       <Scope>gemma4:e4b и qwen3.5:9b Vision (Ollama HTTP через TimeoutManager), Gatekeeper логика (≤6% VLM), LLM-ошибка → fallback_used=llm_failed (без keyword fallback).</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
-        <Dependency ref="M-AUDIO"/>
         <Dependency ref="M-VISION"/>
       </Depends>
       <Source path="src/semantic_analyzer/"/>
@@ -206,19 +204,30 @@
       <Depends>
         <Dependency ref="M-CORE"/>
         <Dependency ref="M-SEMANTIC"/>
-        <Dependency ref="M-AUDIO"/>
+        <Dependency ref="M-MODERATOR"/>
+        <Dependency ref="M-SEARCH"/>
       </Depends>
       <Source path="src/passport_builder/"/>
       <Test path="tests/passport_builder/"/>
       <Verification ref="V-M-PASSPORT"/>
     </M-PASSPORT>
 
+    <M-MODERATOR NAME="Moderation Judge" TYPE="PROCESSOR" status="built">
+      <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений. Один LLM-вызов при сборке паспорта.</Purpose>
+      <Scope>assess_moderation. gemma4:e4b as judge for age rating, violations, verdict.</Scope>
+      <Depends>
+        <Dependency ref="M-CORE"/>
+      </Depends>
+      <Source path="src/moderator/"/>
+      <Test path="tests/moderator/"/>
+      <Verification ref="V-M-MODERATOR"/>
+    </M-MODERATOR>
+
     <M-SEARCH NAME="Semantic Search" TYPE="PROCESSOR" status="built">
       <Purpose>Embedding-индексация сцен и семантический поиск через ChromaDB</Purpose>
       <Scope>index_passport (Ollama embedding → ChromaDB), search_scenes (embedding query → top-K), reindex_all.</Scope>
       <Depends>
         <Dependency ref="M-CORE"/>
-        <Dependency ref="M-PASSPORT"/>
       </Depends>
       <Source path="src/search/"/>
       <Test path="tests/search/"/>
@@ -246,6 +255,8 @@
         <Dependency ref="M-VISION"/>
         <Dependency ref="M-SEMANTIC"/>
         <Dependency ref="M-PASSPORT"/>
+        <Dependency ref="M-MIXER"/>
+        <Dependency ref="M-SEARCH"/>
       </Depends>
       <Source path="src/api/"/>
       <Test path="tests/api/"/>

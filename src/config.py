@@ -41,28 +41,12 @@ class Config:
         return val if val is not None else default
 
     @property
-    def ollama_endpoint(self) -> str:
-        return self._get("models", "ollama", "endpoint", default="http://localhost:11434")
-
-    @property
-    def ollama_text_model(self) -> str:
-        return self._get("models", "ollama", "text_model", default="gemma4:e4b")
-
-    @property
-    def ollama_vision_model(self) -> str:
-        return self._get("models", "ollama", "vision_model", default="qwen3.5:9b")
-
-    @property
     def ollama_temperature(self) -> float:
         return float(self._get("models", "ollama", "default_params", "temperature", default=0.1))
 
     @property
     def ollama_max_tokens(self) -> int:
         return int(self._get("models", "ollama", "default_params", "max_tokens", default=2048))
-
-    @property
-    def classifier_model(self) -> str:
-        return self._get("models", "ollama", "classifier_model", default="qwen3.5:0.8b")
 
     @property
     def classifier_max_tokens(self) -> int:
@@ -162,14 +146,6 @@ class Config:
         return float(self._get("celebrity_recognition", "min_confidence", default=0.6))
 
     @property
-    def search_embedding_model(self) -> str:
-        return self._get("search", "embedding_model", default="qwen3-embedding:0.6b")
-
-    @property
-    def search_top_k(self) -> int:
-        return int(self._get("search", "top_k", default=20))
-
-    @property
     def search_chroma_path(self) -> str:
         return self._get("search", "chroma_path", default="./data/chroma")
 
@@ -182,14 +158,6 @@ class Config:
         return self._get("passport", "output_dir", default="./output")
 
     @property
-    def mixer_llm_model(self) -> str:
-        return self._get("mixer", "llm_model", default="gemma4:e4b")
-
-    @property
-    def mixer_max_videos_per_stage(self) -> int:
-        return int(self._get("mixer", "max_videos_per_stage", default=3))
-
-    @property
     def providers(self) -> dict:
         p = self._get("models", "providers", default=None)
         if p is not None:
@@ -197,7 +165,7 @@ class Config:
         return {
             "ollama": {
                 "type": "ollama",
-                "endpoint": self.ollama_endpoint,
+                "endpoint": self._get("models", "ollama", "endpoint", default="http://localhost:11434"),
             },
         }
 
@@ -207,14 +175,20 @@ class Config:
         if r is not None:
             return r
         return {
-            "text_model":       {"provider": "ollama", "model": self.ollama_text_model},
-            "vision_model":     {"provider": "ollama", "model": self.ollama_vision_model},
-            "classifier_model": {"provider": "ollama", "model": self.classifier_model},
-            "mixer_model":      {"provider": "ollama", "model": self.mixer_llm_model},
-            "moderation_model": {"provider": "ollama", "model": self.ollama_text_model},
-            "embedding_model":  {"provider": "ollama", "model": self.search_embedding_model},
+            "text_model":       {"provider": "ollama", "model": self._get(
+                "models", "ollama", "text_model", default="gemma4:e4b")},
+            "vision_model":     {"provider": "ollama", "model": self._get(
+                "models", "ollama", "vision_model", default="qwen3.5:9b")},
+            "classifier_model": {"provider": "ollama", "model": self._get(
+                "models", "ollama", "classifier_model", default="qwen3.5:0.8b")},
+            "mixer_model":      {"provider": "ollama", "model": self._get(
+                "models", "mixer", "llm_model", default="gemma4:e4b")},
+            "moderation_model": {"provider": "ollama", "model": self._get(
+                "models", "ollama", "text_model", default="gemma4:e4b")},
+            "embedding_model":  {"provider": "ollama", "model": self._get(
+                "models", "search", "embedding_model", default="qwen3-embedding:0.6b")},
         }
 
 
 config = Config()
-# END_BLOCK: M-CONFIG/CLASS
+# END_BLOCK: M-CORE/CONFIG/CLASS

@@ -2,7 +2,7 @@
 # MODULE_CONTRACT: M-SEARCH
 # PURPOSE: Embedding-индексация сцен в ChromaDB и семантический поиск
 # SCOPE: index_passport, search_scenes, reindex_all. ChromaDB, qwen3-embedding via Ollama.
-# DEPENDS: M-CORE, M-PASSPORT
+# DEPENDS: M-CORE
 # LINKS: docs/knowledge-graph.xml | docs/development-plan.xml | docs/verification-plan.xml
 # START_BLOCK: M-SEARCH/INIT
 from src.search.indexer import index_passport, reindex_all

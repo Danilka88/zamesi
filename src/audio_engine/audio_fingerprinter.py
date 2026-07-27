@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.config import config
+from src.core.config import config
 from src.core.logging_config import get_logger
 from src.core.schemas import CelebrityVoice, MusicMatch, TrackMetadata
 

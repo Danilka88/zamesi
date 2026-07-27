@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-SEARCH" module="M-SEARCH" priority="high">
+  <description>Embedding-индексация сцен и семантический поиск через ChromaDB</description>
+  <Scenarios>
+    <Scenario id="S-M-SEARCH-1" type="success">
+      <description>index_passport: пустой паспорт</description>
+      <commands>
+        <command>pytest tests/search/test_indexer.py -v -k "test_index_passport_empty"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEARCH][INDEXER][DONE]</marker>
+        <assert>Паспорт без timeline → 0 проиндексированных сцен</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEARCH-2" type="success">
+      <description>index_passport: индексация одной и нескольких сцен</description>
+      <commands>
+        <command>pytest tests/search/test_indexer.py -v -k "test_index_passport_single or test_index_passport_multiple"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEARCH][INDEXER][DONE]</marker>
+        <assert>1 сцена → 1 чанк; N сцен → N чанков; каждый чанк содержит корректные метаданные</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEARCH-3" type="success">
+      <description>embed_text: вызов Ollama embedding API</description>
+      <commands>
+        <command>pytest tests/search/test_indexer.py -v -k "test_embedding_call"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEARCH][INDEXER][EMBED_DONE]</marker>
+        <assert>embed_text возвращает список float; модель qwen3-embedding:0.6b; input передаётся корректно</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEARCH-4" type="success">
+      <description>search_scenes: пустой запрос, без результатов, с результатами</description>
+      <commands>
+        <command>pytest tests/search/test_searcher.py -v -k "test_search_empty or test_search_no_results or test_search_with_results"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEARCH][SEARCHER][RESULTS]</marker>
+        <assert>Пустой запрос → пустой список; нет совпадений → пустой список; 2 результата → список из 2 SceneSearchResult с корректными video_id и scene_index</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEARCH-5" type="success">
+      <description>search_scenes: фильтр по genre</description>
+      <commands>
+        <command>pytest tests/search/test_searcher.py -v -k "test_search_with_filter"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEARCH][SEARCHER][RESULTS]</marker>
+        <assert>Фильтр genre передаётся в ChromaDB where-параметр; возвращается пустой результат при фильтре без совпадений</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-SEARCH][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

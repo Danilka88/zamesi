@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-VISION" name="Vision Scanner" type="PROCESSOR" status="built">
+  <Purpose>OCR (RapidOCR v4), GenreClassifier (LLM-driven), DomainRouter (жанровая блокировка VLM)</Purpose>
+  <Source path="src/vision_scanner/"/>
+  <Test path="tests/vision_scanner/"/>
+  <Exports>
+    <function name="detect_genre">Классификация жанра через LLM (qwen3.5:0.8b) с keyword fallback</function>
+    <function name="is_vision_blocked">Проверка: блокировать ли VLM для данного жанра</function>
+    <function name="process_frames">RapidOCR v4: распознавание текста на I-frame</function>
+    <function name="classify">LLM-driven классификация жанра с keyword fallback</function>
+  </Exports>
+  <Classes>
+    <class name="OCRBuffer">Буфер OCR-результатов с окном ±5с для дедупликации</class>
+  </Classes>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-AUDIO" relation="receives-iframes-from"/>
+    <Link target="M-SEMANTIC" relation="feeds-ocr-into"/>
+  </CrossLinks>
+  <Verification ref="V-M-VISION"/>
+</module-graph>

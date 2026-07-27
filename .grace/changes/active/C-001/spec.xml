@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraceChangeSpec id="C-001" project="RUTUBE Video Analyzer" version="0.1.0">
+  <title>GRACE 3 → 4 Migration: docs/ → .grace/</title>
+  <status>approved</status>
+  <priority>high</priority>
+  <designContext>
+    <summary>Миграция существующих GRACE 3 артефактов из docs/ в .grace/ структуру GRACE 4. Конвертация XML-артефактов без изменения исходного кода.</summary>
+    <rationale>GRACE 4 предоставляет routed sub-docs, assertion gates, интегрированный change lifecycle и CLI-валидацию. Текущие docs/ артефакты содержат всю необходимую информацию, но не используют возможности GRACE 4.</rationale>
+    <scope>Исключительно документы: никаких изменений кода (src/), тестов (tests/), конфигурации или зависимостей.</scope>
+    <modules>
+      <module id="M-CORE" action="reroute"/>
+      <module id="M-AUDIO" action="reroute"/>
+      <module id="M-VISION" action="reroute"/>
+      <module id="M-SEMANTIC" action="reroute"/>
+      <module id="M-PASSPORT" action="reroute"/>
+      <module id="M-SEARCH" action="reroute"/>
+      <module id="M-MIXER" action="reroute"/>
+      <module id="M-API" action="reroute"/>
+      <module id="M-MODERATOR" action="reroute"/>
+    </modules>
+  </designContext>
+  <assertions>
+    <assertion id="A-C001-01" type="integrity">
+      <description>Все модули имеют корректные cross-links в графе</description>
+      <check>.grace/graph/index.xml содержит все 9 модулей с routed ссылками</check>
+    </assertion>
+    <assertion id="A-C001-02" type="integrity">
+      <description>Все verification entry имеют routed сценарии</description>
+      <check>.grace/verification/index.xml содержит все 9 V-M-* entry с routed ссылками</check>
+    </assertion>
+    <assertion id="A-C001-03" type="integrity">
+      <description>context артефакты скопированы без изменений</description>
+      <check>.grace/context/requirements.xml и technology.xml идентичны docs/ оригиналам</check>
+    </assertion>
+    <assertion id="A-C001-04" type="migration">
+      <description>Git-репозиторий не содержит изменений в src/ или tests/</description>
+      <check>git diff --stat показывает изменения только в .grace/ и docs/</check>
+    </assertion>
+  </assertions>
+</GraceChangeSpec>

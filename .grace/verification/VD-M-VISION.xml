@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-VISION" module="M-VISION" priority="high">
+  <description>Genre classification, DomainRouter, OCR, OCR-буфер</description>
+  <Scenarios>
+    <Scenario id="S-M-VISION-1" type="success">
+      <description>DomainRouter: keyword fallback для разных жанров</description>
+      <commands>
+        <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_keyword_fallback"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
+        <assert>Для подкастов/лекций domain_router возвращает соответствующий жанр</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-VISION-2" type="success">
+      <description>DomainRouter: is_vision_blocked для разных жанров</description>
+      <commands>
+        <command>pytest tests/vision_scanner/test_domain_router.py -v -k "test_is_vision_blocked"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
+        <assert>is_vision_blocked возвращает True для podcast/lecture, False для how_to</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-VISION-3" type="success">
+      <description>OCR-буфер: поиск текста в окне ±5с</description>
+      <commands>
+        <command>pytest tests/vision_scanner/test_ocr_buffer.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-VISION][OCR][DONE]</marker>
+        <assert>Текст в окне ±5с возвращается; вне окна — None; множественные результаты объединяются</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-VISION-4" type="success">
+      <description>Rapid OCR: распознавание текста на I-frames</description>
+      <commands>
+        <command>pytest tests/vision_scanner/test_rapid_ocr.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-VISION][OCR][DONE]</marker>
+        <assert>Успешное распознавание возвращает OCRResult с текстом; пустой вход → пустой список; отсутствующий файл → пропускается; низкая уверенность фильтруется; ошибка OCR не прерывает pipeline</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-VISION-5" type="success">
+      <description>Genre classifier: keyword fallback и LLM-классификация жанра</description>
+      <commands>
+        <command>pytest tests/vision_scanner/test_genre_classifier.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>
+        <assert>_keyword_fallback определяет podcast/how_to по ключевым словам; classify возвращает VideoGenre через LLM; ошибка LLM → fallback на _keyword_fallback; невалидный JSON → unknown</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-VISION][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

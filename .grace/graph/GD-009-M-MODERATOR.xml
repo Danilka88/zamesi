@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-MODERATOR" name="Moderation Judge" type="PROCESSOR" status="built">
+  <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений. Один LLM-вызов при сборке паспорта.</Purpose>
+  <Source path="src/moderator/"/>
+  <Test path="tests/moderator/"/>
+  <Exports>
+    <function name="assess_moderation">LLM-оценка модерации: транскрипт + сцены → ModerationReport</function>
+  </Exports>
+  <Prompts>
+    <prompt name="MODERATION_JUDGE_SYSTEM">Системный промпт: правила модерации, категории нарушений, JSON-схема</prompt>
+    <prompt name="MODERATION_JUDGE_USER">Пользовательский промпт: транскрипт, сцены, OCR, музыкa</prompt>
+  </Prompts>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-AUDIO" relation="uses-music-celebrity"/>
+    <Link target="M-SEMANTIC" relation="uses-scene-summaries"/>
+    <Link target="M-PASSPORT" relation="feeds-into"/>
+  </CrossLinks>
+  <Verification ref="V-M-MODERATOR"/>
+</module-graph>

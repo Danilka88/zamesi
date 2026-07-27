@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-PASSPORT" name="Passport Builder" type="GENERATOR" status="built">
+  <Purpose>Формирование YAML-frontmatter + Markdown-таймлайн с точками монетизации</Purpose>
+  <Source path="src/passport_builder/"/>
+  <Test path="tests/passport_builder/"/>
+  <Exports>
+    <function name="build_frontmatter">Генерация YAML-секции (метаданные, SEO) через LLM</function>
+    <function name="build_passport">Сборка Passport из scene_results + frontmatter</function>
+    <function name="passport_to_markdown">Преобразование Passport → .md файл</function>
+    <function name="validate">Валидация .md структуры (video_id, таймкоды, ecom search_query)</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-SEMANTIC" relation="receives-monetization-from"/>
+    <Link target="M-AUDIO" relation="receives-timeline-from"/>
+    <Link target="M-SEARCH" relation="feeds-passports-into"/>
+    <Link target="M-MODERATOR" relation="receives-moderation-from"/>
+  </CrossLinks>
+  <Verification ref="V-M-PASSPORT"/>
+</module-graph>

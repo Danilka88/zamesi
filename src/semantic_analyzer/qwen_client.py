@@ -1,7 +1,7 @@
 import base64
 import os
 
-from src.config import config
+from src.core.config import config
 from src.core.exceptions import JSONParseError
 from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger

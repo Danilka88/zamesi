@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraceChangePlan id="C-001" project="RUTUBE Video Analyzer" version="0.1.0">
+  <title>GRACE 3 → 4 Migration</title>
+  <status="active"/>
+  <phases>
+    <Phase-0 name="GRACE 4 Migration" status="done">
+      <description>Конвертация docs/ → .grace/ структуры</description>
+      <assertions>
+        <baseline>
+          <assert>docs/ директория содержит 6 XML артефактов (requirements, technology, knowledge-graph, development-plan, verification-plan, operational-packets)</assert>
+          <assert>.grace/ директория не существует</assert>
+        </baseline>
+        <target>
+          <assert>.grace/context/ содержит requirements.xml, technology.xml</assert>
+          <assert>.grace/graph/ содержит index.xml + 9 routed GD-*-M-*.xml sub-docs</assert>
+          <assert>.grace/verification/ содержит index.xml + 9 routed VD-M-*.xml sub-docs</assert>
+          <assert>.grace/changes/active/C-001/ содержит spec.xml и plan.xml</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C001-T1" status="done">
+          <description>Создать .grace/ директорию (context/, graph/, verification/, changes/active/C-001, changes/archive)</description>
+        </task>
+        <task id="C001-T2" status="done">
+          <description>Скопировать requirements.xml и technology.xml в .grace/context/</description>
+        </task>
+        <task id="C001-T3" status="done">
+          <description>Конвертировать knowledge-graph.xml → .grace/graph/index.xml + 9 routed sub-docs</description>
+        </task>
+        <task id="C001-T4" status="done">
+          <description>Конвертировать verification-plan.xml → .grace/verification/index.xml + 9 routed sub-docs</description>
+        </task>
+        <task id="C001-T5" status="done">
+          <description>Создать C-001 spec.xml (GraceChangeSpec) и plan.xml (GraceChangePlan)</description>
+        </task>
+        <task id="C001-T6" status="pending">
+          <description>CLI-валидация: grace lint --assertions current</description>
+        </task>
+        <task id="C001-T7" status="pending">
+          <description>Cleanup: решение по docs/ (keep/remove)</description>
+        </task>
+      </tasks>
+    </Phase-0>
+    <Phase-1 name="Core Contracts &amp; Config" status="built">
+      <description>Создание Pydantic-моделей, конфигурации, базовых исключений. Фундамент для всех модулей.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет определённых Pydantic-моделей для пайплайна</assert>
+        </baseline>
+        <target>
+          <assert>M-CORE экспортирует JobStatus, TimelineSegment, SceneAnalysisResult, Passport, AppConfig</assert>
+          <assert>TimeoutManager с circuit breaker + retry + fallback chain реализован</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase1-T1" status="done">
+          <description>Реализация core типов: JobStatus, TimelineSegment, SceneAnalysisResult, Passport, AppConfig. Pydantic v2 модели с валидацией. TimeoutManager с circuit breaker + retry + fallback chain.</description>
+          <source>src/core/schemas.py, src/core/exceptions.py, src/core/logging_config.py, src/core/timeout_manager.py, src/core/circuit_breaker.py, src/core/metrics.py, src/core/json_utils.py, src/config.py</source>
+        </task>
+      </tasks>
+    </Phase-1>
+    <Phase-2 name="Audio Engine" status="built">
+      <description>Извлечение аудио (ffmpeg subprocess), ASR (Whisper.cpp), диаризация (SpeechBrain ECAPA-TDNN + Silero VAD), сборка таймлайна.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля для обработки аудио</assert>
+        </baseline>
+        <target>
+          <assert>M-AUDIO экспортирует extract_audio, transcribe, diarize, merge_timeline</assert>
+          <assert>Timeline merger корректно присваивает спикера</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase2-T1" status="done">
+          <description>Модуль extract_audio: ffmpeg subprocess → WAV 16kHz mono + extract_iframes</description>
+          <source>src/audio_engine/pyav_reader.py</source>
+        </task>
+        <task id="Phase2-T2" status="done">
+          <description>Модуль transcribe: запуск whisper-cli large-v3, парсинг вывода, retry-логика</description>
+          <source>src/audio_engine/whisper_asr.py</source>
+        </task>
+        <task id="Phase2-T3" status="done">
+          <description>Модуль diarize: SpeechBrain ECAPA-TDNN + Silero VAD, маппинг спикеров на таймлайне</description>
+          <source>src/audio_engine/diarization_speechbrain.py</source>
+        </task>
+        <task id="Phase2-T4" status="done">
+          <description>Модуль build_timeline: слияние ASR + диаризация → List[TimelineSegment]</description>
+          <source>src/audio_engine/timeline_merger.py</source>
+        </task>
+      </tasks>
+    </Phase-2>
+    <Phase-3 name="Vision Scanner" status="built">
+      <description>I-frame extraction, OCR (RapidOCR v4), GenreClassifier + DomainRouter (LLM-driven жанровая блокировка VLM), OCR-дедупликация.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля для компьютерного зрения</assert>
+        </baseline>
+        <target>
+          <assert>M-VISION экспортирует detect_genre, is_vision_blocked, process_frames</assert>
+          <assert>OCR-буфер дедуплицирует результаты в окне ±5с</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase3-T1" status="done">
+          <description>Модуль extract_iframes: ffmpeg subprocess извлечение ключевых кадров по середине каждого сегмента</description>
+          <source>src/audio_engine/pyav_reader.py (extract_iframes)</source>
+        </task>
+        <task id="Phase3-T2" status="done">
+          <description>Модуль ocr_frame: RapidOCR v4 на I-frame, фильтр confidence ≥0.5, буферизация окон 5с</description>
+          <source>src/vision_scanner/rapid_ocr.py, src/vision_scanner/ocr_buffer.py</source>
+        </task>
+        <task id="Phase3-T3" status="done">
+          <description>Модуль genre_classifier + domain_router: LLM-классификация жанра через qwen3.5:0.8b с keyword fallback</description>
+          <source>src/vision_scanner/genre_classifier.py, src/vision_scanner/domain_router.py</source>
+        </task>
+      </tasks>
+    </Phase-3>
+    <Phase-4 name="Semantic Analyzer &amp; VLM Gatekeeper" status="built">
+      <description>SLM-анализ (gemma4:e4b), трёхуровневый Gatekeeper, VLM-анализ (qwen3.5:9b Vision), извлечение монетизационных точек.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля семантического анализа</assert>
+        </baseline>
+        <target>
+          <assert>M-SEMANTIC экспортирует analyze_scenes, analyze_text_segment, analyze_vision_segment, generate_frontmatter</assert>
+          <assert>VLM Gatekeeper вызывает VLM не более чем для 6% сегментов</assert>
+          <assert>При ошибке LLM → fallback_used=llm_failed (без rule-based генерации)</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase4-T1" status="done">
+          <description>Модуль analyze_text_segment: SLM-запрос к gemma4:e4b для текста сегмента (pass1)</description>
+          <source>src/semantic_analyzer/qwen_client.py</source>
+        </task>
+        <task id="Phase4-T2" status="done">
+          <description>Модуль analyze_scenes: итерация по всем сегментам, вызов pass1, VLM gate, опциональный pass2 vision</description>
+          <source>src/semantic_analyzer/scene_analyzer.py</source>
+        </task>
+        <task id="Phase4-T3" status="done">
+          <description>Модуль analyze_vision_segment: вызов qwen3.5:9b Vision с I-frame (base64), парсинг ответа</description>
+          <source>src/semantic_analyzer/qwen_client.py</source>
+        </task>
+      </tasks>
+    </Phase-4>
+    <Phase-5 name="Passport Builder" status="built">
+      <description>Генерация YAML-frontmatter (LLM), Markdown-таймлайн, запись .md паспорта, валидация.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля генерации паспортов</assert>
+        </baseline>
+        <target>
+          <assert>M-PASSPORT экспортирует build_frontmatter, build_passport, passport_to_markdown, validate</assert>
+          <assert>Валидатор проверяет video_id, таймкоды, ecom search_query</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase5-T1" status="done">
+          <description>Модуль build_frontmatter: LLM-генерация YAML-секции (метаданные, SEO, авто-плейлисты)</description>
+          <source>src/passport_builder/frontmatter_generator.py</source>
+        </task>
+        <task id="Phase5-T2" status="done">
+          <description>Модуль build_passport + passport_to_markdown: Markdown-форматирование таймлайна с AD_SLOT/ECOM_ITEM/CLIP_CANDIDATE</description>
+          <source>src/passport_builder/passport_builder.py</source>
+        </task>
+        <task id="Phase5-T3" status="done">
+          <description>Модуль validate: проверка .md структуры (YAML, таймкоды, обязательные поля). Опциональный strict mode с raise.</description>
+          <source>src/passport_builder/validator.py</source>
+        </task>
+      </tasks>
+    </Phase-5>
+    <Phase-7 name="Semantic Search / VideoRAG" status="built">
+      <description>Паспорт → сцены → embedding → ChromaDB. Поиск: запрос → embedding → top-K сцен.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля семантического поиска</assert>
+        </baseline>
+        <target>
+          <assert>M-SEARCH экспортирует index_passport, search_scenes, reindex_all</assert>
+          <assert>ChromaDB collection.query возвращает top-K с косинусной близостью</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase7-T1" status="done">
+          <description>Модуль indexer: index_passport (сцена → чанк → embedding → ChromaDB), reindex_all</description>
+          <source>src/search/indexer.py</source>
+        </task>
+        <task id="Phase7-T2" status="done">
+          <description>Модуль searcher: search_scenes (запрос → embedding → query ChromaDB → SearchResult[])</description>
+          <source>src/search/searcher.py</source>
+        </task>
+        <task id="Phase7-T3" status="done">
+          <description>Routes: GET /search, POST /search/reindex</description>
+          <source>src/api/routes_search.py</source>
+        </task>
+        <task id="Phase7-T4" status="done">
+          <description>Интеграция: index_passport вызывается после validate() в build_passport</description>
+          <source>src/passport_builder/passport_builder.py</source>
+        </task>
+      </tasks>
+    </Phase-7>
+    <Phase-8 name="Mixer (Замеси)" status="built">
+      <description>Запрос → LLM этапы → Semantic Search → LLM матчинг → Mix → Markdown.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет модуля создания видеоподборок</assert>
+        </baseline>
+        <target>
+          <assert>M-MIXER экспортирует plan_stages, compose_mix, mix_to_md</assert>
+          <assert>Mix содержит этапы с title, description, scenes[]</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase8-T1" status="done">
+          <description>Модуль stage_planner: LLM-разбиение запроса на 3-5 этапов</description>
+          <source>src/mixer/stage_planner.py</source>
+        </task>
+        <task id="Phase8-T2" status="done">
+          <description>Модуль mix_composer: search → LLM match → MixStage</description>
+          <source>src/mixer/mix_composer.py</source>
+        </task>
+        <task id="Phase8-T3" status="done">
+          <description>Модуль mix_to_md: Mix → Markdown (структурированный вывод)</description>
+          <source>src/mixer/mix_to_md.py</source>
+        </task>
+        <task id="Phase8-T4" status="done">
+          <description>Routes: POST /mix, GET /mix/{id}, GET /mix/{id}/markdown</description>
+          <source>src/api/routes_mix.py</source>
+        </task>
+      </tasks>
+    </Phase-8>
+    <Phase-6 name="API Layer &amp; Integration" status="built">
+      <description>FastAPI-endpoints, job queue, оркестрация пайплайна, Prometheus-метрики, интеграционные тесты.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет API-слоя</assert>
+        </baseline>
+        <target>
+          <assert>M-API экспортирует POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health, GET /metrics</assert>
+          <assert>Prometheus-метрики включают latency_histogram, vlm_calls_total, error rate</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase6-T1" status="done">
+          <description>FastAPI приложение: POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health</description>
+          <source>src/api/app.py, src/api/routes.py</source>
+        </task>
+        <task id="Phase6-T2" status="done">
+          <description>Job queue: фоновый запуск пайплайна (asyncio.create_task), хранение статуса in-memory, correlation_id</description>
+          <source>src/api/routes.py (_run_pipeline)</source>
+        </task>
+        <task id="Phase6-T3" status="done">
+          <description>Метрики: Prometheus counter/histogram (jobs, vlm_calls, scenes, processing duration)</description>
+          <source>src/api/metrics.py, src/core/metrics.py</source>
+        </task>
+        <task id="Phase6-T4" status="done">
+          <description>Интеграция всех модулей: эндпоинт POST /analyze запускает полный пайплайн (Audio→Vision→Semantic→Passport)</description>
+          <source>src/api/routes.py</source>
+        </task>
+      </tasks>
+    </Phase-6>
+  </phases>
+  <dataflows>
+    <flow id="DF-001" name="Audio-First Pipeline">
+      <steps>M-AUDIO.extract_audio → M-AUDIO.transcribe → M-AUDIO.diarize → M-AUDIO.merge_timeline</steps>
+    </flow>
+    <flow id="DF-002" name="VLM Gatekeeper Flow">
+      <steps>M-VISION.extract_iframes → M-VISION.ocr_frame → M-VISION.detect_genre → M-SEMANTIC.analyze_scenes</steps>
+    </flow>
+    <flow id="DF-003" name="Passport Generation Flow">
+      <steps>M-PASSPORT.build_frontmatter → M-PASSPORT.build_passport → M-PASSPORT.validate</steps>
+    </flow>
+    <flow id="DF-004" name="API Orchestration Flow">
+      <steps>M-API.POST /analyze → DF-001 → DF-002 → DF-003 → M-API.GET /analyze/{id}/markdown</steps>
+    </flow>
+    <flow id="DF-005" name="Search Flow">
+      <steps>M-PASSPORT.build_passport → M-SEARCH.index_passport → M-SEARCH.search_scenes</steps>
+    </flow>
+    <flow id="DF-006" name="Mix Flow">
+      <steps>M-MIXER.plan_stages → M-MIXER.search_scenes → M-MIXER.compose_mix → M-MIXER.mix_to_md</steps>
+    </flow>
+  </dataflows>
+</GraceChangePlan>

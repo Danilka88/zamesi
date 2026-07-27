@@ -9,7 +9,7 @@ from src.api.pipeline import _cleanup_expired_jobs
 from src.api.routes import _jobs, router
 from src.api.routes_mix import router as mix_router
 from src.api.routes_search import router as search_router
-from src.config import config
+from src.core.config import config
 from src.core.logging_config import setup_logging
 
 setup_logging()

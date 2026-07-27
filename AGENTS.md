@@ -25,13 +25,15 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 
 ## Project References
 
-### @docs
-- `docs/requirements.xml` — Use cases and NFR
-- `docs/technology.xml` — Technology stack
-- `docs/development-plan.xml` — Phases, modules, data flows
-- `docs/knowledge-graph.xml` — Module exports, types, cross-links
-- `docs/verification-plan.xml` — Test scenarios, gates, TCO validation
-- `docs/operational-packets.xml` — Execution templates
+### @.grace (GRACE 4 artifacts)
+- `.grace/context/requirements.xml` — Use cases and NFR
+- `.grace/context/technology.xml` — Technology stack
+- `.grace/graph/index.xml` — Module index with 9 routed sub-docs (GD-*)
+- `.grace/graph/GD-*-M-*.xml` — Per-module exports, types, cross-links
+- `.grace/verification/index.xml` — Test scenarios, gates, TCO validation
+- `.grace/verification/VD-M-*.xml` — Per-entry scenarios with evidence markers
+- `.grace/changes/active/C-001/spec.xml` — GraceChangeSpec
+- `.grace/changes/active/C-001/plan.xml` — GraceChangePlan (Phase-0 migration + 8 dev phases)
 
 ### @src
 - `src/core/schemas.py` — All Pydantic contracts (JobStatus, TimelineSegment, Passport, etc.)

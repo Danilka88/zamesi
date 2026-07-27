@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-SEARCH" name="Semantic Search" type="PROCESSOR" status="built">
+  <Purpose>Embedding-индексация сцен в ChromaDB и семантический поиск</Purpose>
+  <Source path="src/search/"/>
+  <Test path="tests/search/"/>
+  <Exports>
+    <function name="index_passport">Сцена → чанк → embedding → ChromaDB collection.add()</function>
+    <function name="search_scenes">Запрос → embedding → ChromaDB query → SearchResult[]</function>
+    <function name="reindex_all">Переиндексация всех .md паспортов из output_dir</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-PASSPORT" relation="receives-passports-from"/>
+    <Link target="M-MIXER" relation="feeds-into"/>
+  </CrossLinks>
+  <Verification ref="V-M-SEARCH"/>
+</module-graph>

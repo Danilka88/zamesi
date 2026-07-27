@@ -2,7 +2,7 @@ from typing import Any
 
 import chromadb
 
-from src.config import config
+from src.core.config import config
 from src.core.llm_router import llm_router
 
 _client: Any = None

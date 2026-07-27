@@ -1,6 +1,6 @@
 import httpx
 
-from src.config import config
+from src.core.config import config
 from src.core.exceptions import ConfigError
 from src.core.json_utils import extract_json
 

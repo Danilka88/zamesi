@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rapidocr_onnxruntime import RapidOCR
 
-from src.config import config
+from src.core.config import config
 from src.core.logging_config import get_logger
 from src.core.schemas import OCRResult
 

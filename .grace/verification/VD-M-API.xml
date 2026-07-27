@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-API" module="M-API" priority="high">
+  <description>FastAPI-endpoints, job queue, оркестрация, метрики</description>
+  <Scenarios>
+    <Scenario id="S-M-API-1" type="success">
+      <description>GET /health: сервис отвечает</description>
+      <commands>
+        <command>pytest tests/api/test_endpoints.py -v -k "test_health"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
+        <assert>Статус 200; тело содержит status: ok</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-API-2" type="success">
+      <description>GET /metrics: Prometheus-метрики доступны</description>
+      <commands>
+        <command>pytest tests/api/test_endpoints.py -v -k "test_metrics_endpoint"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-API][ROUTES][VIDEO_SAVED]</marker>
+        <assert>Статус 200; тело содержит pipeline_ префикс метрик</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-API-3" type="failure">
+      <description>GET /analyze/{unknown_id}: 404</description>
+      <commands>
+        <command>pytest tests/api/test_endpoints.py -v -k "test_get_unknown_job or test_get_unknown_status"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-API][PIPELINE][FAILED]</marker>
+        <assert>Статус 404 для несуществующего job_id</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-API-4" type="success">
+      <description>GET /search и POST /search/reindex endpoints</description>
+      <commands>
+        <command>pytest tests/api/test_routes_search.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
+        <assert>GET /search без q → 422; GET /search с q → 200; POST /search/reindex → 200 с status=ok и indexed count</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-API-5" type="success">
+      <description>POST /mix и GET /mix/{id} endpoints</description>
+      <commands>
+        <command>pytest tests/api/test_routes_mix.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-API][ROUTES][JOB_CREATED]</marker>
+        <assert>POST /mix с query → 200 с mix_id; GET /mix/nonexistent → 404; GET /mix/nonexistent/markdown → 404</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-API][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

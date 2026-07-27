@@ -1,4 +1,4 @@
-from src.config import config
+from src.core.config import config
 from src.core.logging_config import get_logger
 from src.core.schemas import VideoGenre
 from src.vision_scanner.genre_classifier import classify

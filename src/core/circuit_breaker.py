@@ -1,7 +1,7 @@
 import time
 from enum import Enum
 
-from src.config import config
+from src.core.config import config
 from src.core.exceptions import CircuitBreakerOpenError, PipelineError
 from src.core.logging_config import get_logger
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-AUDIO" name="Audio Engine" type="PROCESSOR" status="built">
+  <Purpose>Извлечение аудио (ffmpeg subprocess), ASR (Whisper), диаризация (SpeechBrain ECAPA-TDNN + Silero VAD), сборка таймлайна</Purpose>
+  <Source path="src/audio_engine/"/>
+  <Test path="tests/audio_engine/"/>
+  <Exports>
+    <function name="extract_audio">Извлечение аудиодорожки (ffmpeg) → WAV 16kHz mono</function>
+    <function name="extract_iframes">Извлечение I-frame (ffmpeg) по таймштампам</function>
+    <function name="transcribe">Whisper.cpp ASR → сегменты с текстом и таймстампами</function>
+    <function name="diarize">SpeechBrain ECAPA-TDNN диаризация → маппинг спикеров на таймлайне</function>
+    <function name="merge_timeline">Слияние ASR + диаризация → TimelineSegment[]</function>
+    <function name="fingerprint_audio">librosa spectrogram → peaks → hash pairs</function>
+    <function name="match_audio">Hash-based matching against known tracks</function>
+    <function name="index_track">Add track to fingerprint DB</function>
+    <function name="detect_celebrity">ECAPA-TDNN embedding → ChromaDB known_voices → CelebrityVoice</function>
+    <function name="index_celebrity_voice">Add voice embedding to known_voices collection</function>
+    <function name="analyze_audio_for_monetization">Combined music + celebrity pipeline</function>
+  </Exports>
+  <Classes>
+    <class name="FingerprintDB">JSON-based hash storage with TrackMetadata</class>
+  </Classes>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-VISION" relation="feeds-iframes-to"/>
+    <Link target="M-SEMANTIC" relation="feeds-into"/>
+    <Link target="M-PASSPORT" relation="feeds-timeline-into"/>
+  </CrossLinks>
+  <Verification ref="V-M-AUDIO"/>
+</module-graph>

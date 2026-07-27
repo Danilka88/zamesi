@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from src.config import config
+from src.core.config import config
 
 config.load()
 

@@ -3,7 +3,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from src.config import config
+from src.core.config import config
 from src.core.exceptions import AudioExtractionError
 from src.core.logging_config import get_logger
 

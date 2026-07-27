@@ -1,7 +1,7 @@
 import asyncio
 
-from src.config import config
 from src.core.circuit_breaker import CircuitBreaker
+from src.core.config import config
 from src.core.exceptions import (
     FallbackTriggered,
     JSONParseError,

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-index project="RUTUBE Video Analyzer" version="0.1.0">
+  <Policy>
+    <logFormat>JSON (structlog) — correlation_id, module, timestamp, event</logFormat>
+    <redaction>Логи не содержат сырых аудио/видео данных, только job_id + метаданные</redaction>
+    <deterministicFirst>true</deterministicFirst>
+    <tcoValidation>
+      <vlmCallsMaxPercent>6</vlmCallsMaxPercent>
+      <costPerHourMax>0.0025</costPerHourMax>
+    </tcoValidation>
+  </Policy>
+  <Entries>
+    <Entry id="V-M-CORE" routed="VD-M-CORE.xml" module="M-CORE" priority="high" scenarios="4">
+      <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
+    </Entry>
+    <Entry id="V-M-AUDIO" routed="VD-M-AUDIO.xml" module="M-AUDIO" priority="high" scenarios="5">
+      <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна</description>
+    </Entry>
+    <Entry id="V-M-VISION" routed="VD-M-VISION.xml" module="M-VISION" priority="high" scenarios="5">
+      <description>Genre classification, DomainRouter, OCR, OCR-буфер</description>
+    </Entry>
+    <Entry id="V-M-SEMANTIC" routed="VD-M-SEMANTIC.xml" module="M-SEMANTIC" priority="critical" scenarios="6">
+      <description>SLM-анализ (gemma4:e4b), VLM Gatekeeper, analyze_scenes. Критично для TCO.</description>
+    </Entry>
+    <Entry id="V-M-PASSPORT" routed="VD-M-PASSPORT.xml" module="M-PASSPORT" priority="high" scenarios="6">
+      <description>Генерация YAML-frontmatter, Markdown-таймлайн, валидация .md</description>
+    </Entry>
+    <Entry id="V-M-SEARCH" routed="VD-M-SEARCH.xml" module="M-SEARCH" priority="high" scenarios="5">
+      <description>Embedding-индексация сцен и семантический поиск через ChromaDB</description>
+    </Entry>
+    <Entry id="V-M-MIXER" routed="VD-M-MIXER.xml" module="M-MIXER" priority="high" scenarios="3">
+      <description>Multi-video structured mix generation per user query</description>
+    </Entry>
+    <Entry id="V-M-API" routed="VD-M-API.xml" module="M-API" priority="high" scenarios="5">
+      <description>FastAPI-endpoints, job queue, оркестрация, метрики</description>
+    </Entry>
+    <Entry id="V-M-MODERATOR" routed="VD-M-MODERATOR.xml" module="M-MODERATOR" priority="medium" scenarios="4">
+      <description>LLM-as-Judge модерация: парсинг ответа, fallback при ошибке LLM, интеграция в паспорт</description>
+    </Entry>
+  </Entries>
+  <Gates>
+    <Gate level="module">
+      <check>lint: ruff check src/ tests/</check>
+      <check>type-check: mypy src/</check>
+      <check>unit-tests: pytest tests/ --timeout=30 -x -q</check>
+    </Gate>
+    <Gate level="phase">
+      <check>integration-tests: pytest tests/test_integration.py --timeout=3600 -v</check>
+      <check>all-tests: pytest tests/ --timeout=60 -v</check>
+    </Gate>
+    <Gate level="release">
+      <check>full-suite: pytest tests/ --timeout=600 -v --junitxml=report.xml</check>
+      <check>VLM-ratio-check: python scripts/check_vlm_ratio.py &lt; 0.06</check>
+    </Gate>
+  </Gates>
+</verification-index>

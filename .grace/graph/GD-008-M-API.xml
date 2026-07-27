@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-API" name="API Layer" type="INTERFACE" status="built">
+  <Purpose>FastAPI endpoints: загрузка, статус, результат, метрики. Управление job queue.</Purpose>
+  <Source path="src/api/"/>
+  <Test path="tests/api/"/>
+  <Exports>
+    <function name="post_analyze">POST /analyze — загрузка видео, старт пайплайна</function>
+    <function name="get_result">GET /analyze/{job_id} — результат</function>
+    <function name="get_status">GET /analyze/{job_id}/status — статус обработки</function>
+    <function name="get_markdown">GET /analyze/{job_id}/markdown — готовый .md паспорт</function>
+    <function name="get_search">GET /search — семантический поиск (SearchResult[])</function>
+    <function name="post_search_reindex">POST /search/reindex — переиндексация</function>
+    <function name="post_mix">POST /mix — создание микса</function>
+    <function name="get_mix">GET /mix/{id} — результат микса</function>
+    <function name="get_mix_markdown">GET /mix/{id}/markdown — Markdown микса</function>
+    <function name="get_health">GET /health — healthcheck</function>
+    <function name="get_metrics">GET /metrics — Prometheus-метрики</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-AUDIO" relation="orchestrates"/>
+    <Link target="M-VISION" relation="orchestrates"/>
+    <Link target="M-SEMANTIC" relation="orchestrates"/>
+    <Link target="M-PASSPORT" relation="orchestrates"/>
+    <Link target="M-SEARCH" relation="orchestrates"/>
+    <Link target="M-MIXER" relation="orchestrates"/>
+  </CrossLinks>
+  <Verification ref="V-M-API"/>
+</module-graph>

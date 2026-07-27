@@ -1,3 +1,4 @@
+# MODULE_MAP: src/core/
 from pathlib import Path
 
 import yaml

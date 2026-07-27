@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-SEMANTIC" module="M-SEMANTIC" priority="critical">
+  <description>SLM-анализ (gemma4:e4b), VLM Gatekeeper, analyze_scenes. Критично для TCO.</description>
+  <Scenarios>
+    <Scenario id="S-M-SEMANTIC-1" type="success">
+      <description>qwen_client: analyze_text_segment возвращает JSON, analyze_vision_segment, generate_frontmatter</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_analyze_text_segment or test_analyze_vision_segment or test_generate_frontmatter"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][TIMEOUT][LLM_SUCCESS]</marker>
+        <assert>analyze_text_segment возвращает JSON с action_is_clear; analyze_vision_segment обрабатывает base64; generate_frontmatter работает</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEMANTIC-2" type="failure">
+      <description>qwen_client: _extract_json_checked рейзит JSONParseError на пустом/невалидном JSON</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_extract_json_checked_raises"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEMANTIC][QWEN][VISION_FILE_MISSING]</marker>
+        <assert>Пустой ответ → JSONParseError; невалидный JSON → JSONParseError; markdown fences стрипаются</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEMANTIC-3" type="success">
+      <description>analyze_scenes: базовый сценарий с монетизацией</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_basic"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
+        <assert>1 сегмент → 1 SceneAnalysisResult с action_is_clear=True</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEMANTIC-4" type="failure">
+      <description>analyze_scenes: ошибка LLM → fallback_used=llm_failed</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_llm_error"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEMANTIC][SCENE][ANALYSIS_FAILED]</marker>
+        <assert>При ошибке LLM возвращается результат с fallback_used=llm_failed, пустой monetization</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEMANTIC-5" type="success">
+      <description>analyze_scenes: VLM gate — vision_blocked=False → VLM вызывается</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_gate"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
+        <assert>requires_vision=True + vision_blocked=False → vlm_calls=1, [Видео: …] в summary</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-SEMANTIC-6" type="success">
+      <description>analyze_scenes: VLM gate — vision_blocked=True → VLM не вызывается</description>
+      <commands>
+        <command>pytest tests/semantic_analyzer/test_scene_analyzer.py -v -k "test_analyze_scenes_vision_blocked_suppresses_vlm"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-SEMANTIC][SCENE][ALL_DONE]</marker>
+        <assert>vision_blocked=True → vlm_calls=0, [Видео: …] отсутствует</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-SEMANTIC][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

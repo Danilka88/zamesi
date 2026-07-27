@@ -1,4 +1,4 @@
-from src.config import config
+from src.core.config import config
 from src.core.schemas import OCRResult
 
 

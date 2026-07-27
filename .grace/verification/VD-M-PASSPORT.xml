@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-PASSPORT" module="M-PASSPORT" priority="high">
+  <description>Генерация YAML-frontmatter, Markdown-таймлайн, валидация .md</description>
+  <Scenarios>
+    <Scenario id="S-M-PASSPORT-1" type="success">
+      <description>Валидация: корректный паспорт проходит без ошибок</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_validator.py -v -k "test_valid_passport"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][VALIDATOR][PASSED]</marker>
+        <assert>Паспорт с video_id и корректными таймкодами — 0 ошибок</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-2" type="failure">
+      <description>Валидация: ошибка при отсутствии video_id</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_validator.py -v -k "test_missing_video_id"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
+        <assert>Пустой video_id → ошибка валидации</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-3" type="failure">
+      <description>Валидация: ошибка при ECOM_ITEM без search_query</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_validator.py -v -k "test_ecom_without"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
+        <assert>ECOM_ITEM без search_query → ошибка валидации</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-4" type="failure">
+      <description>Валидация: strict mode рейзит ValidationError</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_validator.py -v -k "test_strict_mode_raises"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][VALIDATOR][ERRORS]</marker>
+        <assert>strict=True с ошибками → ValidationError</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-5" type="success">
+      <description>build_frontmatter: генерация YAML frontmatter через LLM</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_frontmatter_generator.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][FRONTMATTER][DONE]</marker>
+        <assert>Успешный вызов возвращает PassportFrontmatter с корректными полями; ошибка LLM → fallback domain_type=unknown; пустой транскрипт → domain_type=unknown; brand_safety_score клиппируется до 100</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-6" type="success">
+      <description>build_passport и passport_to_markdown: сборка паспорта и экспорт в .md</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_passport_builder.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][BUILDER][DONE]</marker>
+        <assert>build_passport создаёт Passport с frontmatter и timeline; пустая таймлайна → пустой список; passport_to_markdown содержит video_id, domain_type, ECOM_ITEM, AD_SLOT; YAML escaping корректно обрабатывает кавычки/табуляцию/переносы строк</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-PASSPORT][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

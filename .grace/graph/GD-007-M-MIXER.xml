@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-MIXER" name="Mixer (Замеси)" type="PROCESSOR" status="built">
+  <Purpose>Multi-video structured mix generation per user query</Purpose>
+  <Source path="src/mixer/"/>
+  <Test path="tests/mixer/"/>
+  <Exports>
+    <function name="plan_stages">Запрос → LLM → list of Stage (title + description)</function>
+    <function name="compose_mix">Stages → search + LLM match → Mix</function>
+    <function name="mix_to_markdown">Mix → Markdown (структурированный вывод)</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-SEARCH" relation="receives-search-results-from"/>
+    <Link target="M-API" relation="orchestrates"/>
+  </CrossLinks>
+  <Verification ref="V-M-MIXER"/>
+</module-graph>

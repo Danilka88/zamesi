@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-MODERATOR" module="M-MODERATOR" priority="medium">
+  <description>LLM-as-Judge модерация: парсинг ответа, fallback при ошибке LLM, интеграция в паспорт</description>
+  <Scenarios>
+    <Scenario id="S-M-MODERATOR-1" type="unit">
+      <description>Распознавание ответа LLM: полный набор полей</description>
+      <commands>
+        <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_full"</command>
+      </commands>
+      <evidence>
+        <assert>age_rating, verdict, flags, brand_safety_score корректно извлекаются из JSON</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-MODERATOR-2" type="error">
+      <description>Обработка некорректных значений: age_rating/verdict fallback на default</description>
+      <commands>
+        <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_invalid_values"</command>
+      </commands>
+      <evidence>
+        <assert>Невалидные значения сбрасываются в 0+/approved/low</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-MODERATOR-3" type="edge">
+      <description>Пустой ответ LLM: пустой отчёт без флагов</description>
+      <commands>
+        <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_empty"</command>
+      </commands>
+      <evidence>
+        <assert>age_rating=0+, verdict=approved, flags=[]</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-MODERATOR-4" type="edge">
+      <description>Флаг без таймстампа: timestamp_sec=None не вызывает ошибку</description>
+      <commands>
+        <command>pytest tests/moderator/test_moderator.py -v -k "test_parse_report_flag_without_timestamp"</command>
+      </commands>
+      <evidence>
+        <assert>Флаг создаётся с timestamp_sec=None</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-MODERATOR][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

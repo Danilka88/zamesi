@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-CORE" module="M-CORE" priority="high">
+  <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
+  <Scenarios>
+    <Scenario id="S-M-CORE-1" type="success">
+      <description>JobStatus enum и Pydantic-модели: все значения корректны</description>
+      <commands>
+        <command>pytest tests/core/test_schemas.py -v -k "test_valid_frontmatter or test_frontmatter_brand_safety"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][SCHEMAS][VALID_ENUM]</marker>
+        <assert>Pydantic валидирует JobStatus, PassportFrontmatter, SceneAnalysisResult, MonetizationItem</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-CORE-2" type="success">
+      <description>SceneAnalysisResult с монетизацией: корректная структура</description>
+      <commands>
+        <command>pytest tests/core/test_schemas.py -v -k "test_scene_result"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][SCHEMAS][MONETIZATION]</marker>
+        <assert>MonetizationItem, ClipCandidate корректно сериализуются; monetization включает ad_slot</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-CORE-3" type="success">
+      <description>TimeoutManager: retry + fallback chain + timeout occurrence</description>
+      <commands>
+        <command>pytest tests/core/test_timeout_manager.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][TIMEOUT][RETRY]</marker>
+        <marker required="true">[M-CORE][TIMEOUT][OCCURRED]</marker>
+        <assert>Timeout → retry → RetryExhaustedError; circuit breaker открывается после порога; маркер OCCURRED логируется при timeout</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-CORE-4" type="failure">
+      <description>Circuit breaker: открывается после threshold, блокирует вызовы</description>
+      <commands>
+        <command>pytest tests/core/test_timeout_manager.py -v -k "circuit_breaker"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][CB][OPENED]</marker>
+        <assert>CircuitBreakerOpenError после 3+ ошибок; восстанавливается в half-open</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-CORE][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

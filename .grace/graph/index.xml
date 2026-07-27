@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph-index project="RUTUBE Video Analyzer" version="0.1.0">
+  <description>Knowledge graph — 9 modules, cross-links, exported types and functions</description>
+  <Modules>
+    <Module id="M-CORE" routed="GD-001-M-CORE.xml" name="Core Types &amp; Contracts" type="LIBRARY" status="built">
+      <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager, MemoryStore, метрики — общие для всех модулей</Purpose>
+    </Module>
+    <Module id="M-AUDIO" routed="GD-002-M-AUDIO.xml" name="Audio Engine" type="PROCESSOR" status="built">
+      <Purpose>Извлечение аудио (ffmpeg subprocess), ASR (Whisper), диаризация, сборка таймлайна</Purpose>
+    </Module>
+    <Module id="M-VISION" routed="GD-003-M-VISION.xml" name="Vision Scanner" type="PROCESSOR" status="built">
+      <Purpose>OCR (RapidOCR v4), GenreClassifier (LLM-driven), DomainRouter (жанровая блокировка VLM)</Purpose>
+    </Module>
+    <Module id="M-SEMANTIC" routed="GD-004-M-SEMANTIC.xml" name="Semantic Analyzer" type="PROCESSOR" status="built">
+      <Purpose>SLM-анализ (gemma4:e4b), VLM Gatekeeper, извлечение точек монетизации</Purpose>
+    </Module>
+    <Module id="M-PASSPORT" routed="GD-005-M-PASSPORT.xml" name="Passport Builder" type="GENERATOR" status="built">
+      <Purpose>Формирование YAML-frontmatter + Markdown-таймлайн с точками монетизации</Purpose>
+    </Module>
+    <Module id="M-SEARCH" routed="GD-006-M-SEARCH.xml" name="Semantic Search" type="PROCESSOR" status="built">
+      <Purpose>Embedding-индексация сцен в ChromaDB и семантический поиск</Purpose>
+    </Module>
+    <Module id="M-MIXER" routed="GD-007-M-MIXER.xml" name="Mixer (Замеси)" type="PROCESSOR" status="built">
+      <Purpose>Multi-video structured mix generation per user query</Purpose>
+    </Module>
+    <Module id="M-API" routed="GD-008-M-API.xml" name="API Layer" type="INTERFACE" status="built">
+      <Purpose>FastAPI endpoints: загрузка, статус, результат, метрики. Управление job queue.</Purpose>
+    </Module>
+    <Module id="M-MODERATOR" routed="GD-009-M-MODERATOR.xml" name="Moderation Judge" type="PROCESSOR" status="built">
+      <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений.</Purpose>
+    </Module>
+  </Modules>
+  <CrossLinks summary="17 cross-module dependencies">
+    <Link from="M-CORE" to="M-AUDIO" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-VISION" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-SEMANTIC" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-PASSPORT" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-SEARCH" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-MIXER" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-API" relation="defines-types-for"/>
+    <Link from="M-CORE" to="M-MODERATOR" relation="defines-types-for"/>
+    <Link from="M-AUDIO" to="M-VISION" relation="feeds-iframes-to"/>
+    <Link from="M-AUDIO" to="M-SEMANTIC" relation="feeds-into"/>
+    <Link from="M-AUDIO" to="M-PASSPORT" relation="feeds-timeline-into"/>
+    <Link from="M-VISION" to="M-SEMANTIC" relation="feeds-ocr-into"/>
+    <Link from="M-SEMANTIC" to="M-PASSPORT" relation="feeds-into"/>
+    <Link from="M-PASSPORT" to="M-SEARCH" relation="feeds-passports-into"/>
+    <Link from="M-SEARCH" to="M-MIXER" relation="feeds-into"/>
+    <Link from="M-MIXER" to="M-API" relation="orchestrates"/>
+    <Link from="M-MODERATOR" to="M-PASSPORT" relation="feeds-into"/>
+  </CrossLinks>
+  <DataFlows>
+    <Flow id="DF-001" name="Audio-First Pipeline">
+      <description>MP4 → аудио → ASR → диаризация → таймлайн</description>
+      <steps>M-AUDIO.extract_audio → M-AUDIO.transcribe → M-AUDIO.diarize → M-AUDIO.merge_timeline</steps>
+    </Flow>
+    <Flow id="DF-002" name="VLM Gatekeeper Flow">
+      <description>Трёхуровневая фильтрация VLM-вызовов: жанр → requires_vision → OCR → Vision</description>
+      <steps>M-VISION.extract_iframes → M-VISION.ocr_frame → M-VISION.detect_genre → M-SEMANTIC.analyze_scenes</steps>
+    </Flow>
+    <Flow id="DF-003" name="Passport Generation Flow">
+      <description>Финальная сборка .md паспорта</description>
+      <steps>M-PASSPORT.build_frontmatter → M-PASSPORT.build_passport → M-PASSPORT.validate</steps>
+    </Flow>
+    <Flow id="DF-004" name="API Orchestration Flow">
+      <description>Полный цикл: загрузка → пайплайн → результат</description>
+      <steps>M-API.POST /analyze → DF-001 → DF-002 → DF-003 → M-API.GET /analyze/{id}/markdown</steps>
+    </Flow>
+    <Flow id="DF-005" name="Search Flow">
+      <description>Passport → index → search</description>
+      <steps>M-PASSPORT.build_passport → M-SEARCH.index_passport → M-SEARCH.search_scenes</steps>
+    </Flow>
+    <Flow id="DF-006" name="Mix Flow">
+      <description>Query → stages → search → compose → render</description>
+      <steps>M-MIXER.plan_stages → M-MIXER.search_scenes → M-MIXER.compose_mix → M-MIXER.mix_to_md</steps>
+    </Flow>
+  </DataFlows>
+</graph-index>

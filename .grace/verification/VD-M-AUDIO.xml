@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-AUDIO" module="M-AUDIO" priority="high">
+  <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна</description>
+  <Scenarios>
+    <Scenario id="S-M-AUDIO-1" type="success">
+      <description>Timeline merger: корректное присвоение спикера</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_timeline_merger.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][MERGER][DONE]</marker>
+        <assert>ASR-сегмент получает speaker из диаризации; fallback на 'unknown'</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-AUDIO-2" type="success">
+      <description>pyav_reader: извлечение аудио через ffmpeg</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_pyav_reader.py -v -k "test_extract_audio"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][PYAV][AUDIO_OK]</marker>
+        <assert>Успешное извлечение .wav; cache hit возвращает существующий файл; отсутствующий файл → AudioExtractionError; ошибка ffmpeg → AudioExtractionError</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-AUDIO-3" type="success">
+      <description>pyav_reader: извлечение I-frames</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_pyav_reader.py -v -k "test_extract_iframes"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][PYAV][IFRAMES_OK]</marker>
+        <assert>N таймстампов → N фреймов с timestamp_sec и path; пустой список → пустой результат; ошибка ffmpeg → пустой результат (продолжает pipeline)</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-AUDIO-4" type="success">
+      <description>Whisper ASR: транскрипция аудио</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_whisper_asr.py -v -k "test_transcribe"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][WHISPER][DONE]</marker>
+        <assert>Успешная транскрипция → сегменты с текстом и word_timestamps; отсутствующий файл → ASRError; ошибка whisper → ASRError; нет JSON → ASRError; пустой JSON → пустой список</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-AUDIO-5" type="success">
+      <description>Diarization (SpeechBrain + Silero VAD): выделение спикеров</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_diarization_speechbrain.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][SPEECHBRAIN][DONE]</marker>
+        <assert>Пустой аудиофайл → пустой список; один спикер → все сегменты SPEAKER_00; два спикера → SPEAKER_00/SPEAKER_01; отсутствующий файл → DiarizationError</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-AUDIO][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-MIXER" module="M-MIXER" priority="high">
+  <description>Multi-video structured mix generation per user query</description>
+  <Scenarios>
+    <Scenario id="S-M-MIXER-1" type="success">
+      <description>plan_stages: LLM-планирование этапов</description>
+      <commands>
+        <command>pytest tests/mixer/test_stage_planner.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-MIXER][PLANNER][STAGES]</marker>
+        <assert>3 этапа для how-to запроса; ≥2 этапов для минимального запроса; ошибка LLM → исключение</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-MIXER-2" type="success">
+      <description>compose_mix: сборка микса из этапов и сцен</description>
+      <commands>
+        <command>pytest tests/mixer/test_mix_composer.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-MIXER][COMPOSER][DONE]</marker>
+        <assert>1 этап → 1 MixStage со сценами; пустой этап → 0 сцен; LLM матчинг выбирает корректные сцены</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-MIXER-3" type="success">
+      <description>mix_to_md: преобразование Mix → Markdown</description>
+      <commands>
+        <command>pytest tests/mixer/test_mix_to_md.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-MIXER][MD][*]</marker>
+        <assert>Заголовок с query, этапы с title/description, сцены с video_id и таймкодами; пустой микс → только заголовок</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-MIXER][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

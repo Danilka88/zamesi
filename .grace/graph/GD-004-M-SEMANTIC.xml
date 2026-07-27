@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-SEMANTIC" name="Semantic Analyzer" type="PROCESSOR" status="built">
+  <Purpose>SLM-анализ (gemma4:e4b), VLM Gatekeeper (жанр→монетизация→OCR→Vision), извлечение точек монетизации</Purpose>
+  <Source path="src/semantic_analyzer/"/>
+  <Test path="tests/semantic_analyzer/"/>
+  <Exports>
+    <function name="analyze_scenes">SLM-анализ всех сегментов: pass1 text + VLM gate + pass2 vision</function>
+    <function name="analyze_text_segment">Одиночный SLM-запрос к gemma4:e4b для текстового сегмента</function>
+    <function name="analyze_vision_segment">Одиночный VLM-запрос к qwen3.5:9b с I-frame</function>
+    <function name="generate_frontmatter">Генерация YAML-фронтмэттера через LLM</function>
+  </Exports>
+  <Prompts>
+    <prompt name="PASS1_TEXT_SYSTEM/PASS1_TEXT_USER">SLM pass1: анализ текстового сегмента (gemma4:e4b)</prompt>
+    <prompt name="PASS2_VISION_SYSTEM/PASS2_VISION_USER">VLM pass2: описание I-frame (qwen3.5:9b)</prompt>
+    <prompt name="FRONTMATTER_SYSTEM/FRONTMATTER_USER">SEO-метаданные через LLM</prompt>
+  </Prompts>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-AUDIO" relation="receives-timeline-from"/>
+    <Link target="M-VISION" relation="receives-ocr-from"/>
+    <Link target="M-PASSPORT" relation="feeds-into"/>
+  </CrossLinks>
+  <Verification ref="V-M-SEMANTIC"/>
+</module-graph>

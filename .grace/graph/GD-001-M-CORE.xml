@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-CORE" name="Core Types &amp; Contracts" type="LIBRARY" status="built">
+  <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager, MemoryStore, метрики — общие для всех модулей</Purpose>
+  <Source path="src/core/"/>
+  <Test path="tests/core/"/>
+  <Exports>
+    <type name="VideoGenre">Enum жанров: how_to_repair, podcast, lecture, gameplay, interview, vlog, review, unboxing, cooking, travel, sports, news, tutorial, other</type>
+    <type name="JobStatus">Статус обработки: pending, processing, done, error</type>
+    <type name="TimelineSegment">Сегмент таймлайна: start_sec, end_sec, text, speaker</type>
+    <type name="WordTimestamp">Слово с таймстампом: word, start_sec, end_sec, probability</type>
+    <type name="SpeakerSegment">Сегмент спикера: speaker, start_sec, end_sec</type>
+    <type name="SceneAnalysisResult">Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[]</type>
+    <type name="MonetizationItem">Точка монетизации: ad_slot, ecom_item, clip_candidate, music_track, artist_merch, event_ticket, celebrity_appearance</type>
+    <type name="MusicMatch">Результат распознавания музыки: track_name, artist, confidence, genre</type>
+    <type name="CelebrityVoice">Распознанный голос знаменитости: name, profession, confidence</type>
+    <type name="TrackMetadata">Метаданные трека: artist, track_name, afisha_urls, merch_urls, events</type>
+    <type name="ClipCandidate">Кандидат на нарезку: hook, time_range, virality_potential</type>
+    <type name="OCRResult">Результат OCR: text, confidence, bbox, timestamp</type>
+    <type name="Passport">Финальный .md паспорт с фронтмэттером и таймлайном</type>
+    <type name="PassportFrontmatter">YAML-фронтмэттер: video_id, domain_type, brand_safety_score, seo_title</type>
+    <type name="JobMetrics">Метрики пайплайна: total_segments, vlm_calls, vlm_percent, duration_sec</type>
+    <type name="JobResult">Результат job: job_id, status, passport, metrics, timestamps</type>
+    <type name="AnalyzeResponse">POST /analyze ответ: job_id, status</type>
+    <type name="AnalyzeStatusResponse">GET /analyze/{id}/status ответ: job_id, status, progress</type>
+    <type name="AnalyzeResultResponse">GET /analyze/{id}/result ответ: job_id, status, passport, metrics</type>
+    <type name="SearchResult">Результат семантического поиска: video_id, scene_index, summary, score</type>
+    <type name="MixRequest">Запрос на создание микса: query, max_videos_per_stage</type>
+    <type name="Stage">Этап микса: title, description</type>
+    <type name="MixSceneRef">Ссылка на сцену в миксе: video_id, scene_index, start_sec, end_sec, summary</type>
+    <type name="MixStage">Этап микса со сценами: title, description, scenes[]</type>
+    <type name="Mix">Готовый микс: mix_id, query, stages[], total_duration_sec</type>
+    <type name="AppConfig">Загрузка и валидация config.yaml</type>
+    <type name="MemoryStore">Generic TTL-кеш с автоматической очисткой</type>
+    <type name="ModerationFlag">Флаг модерации: category, severity, timestamp, evidence</type>
+    <type name="ModerationReport">Отчёт модерации: age_rating, verdict, flags[], summary</type>
+  </Exports>
+  <Exceptions>
+    <exception name="PipelineError">Базовое исключение пайплайна</exception>
+    <exception name="TimeoutError">Таймаут операции</exception>
+    <exception name="RetryExhaustedError">Исчерпаны попытки retry</exception>
+    <exception name="CircuitBreakerOpenError">Circuit breaker разомкнут</exception>
+    <exception name="LLMResponseError">Ошибка ответа LLM</exception>
+    <exception name="JSONParseError">Ошибка парсинга JSON из LLM</exception>
+    <exception name="FallbackTriggered">Сработал fallback</exception>
+    <exception name="AudioExtractionError">Ошибка извлечения аудио</exception>
+    <exception name="ASRError">Ошибка ASR</exception>
+    <exception name="DiarizationError">Ошибка диаризации</exception>
+    <exception name="OCRError">Ошибка OCR</exception>
+    <exception name="ValidationError">Ошибка валидации</exception>
+    <exception name="ConfigError">Ошибка конфигурации</exception>
+  </Exceptions>
+  <Functions>
+    <function name="load_config">Загрузка конфигурации (src/core/config.py)</function>
+    <function name="timeout_manager">TimeoutManager: retry, circuit breaker, fallback chain</function>
+    <function name="extract_json">Извлечение JSON из markdown code fences</function>
+    <function name="embed_text">qwen3-embedding через Ollama httpx</function>
+    <function name="get_chroma_client">ChromaDB PersistentClient singleton</function>
+    <function name="setup_logging">structlog JSON-конфигурация</function>
+    <function name="get_logger">structlog.BoundLogger с correlation_id</function>
+    <function name="fmt_sec">Форматирование секунд → MM:SS или H:MM:SS</function>
+    <function name="circuit_breaker">CircuitBreaker: изолирован в core/circuit_breaker.py</function>
+  </Functions>
+  <Classes>
+    <class name="CircuitBreaker">Circuit breaker с 3 состояниями: closed/open/half-open</class>
+    <class name="CircuitState">Enum closed/open/half_open</class>
+    <class name="LLMRouter">Мульти-провайдер LLM (Ollama/OpenAI/Yandex/Cloud.ru/OpenRouter)</class>
+  </Classes>
+  <CrossLinks>
+    <Link target="M-AUDIO" relation="defines-types-for"/>
+    <Link target="M-VISION" relation="defines-types-for"/>
+    <Link target="M-SEMANTIC" relation="defines-types-for"/>
+    <Link target="M-PASSPORT" relation="defines-types-for"/>
+    <Link target="M-SEARCH" relation="defines-types-for"/>
+    <Link target="M-MIXER" relation="defines-types-for"/>
+    <Link target="M-API" relation="defines-types-for"/>
+    <Link target="M-MODERATOR" relation="defines-types-for"/>
+  </CrossLinks>
+  <Verification ref="V-M-CORE"/>
+</module-graph>

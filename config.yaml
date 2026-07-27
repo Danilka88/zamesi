@@ -1,16 +1,33 @@
 models:
-  ollama:
-    endpoint: "http://localhost:11434"
-    text_model: "gemma4:e4b"
-    vision_model: "qwen3.5:9b"
-    classifier_model: "qwen3.5:0.8b"
-    classifier_max_tokens: 8192
-    vision_max_image_bytes: 2097152  # 2 MB — I-frames larger than this skip VLM
-    vision_max_tokens: 8192  # Qwen3.5:9b тратит токены на thinking, нужен запас
-    default_params:
-      temperature: 0.1
-      top_p: 0.9
-      max_tokens: 4096
+  default_params:
+    temperature: 0.1
+    top_p: 0.9
+    max_tokens: 4096
+
+  providers:
+    ollama:
+      type: ollama
+      endpoint: "http://localhost:11434"
+    yandex:
+      type: openai
+      endpoint: "https://llm.api.cloud.yandex.net/foundationModels/v1"
+      api_key: "${YANDEX_API_KEY}"
+    cloudru:
+      type: openai
+      endpoint: "https://api.cloud.ru/v1"
+      api_key: "${CLOUDRU_API_KEY}"
+    openrouter:
+      type: openai
+      endpoint: "https://openrouter.ai/api/v1"
+      api_key: "${OPENROUTER_API_KEY}"
+
+  routing:
+    text_model:       { provider: "ollama", model: "gemma4:e4b" }
+    vision_model:     { provider: "ollama", model: "qwen3.5:9b" }
+    classifier_model: { provider: "ollama", model: "qwen3.5:0.8b" }
+    mixer_model:      { provider: "ollama", model: "gemma4:e4b" }
+    moderation_model: { provider: "ollama", model: "gemma4:e4b" }
+    embedding_model:  { provider: "ollama", model: "qwen3-embedding:0.6b" }
 
   whisper:
     binary: "~/bin/whisper-cli"

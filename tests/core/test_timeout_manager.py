@@ -1,11 +1,11 @@
 import pytest
 
+from src.core.circuit_breaker import CircuitBreaker, CircuitState
 from src.core.exceptions import (
     CircuitBreakerOpenError,
     RetryExhaustedError,
     TimeoutError,
 )
-from src.core.circuit_breaker import CircuitBreaker, CircuitState
 from src.core.timeout_manager import TimeoutManager
 
 

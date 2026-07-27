@@ -1,6 +1,5 @@
 import json
 
-from src.config import config
 from src.core.exceptions import JSONParseError
 from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger
@@ -22,7 +21,7 @@ async def plan_stages(query: str, log=None) -> list[dict]:
         prompt=prompt,
         timeout_name="llm_general_default",
         call_name="mix_plan_stages",
-        model=config.mixer_llm_model,
+        role="mixer_model",
         log=log,
     )
     try:

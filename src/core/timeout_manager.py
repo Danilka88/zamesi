@@ -9,7 +9,7 @@ from src.core.exceptions import (
     RetryExhaustedError,
     TimeoutError,
 )
-from src.core.json_utils import extract_json
+from src.core.llm_router import llm_router
 from src.core.logging_config import get_logger
 from src.core.metrics import fallbacks_total, timeouts_total
 
@@ -117,50 +117,33 @@ class TimeoutManager:
         call_name: str | None = None,
         model: str | None = None,
         max_tokens: int | None = None,
+        role: str | None = None,
         log=None,
     ) -> str:
         call_name = call_name or timeout_name
+        if role is None:
+            role = "vision_model" if image_base64 else "text_model"
         return await self.call_with_retry(
             call_name=call_name,
             timeout_name=timeout_name,
-            func=self._ollama_infer,
+            func=self._llm_infer,
             prompt=prompt,
             image_base64=image_base64,
-            model=model,
+            role=role,
             max_tokens=max_tokens,
             log=log,
         )
 
-    # START_BLOCK: M-CORE/TIMEOUT/OLLAMA_INFER
-    async def _ollama_infer(
+    # START_BLOCK: M-CORE/TIMEOUT/LLM_INFER
+    async def _llm_infer(
         self, prompt: str, image_base64: str | None = None,
-        model: str | None = None, max_tokens: int | None = None,
+        role: str = "text_model", max_tokens: int | None = None,
     ) -> str:
-        import httpx
-
-        model = model or (config.ollama_vision_model if image_base64 else config.ollama_text_model)
-        timeout_name = "qwen_pass2_vision" if image_base64 else "qwen_pass1_text"
-        timeout_sec = int(self.get_timeout(timeout_name))
-        num_predict = max_tokens or config.ollama_max_tokens
-        payload = {
-            "model": model,
-            "prompt": prompt,
-            "stream": False,
-            "options": {
-                "temperature": config.ollama_temperature,
-                "num_predict": num_predict,
-            },
-        }
-        if image_base64:
-            payload["images"] = [image_base64]
-
-        async with httpx.AsyncClient(timeout=timeout_sec + 5) as client:
-            response = await client.post(f"{config.ollama_endpoint}/api/generate", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            raw = data.get("response", "")
-            return extract_json(raw)
-    # END_BLOCK: M-CORE/TIMEOUT/OLLAMA_INFER
+        return await llm_router.infer(
+            prompt=prompt, role=role,
+            image_base64=image_base64, max_tokens=max_tokens,
+        )
+    # END_BLOCK: M-CORE/TIMEOUT/LLM_INFER
 
 
 timeout_manager = TimeoutManager()

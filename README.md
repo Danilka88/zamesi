@@ -21,7 +21,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 149 тестов с изоляцией внешних вызовов (monkeypatch, AsyncMock). 9 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 157 тестов с изоляцией внешних вызовов (monkeypatch, AsyncMock). 9 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs), structlog с 54 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -76,7 +76,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 |---|---|---|
 | Влияние на метрики монетизации | Типы меток, схема работы, Search + Mixer |
 | Юнит-экономика | Экономическая эффективность |
-| Воспроизводимость | Тестирование (149 тестов) |
+| Воспроизводимость | Тестирование (157 тестов) |
 | Чувствительные данные | Приватность и безопасность |
 | Production-готовность | Отказоустойчивость, мониторинг |
 | UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
@@ -364,14 +364,14 @@ MP4
 └───────────┘ └───────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│  M-CORE — 11 файлов, 38 тестов                              │
+│  M-CORE — 12 файлов, 46 тестов                              │
 │  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
-│  Exceptions, logging_config, json_utils, time_utils,         │
-│  Moderation schemas, embedding, prometheus метрики            │
+│  LLMRouter, Exceptions, logging_config, json_utils,          │
+│  time_utils, Moderation schemas, embedding, метрики           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 49 source-файлов, 40 test-файлов, 89 файлов Python.
+Всего: 50 source-файлов, 41 test-файл, 91 файл Python.
 
 ---
 
@@ -441,13 +441,13 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 149 тестов, 0 failures, 1 skipped
+### Test suite: 157 тестов, 0 failures, 1 skipped
 
 Покрытие тестов по модулям:
 
 | Модуль | Тестов | Файлы |
 |---|---|---|---|
-| M-CORE | 38 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py` |
+| M-CORE | 46 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py`, `test_llm_router.py` |
 | M-AUDIO | 29 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py` |
 | M-VISION | 23 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
 | M-SEMANTIC | 12 | `test_qwen_client.py`, `test_scene_analyzer.py` |
@@ -456,7 +456,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
 | M-MODERATOR | 4 | `test_moderator.py` (parse, invalid, empty, flag) |
-| Интеграция | 1 | `test_integration.py` — **skipped** (ожидает demo video) |
+| Интеграция | 1 | `test_integration.py` |
 
 ### Методология
 
@@ -544,7 +544,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-65 пар `START_BLOCK`/`END_BLOCK` в 49 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+65 пар `START_BLOCK`/`END_BLOCK` в 50 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 

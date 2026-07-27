@@ -1,6 +1,5 @@
 import json
 
-from src.config import config
 from src.core.exceptions import JSONParseError
 from src.core.json_utils import extract_json
 from src.core.logging_config import get_logger
@@ -50,7 +49,7 @@ async def compose_mix(
             prompt=prompt,
             timeout_name="llm_general_default",
             call_name="mix_match_scenes",
-            model=config.mixer_llm_model,
+            role="mixer_model",
             log=log,
         )
         try:

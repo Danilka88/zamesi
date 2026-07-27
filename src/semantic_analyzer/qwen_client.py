@@ -34,6 +34,7 @@ async def analyze_text_segment(
         prompt=full_prompt,
         timeout_name="qwen_pass1_text",
         call_name="pass1_text",
+        role="text_model",
         log=log,
     )
     return _extract_json_checked(raw)
@@ -66,7 +67,7 @@ async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> st
         image_base64=image_b64,
         timeout_name="qwen_pass2_vision",
         call_name="pass2_vision",
-        model=config.ollama_vision_model,
+        role="vision_model",
         max_tokens=config.vision_max_tokens,
         log=log,
     )
@@ -85,6 +86,7 @@ async def generate_frontmatter(full_transcript: str, log=None) -> str:
         prompt=full_prompt,
         timeout_name="qwen_frontmatter",
         call_name="frontmatter",
+        role="text_model",
         log=log,
     )
     return _extract_json_checked(raw)

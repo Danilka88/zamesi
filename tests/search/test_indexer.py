@@ -73,20 +73,14 @@ async def test_index_passport_multiple(monkeypatch):
 async def test_embedding_call(monkeypatch):
     called = []
 
-    class FakeClient:
-        async def post(self, *a, **kw):
-            called.append(kw)
-            class FakeResp:
-                def raise_for_status(self): pass
-                def json(self):
-                    return {"embeddings": [[0.1] * 1024]}
-            return FakeResp()
+    async def mock_embed(text, role="embedding_model"):
+        called.append({"text": text, "role": role})
+        return [0.1] * 1024
 
-    monkeypatch.setattr("src.core.embedding.get_async_http", lambda: FakeClient())
+    monkeypatch.setattr("src.search.indexer.embed_text", mock_embed)
 
     from src.search.indexer import embed_text
     result = await embed_text("test text")
     assert len(result) == 1024
     assert len(called) == 1
-    assert called[0]["json"]["model"] == "qwen3-embedding:0.6b"
-    assert called[0]["json"]["input"] == "test text"
+    assert called[0]["text"] == "test text"

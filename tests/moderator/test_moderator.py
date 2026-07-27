@@ -1,6 +1,4 @@
-import pytest
 
-from src.core.schemas import ModerationReport
 from src.moderator.moderator import _parse_report
 
 

@@ -39,6 +39,7 @@ async def assess_moderation(
             prompt=full_prompt,
             timeout_name="llm_general_default",
             call_name="moderation_judge",
+            role="moderation_model",
             log=log,
         )
         data = json.loads(raw)

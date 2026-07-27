@@ -36,7 +36,7 @@ async def classify(full_asr_text: str, log=None) -> VideoGenre:
             prompt=prompt + user_text,
             timeout_name="domain_router",
             call_name="genre_classifier",
-            model=config.classifier_model,
+            role="classifier_model",
             max_tokens=config.classifier_max_tokens,
             log=log,
         )

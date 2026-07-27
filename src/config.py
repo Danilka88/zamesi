@@ -189,6 +189,32 @@ class Config:
     def mixer_max_videos_per_stage(self) -> int:
         return int(self._get("mixer", "max_videos_per_stage", default=3))
 
+    @property
+    def providers(self) -> dict:
+        p = self._get("models", "providers", default=None)
+        if p is not None:
+            return p
+        return {
+            "ollama": {
+                "type": "ollama",
+                "endpoint": self.ollama_endpoint,
+            },
+        }
+
+    @property
+    def routing(self) -> dict:
+        r = self._get("models", "routing", default=None)
+        if r is not None:
+            return r
+        return {
+            "text_model":       {"provider": "ollama", "model": self.ollama_text_model},
+            "vision_model":     {"provider": "ollama", "model": self.ollama_vision_model},
+            "classifier_model": {"provider": "ollama", "model": self.classifier_model},
+            "mixer_model":      {"provider": "ollama", "model": self.mixer_llm_model},
+            "moderation_model": {"provider": "ollama", "model": self.ollama_text_model},
+            "embedding_model":  {"provider": "ollama", "model": self.search_embedding_model},
+        }
+
 
 config = Config()
 # END_BLOCK: M-CONFIG/CLASS

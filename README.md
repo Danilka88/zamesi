@@ -364,14 +364,14 @@ MP4
 └───────────┘ └───────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│  M-CORE — 12 файлов, 46 тестов                              │
+│  M-CORE — 13 файлов, 46 тестов                              │
 │  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
 │  LLMRouter, Exceptions, logging_config, json_utils,          │
 │  time_utils, Moderation schemas, embedding, метрики           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 50 source-файлов, 41 test-файл, 91 файл Python.
+Всего: 50 source-файлов, 41 test-файл, 91 файл Python, 26 .grace артефактов.
 
 ---
 
@@ -544,7 +544,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-65 пар `START_BLOCK`/`END_BLOCK` в 50 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+67 пар `START_BLOCK`/`END_BLOCK` в 51 source-файле. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
@@ -999,4 +999,4 @@ Mixer на запрос `"фоторамка из картона своими р
 
 ---
 
-*GRACE-governed project: 7 docs-артефактов, 9 MODULE_CONTRACT, 65 semantic block pairs, 52 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+*GRACE 4-governed project: 26 .grace артефактов, 9 MODULE_CONTRACT, 67 semantic block pairs, 52 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

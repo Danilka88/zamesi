@@ -55,12 +55,20 @@
     <embedding name="qwen3-embedding:0.6b" provider="Ollama" endpoint="http://localhost:11434" purpose="Embedding для семантического поиска (multilingual, 1024-dim)">
       <params MTEB="64.33"/>
     </embedding>
+
+    <llm-router>
+      <description>Multi-provider fallback chain. Primary → fallback → fallback при ошибке. Per-provider circuit breaker + latency tracking.</description>
+      <provider name="ollama" type="ollama" endpoint="http://localhost:11434" purpose="Локальный LLM (dev, sensitive data)"/>
+      <provider name="yandex" type="openai-compat" endpoint="https://llm.api.cloud.yandex.net/foundationModels/v1" purpose="Российский облачный LLM"/>
+      <provider name="cloudru" type="openai-compat" endpoint="https://api.cloud.ru/v1" purpose="Российский облачный LLM (openai-compat)"/>
+      <provider name="openrouter" type="openai-compat" endpoint="https://openrouter.ai/api/v1" purpose="Глобальный multi-model hub"/>
+    </llm-router>
   </ai-models>
 
   <constraints>
     <constraint>VLM Gatekeeper: ≤6% всех сегментов проходят через Vision-модель</constraint>
     <constraint>Себестоимость пайплайна &lt;$0.0025/час видео (CPU-only, локальные модели)</constraint>
-    <constraint>Все внешние вызовы защищены circuit breaker + retry + fallback chain</constraint>
+    <constraint>Все внешние вызовы защищены circuit breaker + retry + fallback chain + multi-provider fallback</constraint>
     <constraint>Таймаут pipeline: 3600 сек (pipeline_total); каждый под-таймаут индивидуален (qwen_pass1_text: 180, qwen_pass2_vision: 300, domain_router: 120)</constraint>
     <constraint>Нет веб-сервера зависимостей: Whisper, SpeechBrain, RapidOCR — локальный запуск</constraint>
   </constraints>

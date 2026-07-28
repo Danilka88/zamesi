@@ -63,7 +63,7 @@
   <Classes>
     <class name="CircuitBreaker">Circuit breaker с 3 состояниями: closed/open/half-open</class>
     <class name="CircuitState">Enum closed/open/half_open</class>
-    <class name="LLMRouter">Мульти-провайдер LLM (Ollama/OpenAI/Yandex/Cloud.ru/OpenRouter)</class>
+    <class name="LLMRouter">Мульти-провайдер LLM с fallback chain: Ollama → Yandex → OpenRouter. Per-provider circuit breaker + latency tracking.</class>
   </Classes>
   <CrossLinks>
     <Link target="M-AUDIO" relation="defines-types-for"/>

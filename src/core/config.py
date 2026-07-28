@@ -171,23 +171,23 @@ class Config:
         }
 
     @property
-    def routing(self) -> dict:
+    def routing(self) -> dict[str, list[dict]]:
         r = self._get("models", "routing", default=None)
         if r is not None:
             return r
         return {
-            "text_model":       {"provider": "ollama", "model": self._get(
-                "models", "ollama", "text_model", default="gemma4:e4b")},
-            "vision_model":     {"provider": "ollama", "model": self._get(
-                "models", "ollama", "vision_model", default="qwen3.5:9b")},
-            "classifier_model": {"provider": "ollama", "model": self._get(
-                "models", "ollama", "classifier_model", default="qwen3.5:0.8b")},
-            "mixer_model":      {"provider": "ollama", "model": self._get(
-                "models", "mixer", "llm_model", default="gemma4:e4b")},
-            "moderation_model": {"provider": "ollama", "model": self._get(
-                "models", "ollama", "text_model", default="gemma4:e4b")},
-            "embedding_model":  {"provider": "ollama", "model": self._get(
-                "models", "search", "embedding_model", default="qwen3-embedding:0.6b")},
+            "text_model":       [{"provider": "ollama", "model": self._get(
+                "models", "ollama", "text_model", default="gemma4:e4b")}],
+            "vision_model":     [{"provider": "ollama", "model": self._get(
+                "models", "ollama", "vision_model", default="qwen3.5:9b")}],
+            "classifier_model": [{"provider": "ollama", "model": self._get(
+                "models", "ollama", "classifier_model", default="qwen3.5:0.8b")}],
+            "mixer_model":      [{"provider": "ollama", "model": self._get(
+                "models", "mixer", "llm_model", default="gemma4:e4b")}],
+            "moderation_model": [{"provider": "ollama", "model": self._get(
+                "models", "ollama", "text_model", default="gemma4:e4b")}],
+            "embedding_model":  [{"provider": "ollama", "model": self._get(
+                "models", "search", "embedding_model", default="qwen3-embedding:0.6b")}],
         }
 
 

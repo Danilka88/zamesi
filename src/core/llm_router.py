@@ -1,14 +1,18 @@
 # MODULE_MAP: src/core/
 # MODULE_CONTRACT: M-CORE
-# PURPOSE: Мульти-провайдер LLM (Ollama/OpenAI) с routing по ролям: text, vision, classifier, mixer, moderation, embedding
-# SCOPE: LLMRouter, ROLES, infer, embed. Provider selection, OpenAI/Ollama API calls.
-# DEPENDS: M-CORE (config, exceptions, json_utils)
+# PURPOSE: Мульти-провайдер LLM с fallback chain: primary → fallback → fallback …
+# SCOPE: LLMRouter, ROLES, infer, embed. Provider selection, per-provider circuit breaker, latency tracking.
+# DEPENDS: M-CORE (config, exceptions, json_utils, circuit_breaker)
 # LINKS: .grace/graph/index.xml | .grace/verification/index.xml
+import time
+
 import httpx
 
+from src.core.circuit_breaker import CircuitBreaker
 from src.core.config import config
 from src.core.exceptions import ConfigError
 from src.core.json_utils import extract_json
+from src.core.logging_config import get_logger
 
 # START_BLOCK: M-CORE/LLM_ROUTER/ROLES
 ROLES = (
@@ -21,10 +25,13 @@ ROLES = (
 )
 # END_BLOCK: M-CORE/LLM_ROUTER/ROLES
 
+
 # START_BLOCK: M-CORE/LLM_ROUTER/CLASS
 class LLMRouter:
     def __init__(self) -> None:
         self._client: httpx.AsyncClient | None = None
+        self._provider_cbs: dict[str, CircuitBreaker] = {}
+        self._latency: dict[str, float] = {}
 
     @property
     def client(self) -> httpx.AsyncClient:
@@ -32,20 +39,37 @@ class LLMRouter:
             self._client = httpx.AsyncClient(timeout=120.0)
         return self._client
 
-    def provider_for(self, role: str) -> dict:
-        providers = config.providers
+    def _provider_entries(self, role: str) -> list[dict]:
         routing = config.routing
-        entry = routing.get(role, {})
-        pname = entry.get("provider", "ollama")
-        if pname not in providers:
+        raw = routing.get(role, [])
+        if isinstance(raw, dict):
+            raw = [raw]
+        if not raw:
+            raise ConfigError(f"No providers configured for role '{role}'")
+        return raw
+
+    def provider_for(self, role: str) -> dict:
+        entries = self._provider_entries(role)
+        pname = entries[0]["provider"]
+        if pname not in config.providers:
             raise ConfigError(f"Provider '{pname}' for role '{role}' not configured in models.providers")
-        return providers[pname]
+        return config.providers[pname]
 
     def model_for(self, role: str) -> str:
-        routing = config.routing
-        entry = routing.get(role, {})
-        return entry.get("model", "")
+        entries = self._provider_entries(role)
+        return entries[0].get("model", "")
 
+    def _provider_cb(self, name: str) -> CircuitBreaker:
+        if name not in self._provider_cbs:
+            self._provider_cbs[name] = CircuitBreaker(name)
+        return self._provider_cbs[name]
+
+    def _update_latency(self, provider: str, elapsed: float) -> None:
+        alpha = 0.3
+        prev = self._latency.get(provider, elapsed)
+        self._latency[provider] = alpha * elapsed + (1 - alpha) * prev
+
+    # START_BLOCK: M-CORE/LLM_ROUTER/INFER
     async def infer(
         self,
         prompt: str,
@@ -53,30 +77,100 @@ class LLMRouter:
         image_base64: str | None = None,
         max_tokens: int | None = None,
     ) -> str:
-        provider = self.provider_for(role)
-        model = self.model_for(role)
-        ptype = provider.get("type", "ollama")
-        endpoint = provider.get("endpoint", "http://localhost:11434")
-        api_key = provider.get("api_key", "")
+        entries = self._provider_entries(role)
+        log = get_logger()
+        last_error: Exception | None = None
 
+        for entry in entries:
+            pname = entry["provider"]
+            if pname not in config.providers:
+                log.warning("[M-CORE][LLM][PROVIDER_SKIP]", provider=pname, reason="not_configured")
+                last_error = ConfigError(f"Provider '{pname}' not configured in models.providers")
+                continue
+            provider_cfg = config.providers[pname]
+
+            provider_type = provider_cfg.get("type", "ollama")
+            if provider_type not in ("ollama", "openai"):
+                log.warning("[M-CORE][LLM][PROVIDER_SKIP]", provider=pname, type=provider_type, reason="unsupported_type")
+                last_error = ConfigError(f"Unknown provider type '{provider_type}' for '{pname}'")
+                continue
+
+            cb = self._provider_cb(pname)
+            try:
+                start = time.monotonic()
+                result = await cb.acall(
+                    self._infer_one, provider_cfg, entry["model"],
+                    prompt, image_base64, max_tokens,
+                )
+                elapsed = time.monotonic() - start
+                self._update_latency(pname, elapsed)
+                log.info("[M-CORE][LLM][SUCCESS]", provider=pname, role=role, latency=f"{elapsed:.1f}s")
+                return result
+            except Exception as e:
+                last_error = e
+                log.warning("[M-CORE][LLM][FALLBACK]", provider=pname, role=role, error=str(e)[:100])
+
+        raise ConfigError(f"All providers failed for role '{role}': {last_error}" if last_error
+                          else f"All providers failed for role '{role}'")
+    # END_BLOCK: M-CORE/LLM_ROUTER/INFER
+
+    # START_BLOCK: M-CORE/LLM_ROUTER/EMBED
+    async def embed(self, text: str, role: str = "embedding_model") -> list[float]:
+        entries = self._provider_entries(role)
+        log = get_logger()
+        last_error: Exception | None = None
+
+        for entry in entries:
+            pname = entry["provider"]
+            if pname not in config.providers:
+                last_error = ConfigError(f"Provider '{pname}' not configured in models.providers")
+                continue
+            provider_cfg = config.providers[pname]
+
+            provider_type = provider_cfg.get("type", "ollama")
+            if provider_type not in ("ollama", "openai"):
+                last_error = ConfigError(f"Unknown provider type '{provider_type}' for '{pname}'")
+                continue
+
+            cb = self._provider_cb(pname)
+            try:
+                start = time.monotonic()
+                result = await cb.acall(
+                    self._embed_one, provider_cfg, entry["model"], text,
+                )
+                elapsed = time.monotonic() - start
+                self._update_latency(pname, elapsed)
+                return result
+            except Exception as e:
+                last_error = e
+                log.warning("[M-CORE][LLM][EMBED_FALLBACK]", provider=pname, error=str(e)[:100])
+
+        raise ConfigError(f"All providers failed for embed role '{role}': {last_error}" if last_error
+                          else f"All providers failed for embed role '{role}'")
+    # END_BLOCK: M-CORE/LLM_ROUTER/EMBED
+
+    async def _infer_one(
+        self,
+        provider_cfg: dict,
+        model: str,
+        prompt: str,
+        image_base64: str | None = None,
+        max_tokens: int | None = None,
+    ) -> str:
+        ptype = provider_cfg.get("type", "ollama")
+        endpoint = provider_cfg.get("endpoint", "http://localhost:11434")
+        api_key = provider_cfg.get("api_key", "")
         if ptype == "ollama":
             return await self._ollama_infer(endpoint, model, prompt, image_base64, max_tokens)
-        if ptype == "openai":
-            return await self._openai_infer(endpoint, api_key, model, prompt, image_base64, max_tokens)
-        raise ConfigError(f"Unknown provider type '{ptype}' for role '{role}'")
+        return await self._openai_infer(endpoint, api_key, model, prompt, image_base64, max_tokens)
 
-    async def embed(self, text: str, role: str = "embedding_model") -> list[float]:
-        provider = self.provider_for(role)
-        model = self.model_for(role)
-        ptype = provider.get("type", "ollama")
-        endpoint = provider.get("endpoint", "http://localhost:11434")
-        api_key = provider.get("api_key", "")
-
+    async def _embed_one(self, provider_cfg: dict, model: str, text: str) -> list[float]:
+        ptype = provider_cfg.get("type", "ollama")
+        endpoint = provider_cfg.get("endpoint", "http://localhost:11434")
+        api_key = provider_cfg.get("api_key", "")
         if ptype == "ollama":
             return await self._ollama_embed(endpoint, model, text)
-        if ptype == "openai":
-            return await self._openai_embed(endpoint, api_key, model, text)
-        raise ConfigError(f"Unknown provider type '{ptype}' for embed role '{role}'")
+        return await self._openai_embed(endpoint, api_key, model, text)
 
     async def _ollama_infer(
         self,

@@ -22,12 +22,25 @@ models:
       api_key: "${OPENROUTER_API_KEY}"
 
   routing:
-    text_model:       { provider: "ollama", model: "gemma4:e4b" }
-    vision_model:     { provider: "ollama", model: "qwen3.5:9b" }
-    classifier_model: { provider: "ollama", model: "qwen3.5:0.8b" }
-    mixer_model:      { provider: "ollama", model: "gemma4:e4b" }
-    moderation_model: { provider: "ollama", model: "gemma4:e4b" }
-    embedding_model:  { provider: "ollama", model: "qwen3-embedding:0.6b" }
+    text_model:
+      - { provider: ollama,   model: gemma4:e4b }
+      - { provider: yandex,   model: yandexgpt }
+      - { provider: openrouter, model: openai/gpt-4o-mini }
+    vision_model:
+      - { provider: ollama,   model: qwen3.5:9b }
+      - { provider: openrouter, model: openai/gpt-4o-mini }
+    classifier_model:
+      - { provider: ollama,   model: qwen3.5:0.8b }
+      - { provider: yandex,   model: yandexgpt }
+    mixer_model:
+      - { provider: ollama,   model: gemma4:e4b }
+      - { provider: openrouter, model: openai/gpt-4o-mini }
+    moderation_model:
+      - { provider: ollama,   model: gemma4:e4b }
+      - { provider: yandex,   model: yandexgpt }
+    embedding_model:
+      - { provider: ollama,   model: qwen3-embedding:0.6b }
+      - { provider: yandex,   model: yandex-embed }
 
   whisper:
     binary: "~/bin/whisper-cli"

@@ -295,7 +295,7 @@
       "monetization": [
         {
           "type": "event_ticket",
-          "search_query": "концерт Александр Романов 2026",
+          "search_query": "концерт Celebrity_Artist_01 2026",
           "reason": "голос совпал с Александром Романовым — возможность таргета концертов",
           "confidence": 0.53
         }
@@ -392,7 +392,7 @@
     }
   ],
   "celebrity_voice": {
-    "name": "Александр Романов",
+    "name": "Celebrity_Artist_01",
     "profession": "музыкант",
     "confidence": 0.62
   }

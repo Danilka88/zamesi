@@ -1,0 +1,3075 @@
+{
+  "frontmatter": {
+    "video_id": "movie_review",
+    "domain_type": "entertainment",
+    "brand_safety_score": 97,
+    "target_audience": [
+      "18-45",
+      "киноманы",
+      "любители научной фантастики",
+      "активный кинопоиск"
+    ],
+    "seo_title": "Обзор фильма «Эхо Будущего» — лучший сайфай 2026? Мнение кинокритика",
+    "seo_tags": [
+      "Эхо Будущего",
+      "обзор фильма",
+      "научная фантастика 2026",
+      "фантастика новинки",
+      "кинообзор",
+      "сайфай 2026",
+      "кинокритика",
+      "что посмотреть"
+    ],
+    "trending_cluster": "Кинообзоры и рецензии",
+    "auto_playlists": [
+      "Научная фантастика 2026",
+      "Лучшие кинообзоры",
+      "Подборки для вечера"
+    ],
+    "ad_targeting_keywords": [
+      "кино",
+      "научная фантастика",
+      "обзор фильма",
+      "кинотеатр",
+      "премьера 2026",
+      "IMAX",
+      "саундтрек",
+      "мерч"
+    ],
+    "moderation": {
+      "age_rating": "12+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 97,
+      "summary": "Безопасный контент: кинообзор научно-фантастического фильма. Нет спорных тем, насилия или возрастных ограничений."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Яркое интро с тизерами — ведущий анонсирует обзор нового научно-фантастического фильма «Эхо Будущего»",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "кинообзоры 2026",
+          "reason": "Автоматическое определение: кинообзоры 2026",
+          "confidence": 0.84
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ведущий представляет гостя — известного кинокритика, который уже посмотрел фильм",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.6
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Краткий синопсис: учёный Лев Волков обнаруживает сигнал из будущего",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "фантастика новинки 2026",
+          "reason": "Автоматическое определение: фантастика новинки 2026",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.2
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Обсуждение визуального стиля — операторская работа и CGI",
+      "monetization": [
+        {
+          "type": "ECOM_ITEM",
+          "search_query": "Blu-ray фильм Эхо Будущего",
+          "reason": "Автоматическое определение: Blu-ray фильм Эхо Будущего",
+          "confidence": 0.85
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Визуальный ряд, который стоит увидеть на большом экране",
+        "time_range_start": 110,
+        "time_range_end": 135,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.4
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Разбор саундтрека — композитор Ханс Циммер, оркестровые партии",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "саундтреки 2026 подборка",
+          "reason": "Автоматическое определение: саундтреки 2026 подборка",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Критик отмечает сильную игру актёров, особенно исполнителя главной роли",
+      "monetization": [
+        {
+          "type": "ECOM_ITEM",
+          "search_query": "постер фильма Эхо Будущего",
+          "reason": "Автоматическое определение: постер фильма Эхо Будущего",
+          "confidence": 0.66
+        },
+        {
+          "type": "AD_SLOT",
+          "search_query": "кинотеатры премьеры 2026",
+          "reason": "Автоматическое определение: кинотеатры премьеры 2026",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Вставка — обзор мерча: футболки, артбук, стилбук издания",
+      "monetization": [
+        {
+          "type": "ECOM_ITEM",
+          "search_query": "мерч Эхо Будущего официальный",
+          "reason": "Автоматическое определение: мерч Эхо Будущего официальный",
+          "confidence": 0.66
+        },
+        {
+          "type": "ECOM_ITEM",
+          "search_query": "артбук концепт-арты",
+          "reason": "Автоматическое определение: артбук концепт-арты",
+          "confidence": 0.71
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Топ-5 мерча, который раскупят за неделю",
+        "time_range_start": 280,
+        "time_range_end": 310,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.1
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Обсуждение философской темы фильма — природа времени и судьбы",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "научная фантастика философия",
+          "reason": "Автоматическое определение: научная фантастика философия",
+          "confidence": 0.81
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.6
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Критик сравнивает фильм с другими научно-фантастическими картинами",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "лучшие сайфай фильмы сравнение",
+          "reason": "Автоматическое определение: лучшие сайфай фильмы сравнение",
+          "confidence": 0.83
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Технические детали — какие камеры использовались, бюджет фильма",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "технологии кино 2026",
+          "reason": "Автоматическое определение: технологии кино 2026",
+          "confidence": 0.65
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ведущий спрашивает про кассовые сборы и окупаемость",
+      "monetization": [
+        {
+          "type": "ECOM_ITEM",
+          "search_query": "билеты Эхо Будущего кинотеатр",
+          "reason": "Автоматическое определение: билеты Эхо Будущего кинотеатр",
+          "confidence": 0.86
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Обсуждение возрастного рейтинга — фильм для всей семьи",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.5
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Спортивный момент — критик не согласен с оценками других изданий",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "кинокритика рецензии 2026",
+          "reason": "Автоматическое определение: кинокритика рецензии 2026",
+          "confidence": 0.94
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Почему все врут? Честный вердикт кинокритика",
+        "time_range_start": 550,
+        "time_range_end": 580,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Сравнение дубляжа и оригинальной озвучки — какой вариант смотреть",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "кинопрокат Россия дубляж",
+          "reason": "Автоматическое определение: кинопрокат Россия дубляж",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.4
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ведущий спрашивает про сцены после титров и возможное продолжение",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Финальный вердикт — оценка фильма по 10-балльной шкале",
+      "monetization": [
+        {
+          "type": "AD_SLOT",
+          "search_query": "рецензии на фильмы 2026",
+          "reason": "Автоматическое определение: рецензии на фильмы 2026",
+          "confidence": 0.83
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Итоговая оценка: стоит ли бежать в кинотеатр?",
+        "time_range_start": 750,
+        "time_range_end": 780,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Аутро — призыв подписаться, поставить лайк, ссылка на билеты",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.2
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 0,
+      "end_sec": 4,
+      "text": "Всем привет, с вами Кирилл, и это «Киноразбор». Сегодня у нас особенный выпуск — мы поговорим о фильме, который уже называют главной научно-фантастической премьерой года.",
+      "word_timestamps": [
+        {
+          "word": "Всем",
+          "start_sec": 0.0,
+          "end_sec": 0.25
+        },
+        {
+          "word": "привет",
+          "start_sec": 0.3,
+          "end_sec": 0.55
+        },
+        {
+          "word": "с",
+          "start_sec": 0.6,
+          "end_sec": 0.85
+        },
+        {
+          "word": "вами",
+          "start_sec": 0.8999999999999999,
+          "end_sec": 1.15
+        },
+        {
+          "word": "Кирилл",
+          "start_sec": 1.2,
+          "end_sec": 1.45
+        },
+        {
+          "word": "и",
+          "start_sec": 1.5,
+          "end_sec": 1.75
+        },
+        {
+          "word": "это",
+          "start_sec": 1.7999999999999998,
+          "end_sec": 2.05
+        },
+        {
+          "word": "«Киноразбор»",
+          "start_sec": 2.1,
+          "end_sec": 2.35
+        },
+        {
+          "word": "Сегодня",
+          "start_sec": 2.4,
+          "end_sec": 2.65
+        },
+        {
+          "word": "у",
+          "start_sec": 2.6999999999999997,
+          "end_sec": 2.9499999999999997
+        },
+        {
+          "word": "нас",
+          "start_sec": 3.0,
+          "end_sec": 3.25
+        },
+        {
+          "word": "особенный",
+          "start_sec": 3.3,
+          "end_sec": 3.55
+        },
+        {
+          "word": "выпуск",
+          "start_sec": 3.5999999999999996,
+          "end_sec": 3.8499999999999996
+        },
+        {
+          "word": "мы",
+          "start_sec": 3.9,
+          "end_sec": 4.15
+        },
+        {
+          "word": "поговорим",
+          "start_sec": 4.2,
+          "end_sec": 4.45
+        },
+        {
+          "word": "о",
+          "start_sec": 4.5,
+          "end_sec": 4.75
+        },
+        {
+          "word": "фильме",
+          "start_sec": 4.8,
+          "end_sec": 5.05
+        },
+        {
+          "word": "который",
+          "start_sec": 5.1,
+          "end_sec": 5.35
+        },
+        {
+          "word": "уже",
+          "start_sec": 5.3999999999999995,
+          "end_sec": 5.6499999999999995
+        },
+        {
+          "word": "называют",
+          "start_sec": 5.7,
+          "end_sec": 5.95
+        },
+        {
+          "word": "главной",
+          "start_sec": 6.0,
+          "end_sec": 6.25
+        },
+        {
+          "word": "научно-фантастической",
+          "start_sec": 6.3,
+          "end_sec": 6.55
+        },
+        {
+          "word": "премьерой",
+          "start_sec": 6.6,
+          "end_sec": 6.85
+        },
+        {
+          "word": "года",
+          "start_sec": 6.8999999999999995,
+          "end_sec": 7.1499999999999995
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 5,
+      "end_sec": 9,
+      "text": "Фильм «Эхо Будущего» вышел на экраны в прошлую пятницу, и я пригласил в студию кинокритика Алексея Соколова, чтобы разобрать его вдоль и поперёк.",
+      "word_timestamps": [
+        {
+          "word": "Фильм",
+          "start_sec": 5.0,
+          "end_sec": 5.25
+        },
+        {
+          "word": "«Эхо",
+          "start_sec": 5.3,
+          "end_sec": 5.55
+        },
+        {
+          "word": "Будущего»",
+          "start_sec": 5.6,
+          "end_sec": 5.85
+        },
+        {
+          "word": "вышел",
+          "start_sec": 5.9,
+          "end_sec": 6.15
+        },
+        {
+          "word": "на",
+          "start_sec": 6.2,
+          "end_sec": 6.45
+        },
+        {
+          "word": "экраны",
+          "start_sec": 6.5,
+          "end_sec": 6.75
+        },
+        {
+          "word": "в",
+          "start_sec": 6.8,
+          "end_sec": 7.05
+        },
+        {
+          "word": "прошлую",
+          "start_sec": 7.1,
+          "end_sec": 7.35
+        },
+        {
+          "word": "пятницу",
+          "start_sec": 7.4,
+          "end_sec": 7.65
+        },
+        {
+          "word": "и",
+          "start_sec": 7.699999999999999,
+          "end_sec": 7.949999999999999
+        },
+        {
+          "word": "я",
+          "start_sec": 8.0,
+          "end_sec": 8.25
+        },
+        {
+          "word": "пригласил",
+          "start_sec": 8.3,
+          "end_sec": 8.55
+        },
+        {
+          "word": "в",
+          "start_sec": 8.6,
+          "end_sec": 8.85
+        },
+        {
+          "word": "студию",
+          "start_sec": 8.9,
+          "end_sec": 9.15
+        },
+        {
+          "word": "кинокритика",
+          "start_sec": 9.2,
+          "end_sec": 9.45
+        },
+        {
+          "word": "Алексея",
+          "start_sec": 9.5,
+          "end_sec": 9.75
+        },
+        {
+          "word": "Соколова",
+          "start_sec": 9.8,
+          "end_sec": 10.05
+        },
+        {
+          "word": "чтобы",
+          "start_sec": 10.1,
+          "end_sec": 10.35
+        },
+        {
+          "word": "разобрать",
+          "start_sec": 10.399999999999999,
+          "end_sec": 10.649999999999999
+        },
+        {
+          "word": "его",
+          "start_sec": 10.7,
+          "end_sec": 10.95
+        },
+        {
+          "word": "вдоль",
+          "start_sec": 11.0,
+          "end_sec": 11.25
+        },
+        {
+          "word": "и",
+          "start_sec": 11.3,
+          "end_sec": 11.55
+        },
+        {
+          "word": "поперёк",
+          "start_sec": 11.6,
+          "end_sec": 11.85
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 10,
+      "end_sec": 14,
+      "text": "Привет, Кирилл. Спасибо за приглашение. Этот фильм я ждал очень давно — трейлеры выглядели многообещающе.",
+      "word_timestamps": [
+        {
+          "word": "Привет",
+          "start_sec": 10.0,
+          "end_sec": 10.25
+        },
+        {
+          "word": "Кирилл",
+          "start_sec": 10.3,
+          "end_sec": 10.55
+        },
+        {
+          "word": "Спасибо",
+          "start_sec": 10.6,
+          "end_sec": 10.85
+        },
+        {
+          "word": "за",
+          "start_sec": 10.9,
+          "end_sec": 11.15
+        },
+        {
+          "word": "приглашение",
+          "start_sec": 11.2,
+          "end_sec": 11.45
+        },
+        {
+          "word": "Этот",
+          "start_sec": 11.5,
+          "end_sec": 11.75
+        },
+        {
+          "word": "фильм",
+          "start_sec": 11.8,
+          "end_sec": 12.05
+        },
+        {
+          "word": "я",
+          "start_sec": 12.1,
+          "end_sec": 12.35
+        },
+        {
+          "word": "ждал",
+          "start_sec": 12.4,
+          "end_sec": 12.65
+        },
+        {
+          "word": "очень",
+          "start_sec": 12.7,
+          "end_sec": 12.95
+        },
+        {
+          "word": "давно",
+          "start_sec": 13.0,
+          "end_sec": 13.25
+        },
+        {
+          "word": "трейлеры",
+          "start_sec": 13.3,
+          "end_sec": 13.55
+        },
+        {
+          "word": "выглядели",
+          "start_sec": 13.6,
+          "end_sec": 13.85
+        },
+        {
+          "word": "многообещающе",
+          "start_sec": 13.9,
+          "end_sec": 14.15
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 15,
+      "end_sec": 19,
+      "text": "Для тех, кто не в курсе — напомни краткий сюжет. О чём фильм?",
+      "word_timestamps": [
+        {
+          "word": "Для",
+          "start_sec": 15.0,
+          "end_sec": 15.25
+        },
+        {
+          "word": "тех",
+          "start_sec": 15.3,
+          "end_sec": 15.55
+        },
+        {
+          "word": "кто",
+          "start_sec": 15.6,
+          "end_sec": 15.85
+        },
+        {
+          "word": "не",
+          "start_sec": 15.9,
+          "end_sec": 16.15
+        },
+        {
+          "word": "в",
+          "start_sec": 16.2,
+          "end_sec": 16.45
+        },
+        {
+          "word": "курсе",
+          "start_sec": 16.5,
+          "end_sec": 16.75
+        },
+        {
+          "word": "напомни",
+          "start_sec": 16.8,
+          "end_sec": 17.05
+        },
+        {
+          "word": "краткий",
+          "start_sec": 17.1,
+          "end_sec": 17.35
+        },
+        {
+          "word": "сюжет",
+          "start_sec": 17.4,
+          "end_sec": 17.65
+        },
+        {
+          "word": "О",
+          "start_sec": 17.7,
+          "end_sec": 17.95
+        },
+        {
+          "word": "чём",
+          "start_sec": 18.0,
+          "end_sec": 18.25
+        },
+        {
+          "word": "фильм",
+          "start_sec": 18.3,
+          "end_sec": 18.55
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 20,
+      "end_sec": 24,
+      "text": "Фильм рассказывает о физике Льве Волкове, который работает на коллайдере в Дубне. Однажды он фиксирует странный сигнал — радиоволны, идущие из будущего.",
+      "word_timestamps": [
+        {
+          "word": "Фильм",
+          "start_sec": 20.0,
+          "end_sec": 20.25
+        },
+        {
+          "word": "рассказывает",
+          "start_sec": 20.3,
+          "end_sec": 20.55
+        },
+        {
+          "word": "о",
+          "start_sec": 20.6,
+          "end_sec": 20.85
+        },
+        {
+          "word": "физике",
+          "start_sec": 20.9,
+          "end_sec": 21.15
+        },
+        {
+          "word": "Льве",
+          "start_sec": 21.2,
+          "end_sec": 21.45
+        },
+        {
+          "word": "Волкове",
+          "start_sec": 21.5,
+          "end_sec": 21.75
+        },
+        {
+          "word": "который",
+          "start_sec": 21.8,
+          "end_sec": 22.05
+        },
+        {
+          "word": "работает",
+          "start_sec": 22.1,
+          "end_sec": 22.35
+        },
+        {
+          "word": "на",
+          "start_sec": 22.4,
+          "end_sec": 22.65
+        },
+        {
+          "word": "коллайдере",
+          "start_sec": 22.7,
+          "end_sec": 22.95
+        },
+        {
+          "word": "в",
+          "start_sec": 23.0,
+          "end_sec": 23.25
+        },
+        {
+          "word": "Дубне",
+          "start_sec": 23.3,
+          "end_sec": 23.55
+        },
+        {
+          "word": "Однажды",
+          "start_sec": 23.6,
+          "end_sec": 23.85
+        },
+        {
+          "word": "он",
+          "start_sec": 23.9,
+          "end_sec": 24.15
+        },
+        {
+          "word": "фиксирует",
+          "start_sec": 24.2,
+          "end_sec": 24.45
+        },
+        {
+          "word": "странный",
+          "start_sec": 24.5,
+          "end_sec": 24.75
+        },
+        {
+          "word": "сигнал",
+          "start_sec": 24.8,
+          "end_sec": 25.05
+        },
+        {
+          "word": "радиоволны",
+          "start_sec": 25.1,
+          "end_sec": 25.35
+        },
+        {
+          "word": "идущие",
+          "start_sec": 25.4,
+          "end_sec": 25.65
+        },
+        {
+          "word": "из",
+          "start_sec": 25.7,
+          "end_sec": 25.95
+        },
+        {
+          "word": "будущего",
+          "start_sec": 26.0,
+          "end_sec": 26.25
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 25,
+      "end_sec": 29,
+      "text": "Сигнал содержит зашифрованные данные — координаты и дату. Волков понимает, что будущее пытается с ним связаться. Дальше начинается путешествие во времени, но не в привычном смысле.",
+      "word_timestamps": [
+        {
+          "word": "Сигнал",
+          "start_sec": 25.0,
+          "end_sec": 25.25
+        },
+        {
+          "word": "содержит",
+          "start_sec": 25.3,
+          "end_sec": 25.55
+        },
+        {
+          "word": "зашифрованные",
+          "start_sec": 25.6,
+          "end_sec": 25.85
+        },
+        {
+          "word": "данные",
+          "start_sec": 25.9,
+          "end_sec": 26.15
+        },
+        {
+          "word": "координаты",
+          "start_sec": 26.2,
+          "end_sec": 26.45
+        },
+        {
+          "word": "и",
+          "start_sec": 26.5,
+          "end_sec": 26.75
+        },
+        {
+          "word": "дату",
+          "start_sec": 26.8,
+          "end_sec": 27.05
+        },
+        {
+          "word": "Волков",
+          "start_sec": 27.1,
+          "end_sec": 27.35
+        },
+        {
+          "word": "понимает",
+          "start_sec": 27.4,
+          "end_sec": 27.65
+        },
+        {
+          "word": "что",
+          "start_sec": 27.7,
+          "end_sec": 27.95
+        },
+        {
+          "word": "будущее",
+          "start_sec": 28.0,
+          "end_sec": 28.25
+        },
+        {
+          "word": "пытается",
+          "start_sec": 28.3,
+          "end_sec": 28.55
+        },
+        {
+          "word": "с",
+          "start_sec": 28.6,
+          "end_sec": 28.85
+        },
+        {
+          "word": "ним",
+          "start_sec": 28.9,
+          "end_sec": 29.15
+        },
+        {
+          "word": "связаться",
+          "start_sec": 29.2,
+          "end_sec": 29.45
+        },
+        {
+          "word": "Дальше",
+          "start_sec": 29.5,
+          "end_sec": 29.75
+        },
+        {
+          "word": "начинается",
+          "start_sec": 29.8,
+          "end_sec": 30.05
+        },
+        {
+          "word": "путешествие",
+          "start_sec": 30.1,
+          "end_sec": 30.35
+        },
+        {
+          "word": "во",
+          "start_sec": 30.4,
+          "end_sec": 30.65
+        },
+        {
+          "word": "времени",
+          "start_sec": 30.7,
+          "end_sec": 30.95
+        },
+        {
+          "word": "но",
+          "start_sec": 31.0,
+          "end_sec": 31.25
+        },
+        {
+          "word": "не",
+          "start_sec": 31.3,
+          "end_sec": 31.55
+        },
+        {
+          "word": "в",
+          "start_sec": 31.6,
+          "end_sec": 31.85
+        },
+        {
+          "word": "привычном",
+          "start_sec": 31.9,
+          "end_sec": 32.15
+        },
+        {
+          "word": "смысле",
+          "start_sec": 32.2,
+          "end_sec": 32.45
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 30,
+      "end_sec": 34,
+      "text": "Что меня сразу зацепило — это визуальный ряд. Режиссёр Дмитрий Калинин снял очень красивую картину. Каждый кадр — произведение искусства.",
+      "word_timestamps": [
+        {
+          "word": "Что",
+          "start_sec": 30.0,
+          "end_sec": 30.25
+        },
+        {
+          "word": "меня",
+          "start_sec": 30.3,
+          "end_sec": 30.55
+        },
+        {
+          "word": "сразу",
+          "start_sec": 30.6,
+          "end_sec": 30.85
+        },
+        {
+          "word": "зацепило",
+          "start_sec": 30.9,
+          "end_sec": 31.15
+        },
+        {
+          "word": "это",
+          "start_sec": 31.2,
+          "end_sec": 31.45
+        },
+        {
+          "word": "визуальный",
+          "start_sec": 31.5,
+          "end_sec": 31.75
+        },
+        {
+          "word": "ряд",
+          "start_sec": 31.8,
+          "end_sec": 32.05
+        },
+        {
+          "word": "Режиссёр",
+          "start_sec": 32.1,
+          "end_sec": 32.35
+        },
+        {
+          "word": "Дмитрий",
+          "start_sec": 32.4,
+          "end_sec": 32.65
+        },
+        {
+          "word": "Калинин",
+          "start_sec": 32.7,
+          "end_sec": 32.95
+        },
+        {
+          "word": "снял",
+          "start_sec": 33.0,
+          "end_sec": 33.25
+        },
+        {
+          "word": "очень",
+          "start_sec": 33.3,
+          "end_sec": 33.55
+        },
+        {
+          "word": "красивую",
+          "start_sec": 33.6,
+          "end_sec": 33.85
+        },
+        {
+          "word": "картину",
+          "start_sec": 33.9,
+          "end_sec": 34.15
+        },
+        {
+          "word": "Каждый",
+          "start_sec": 34.2,
+          "end_sec": 34.45
+        },
+        {
+          "word": "кадр",
+          "start_sec": 34.5,
+          "end_sec": 34.75
+        },
+        {
+          "word": "произведение",
+          "start_sec": 34.8,
+          "end_sec": 35.05
+        },
+        {
+          "word": "искусства",
+          "start_sec": 35.1,
+          "end_sec": 35.35
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 35,
+      "end_sec": 39,
+      "text": "Полностью согласен. CGI на высочайшем уровне. Особенно сцены с коллайдером и финальный эпизод в четвёртом измерении. Бюджет в 180 миллионов долларов чувствуется в каждой сцене.",
+      "word_timestamps": [
+        {
+          "word": "Полностью",
+          "start_sec": 35.0,
+          "end_sec": 35.25
+        },
+        {
+          "word": "согласен",
+          "start_sec": 35.3,
+          "end_sec": 35.55
+        },
+        {
+          "word": "CGI",
+          "start_sec": 35.6,
+          "end_sec": 35.85
+        },
+        {
+          "word": "на",
+          "start_sec": 35.9,
+          "end_sec": 36.15
+        },
+        {
+          "word": "высочайшем",
+          "start_sec": 36.2,
+          "end_sec": 36.45
+        },
+        {
+          "word": "уровне",
+          "start_sec": 36.5,
+          "end_sec": 36.75
+        },
+        {
+          "word": "Особенно",
+          "start_sec": 36.8,
+          "end_sec": 37.05
+        },
+        {
+          "word": "сцены",
+          "start_sec": 37.1,
+          "end_sec": 37.35
+        },
+        {
+          "word": "с",
+          "start_sec": 37.4,
+          "end_sec": 37.65
+        },
+        {
+          "word": "коллайдером",
+          "start_sec": 37.7,
+          "end_sec": 37.95
+        },
+        {
+          "word": "и",
+          "start_sec": 38.0,
+          "end_sec": 38.25
+        },
+        {
+          "word": "финальный",
+          "start_sec": 38.3,
+          "end_sec": 38.55
+        },
+        {
+          "word": "эпизод",
+          "start_sec": 38.6,
+          "end_sec": 38.85
+        },
+        {
+          "word": "в",
+          "start_sec": 38.9,
+          "end_sec": 39.15
+        },
+        {
+          "word": "четвёртом",
+          "start_sec": 39.2,
+          "end_sec": 39.45
+        },
+        {
+          "word": "измерении",
+          "start_sec": 39.5,
+          "end_sec": 39.75
+        },
+        {
+          "word": "Бюджет",
+          "start_sec": 39.8,
+          "end_sec": 40.05
+        },
+        {
+          "word": "в",
+          "start_sec": 40.1,
+          "end_sec": 40.35
+        },
+        {
+          "word": "180",
+          "start_sec": 40.4,
+          "end_sec": 40.65
+        },
+        {
+          "word": "миллионов",
+          "start_sec": 40.7,
+          "end_sec": 40.95
+        },
+        {
+          "word": "долларов",
+          "start_sec": 41.0,
+          "end_sec": 41.25
+        },
+        {
+          "word": "чувствуется",
+          "start_sec": 41.3,
+          "end_sec": 41.55
+        },
+        {
+          "word": "в",
+          "start_sec": 41.6,
+          "end_sec": 41.85
+        },
+        {
+          "word": "каждой",
+          "start_sec": 41.9,
+          "end_sec": 42.15
+        },
+        {
+          "word": "сцене",
+          "start_sec": 42.2,
+          "end_sec": 42.45
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 40,
+      "end_sec": 44,
+      "text": "А саундтрек? Это же Ханс Циммер работал над музыкой. Его партитура для этого фильма — нечто невероятное.",
+      "word_timestamps": [
+        {
+          "word": "А",
+          "start_sec": 40.0,
+          "end_sec": 40.25
+        },
+        {
+          "word": "саундтрек",
+          "start_sec": 40.3,
+          "end_sec": 40.55
+        },
+        {
+          "word": "Это",
+          "start_sec": 40.6,
+          "end_sec": 40.85
+        },
+        {
+          "word": "же",
+          "start_sec": 40.9,
+          "end_sec": 41.15
+        },
+        {
+          "word": "Ханс",
+          "start_sec": 41.2,
+          "end_sec": 41.45
+        },
+        {
+          "word": "Циммер",
+          "start_sec": 41.5,
+          "end_sec": 41.75
+        },
+        {
+          "word": "работал",
+          "start_sec": 41.8,
+          "end_sec": 42.05
+        },
+        {
+          "word": "над",
+          "start_sec": 42.1,
+          "end_sec": 42.35
+        },
+        {
+          "word": "музыкой",
+          "start_sec": 42.4,
+          "end_sec": 42.65
+        },
+        {
+          "word": "Его",
+          "start_sec": 42.7,
+          "end_sec": 42.95
+        },
+        {
+          "word": "партитура",
+          "start_sec": 43.0,
+          "end_sec": 43.25
+        },
+        {
+          "word": "для",
+          "start_sec": 43.3,
+          "end_sec": 43.55
+        },
+        {
+          "word": "этого",
+          "start_sec": 43.6,
+          "end_sec": 43.85
+        },
+        {
+          "word": "фильма",
+          "start_sec": 43.9,
+          "end_sec": 44.15
+        },
+        {
+          "word": "нечто",
+          "start_sec": 44.2,
+          "end_sec": 44.45
+        },
+        {
+          "word": "невероятное",
+          "start_sec": 44.5,
+          "end_sec": 44.75
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 45,
+      "end_sec": 49,
+      "text": "Циммер снова на высоте. Оркестровые партии, электронные вставки — музыка идеально передаёт ощущение бесконечности космоса и времени.",
+      "word_timestamps": [
+        {
+          "word": "Циммер",
+          "start_sec": 45.0,
+          "end_sec": 45.25
+        },
+        {
+          "word": "снова",
+          "start_sec": 45.3,
+          "end_sec": 45.55
+        },
+        {
+          "word": "на",
+          "start_sec": 45.6,
+          "end_sec": 45.85
+        },
+        {
+          "word": "высоте",
+          "start_sec": 45.9,
+          "end_sec": 46.15
+        },
+        {
+          "word": "Оркестровые",
+          "start_sec": 46.2,
+          "end_sec": 46.45
+        },
+        {
+          "word": "партии",
+          "start_sec": 46.5,
+          "end_sec": 46.75
+        },
+        {
+          "word": "электронные",
+          "start_sec": 46.8,
+          "end_sec": 47.05
+        },
+        {
+          "word": "вставки",
+          "start_sec": 47.1,
+          "end_sec": 47.35
+        },
+        {
+          "word": "музыка",
+          "start_sec": 47.4,
+          "end_sec": 47.65
+        },
+        {
+          "word": "идеально",
+          "start_sec": 47.7,
+          "end_sec": 47.95
+        },
+        {
+          "word": "передаёт",
+          "start_sec": 48.0,
+          "end_sec": 48.25
+        },
+        {
+          "word": "ощущение",
+          "start_sec": 48.3,
+          "end_sec": 48.55
+        },
+        {
+          "word": "бесконечности",
+          "start_sec": 48.6,
+          "end_sec": 48.85
+        },
+        {
+          "word": "космоса",
+          "start_sec": 48.9,
+          "end_sec": 49.15
+        },
+        {
+          "word": "и",
+          "start_sec": 49.2,
+          "end_sec": 49.45
+        },
+        {
+          "word": "времени",
+          "start_sec": 49.5,
+          "end_sec": 49.75
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 50,
+      "end_sec": 54,
+      "text": "Я уже добавил альбом в свой плейлист. Рекомендую слушать в хороших наушниках.",
+      "word_timestamps": [
+        {
+          "word": "Я",
+          "start_sec": 50.0,
+          "end_sec": 50.25
+        },
+        {
+          "word": "уже",
+          "start_sec": 50.3,
+          "end_sec": 50.55
+        },
+        {
+          "word": "добавил",
+          "start_sec": 50.6,
+          "end_sec": 50.85
+        },
+        {
+          "word": "альбом",
+          "start_sec": 50.9,
+          "end_sec": 51.15
+        },
+        {
+          "word": "в",
+          "start_sec": 51.2,
+          "end_sec": 51.45
+        },
+        {
+          "word": "свой",
+          "start_sec": 51.5,
+          "end_sec": 51.75
+        },
+        {
+          "word": "плейлист",
+          "start_sec": 51.8,
+          "end_sec": 52.05
+        },
+        {
+          "word": "Рекомендую",
+          "start_sec": 52.1,
+          "end_sec": 52.35
+        },
+        {
+          "word": "слушать",
+          "start_sec": 52.4,
+          "end_sec": 52.65
+        },
+        {
+          "word": "в",
+          "start_sec": 52.7,
+          "end_sec": 52.95
+        },
+        {
+          "word": "хороших",
+          "start_sec": 53.0,
+          "end_sec": 53.25
+        },
+        {
+          "word": "наушниках",
+          "start_sec": 53.3,
+          "end_sec": 53.55
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 55,
+      "end_sec": 59,
+      "text": "Теперь про актёров. Иван Бережной в роли Волкова — это его лучшая роль. Очень глубокая, эмоциональная игра.",
+      "word_timestamps": [
+        {
+          "word": "Теперь",
+          "start_sec": 55.0,
+          "end_sec": 55.25
+        },
+        {
+          "word": "про",
+          "start_sec": 55.3,
+          "end_sec": 55.55
+        },
+        {
+          "word": "актёров",
+          "start_sec": 55.6,
+          "end_sec": 55.85
+        },
+        {
+          "word": "Иван",
+          "start_sec": 55.9,
+          "end_sec": 56.15
+        },
+        {
+          "word": "Бережной",
+          "start_sec": 56.2,
+          "end_sec": 56.45
+        },
+        {
+          "word": "в",
+          "start_sec": 56.5,
+          "end_sec": 56.75
+        },
+        {
+          "word": "роли",
+          "start_sec": 56.8,
+          "end_sec": 57.05
+        },
+        {
+          "word": "Волкова",
+          "start_sec": 57.1,
+          "end_sec": 57.35
+        },
+        {
+          "word": "это",
+          "start_sec": 57.4,
+          "end_sec": 57.65
+        },
+        {
+          "word": "его",
+          "start_sec": 57.7,
+          "end_sec": 57.95
+        },
+        {
+          "word": "лучшая",
+          "start_sec": 58.0,
+          "end_sec": 58.25
+        },
+        {
+          "word": "роль",
+          "start_sec": 58.3,
+          "end_sec": 58.55
+        },
+        {
+          "word": "Очень",
+          "start_sec": 58.6,
+          "end_sec": 58.85
+        },
+        {
+          "word": "глубокая",
+          "start_sec": 58.9,
+          "end_sec": 59.15
+        },
+        {
+          "word": "эмоциональная",
+          "start_sec": 59.2,
+          "end_sec": 59.45
+        },
+        {
+          "word": "игра",
+          "start_sec": 59.5,
+          "end_sec": 59.75
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 60,
+      "end_sec": 64,
+      "text": "Бережной действительно выложился на полную. Сцены, где его герой осознаёт, что сигнал из будущего — это предупреждение о катастрофе, сыграны потрясающе. И Алиса Ветрова в роли его ассистентки — отличный кастинг.",
+      "word_timestamps": [
+        {
+          "word": "Бережной",
+          "start_sec": 60.0,
+          "end_sec": 60.25
+        },
+        {
+          "word": "действительно",
+          "start_sec": 60.3,
+          "end_sec": 60.55
+        },
+        {
+          "word": "выложился",
+          "start_sec": 60.6,
+          "end_sec": 60.85
+        },
+        {
+          "word": "на",
+          "start_sec": 60.9,
+          "end_sec": 61.15
+        },
+        {
+          "word": "полную",
+          "start_sec": 61.2,
+          "end_sec": 61.45
+        },
+        {
+          "word": "Сцены",
+          "start_sec": 61.5,
+          "end_sec": 61.75
+        },
+        {
+          "word": "где",
+          "start_sec": 61.8,
+          "end_sec": 62.05
+        },
+        {
+          "word": "его",
+          "start_sec": 62.1,
+          "end_sec": 62.35
+        },
+        {
+          "word": "герой",
+          "start_sec": 62.4,
+          "end_sec": 62.65
+        },
+        {
+          "word": "осознаёт",
+          "start_sec": 62.7,
+          "end_sec": 62.95
+        },
+        {
+          "word": "что",
+          "start_sec": 63.0,
+          "end_sec": 63.25
+        },
+        {
+          "word": "сигнал",
+          "start_sec": 63.3,
+          "end_sec": 63.55
+        },
+        {
+          "word": "из",
+          "start_sec": 63.6,
+          "end_sec": 63.85
+        },
+        {
+          "word": "будущего",
+          "start_sec": 63.9,
+          "end_sec": 64.15
+        },
+        {
+          "word": "это",
+          "start_sec": 64.2,
+          "end_sec": 64.45
+        },
+        {
+          "word": "предупреждение",
+          "start_sec": 64.5,
+          "end_sec": 64.75
+        },
+        {
+          "word": "о",
+          "start_sec": 64.8,
+          "end_sec": 65.05
+        },
+        {
+          "word": "катастрофе",
+          "start_sec": 65.1,
+          "end_sec": 65.35
+        },
+        {
+          "word": "сыграны",
+          "start_sec": 65.4,
+          "end_sec": 65.65
+        },
+        {
+          "word": "потрясающе",
+          "start_sec": 65.7,
+          "end_sec": 65.95
+        },
+        {
+          "word": "И",
+          "start_sec": 66.0,
+          "end_sec": 66.25
+        },
+        {
+          "word": "Алиса",
+          "start_sec": 66.3,
+          "end_sec": 66.55
+        },
+        {
+          "word": "Ветрова",
+          "start_sec": 66.6,
+          "end_sec": 66.85
+        },
+        {
+          "word": "в",
+          "start_sec": 66.9,
+          "end_sec": 67.15
+        },
+        {
+          "word": "роли",
+          "start_sec": 67.2,
+          "end_sec": 67.45
+        },
+        {
+          "word": "его",
+          "start_sec": 67.5,
+          "end_sec": 67.75
+        },
+        {
+          "word": "ассистентки",
+          "start_sec": 67.8,
+          "end_sec": 68.05
+        },
+        {
+          "word": "отличный",
+          "start_sec": 68.1,
+          "end_sec": 68.35
+        },
+        {
+          "word": "кастинг",
+          "start_sec": 68.4,
+          "end_sec": 68.65
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 65,
+      "end_sec": 69,
+      "text": "Давайте поговорим о мерче. Я уже видел в магазинах футболки с логотипом фильма и артбук с концепт-артами.",
+      "word_timestamps": [
+        {
+          "word": "Давайте",
+          "start_sec": 65.0,
+          "end_sec": 65.25
+        },
+        {
+          "word": "поговорим",
+          "start_sec": 65.3,
+          "end_sec": 65.55
+        },
+        {
+          "word": "о",
+          "start_sec": 65.6,
+          "end_sec": 65.85
+        },
+        {
+          "word": "мерче",
+          "start_sec": 65.9,
+          "end_sec": 66.15
+        },
+        {
+          "word": "Я",
+          "start_sec": 66.2,
+          "end_sec": 66.45
+        },
+        {
+          "word": "уже",
+          "start_sec": 66.5,
+          "end_sec": 66.75
+        },
+        {
+          "word": "видел",
+          "start_sec": 66.8,
+          "end_sec": 67.05
+        },
+        {
+          "word": "в",
+          "start_sec": 67.1,
+          "end_sec": 67.35
+        },
+        {
+          "word": "магазинах",
+          "start_sec": 67.4,
+          "end_sec": 67.65
+        },
+        {
+          "word": "футболки",
+          "start_sec": 67.7,
+          "end_sec": 67.95
+        },
+        {
+          "word": "с",
+          "start_sec": 68.0,
+          "end_sec": 68.25
+        },
+        {
+          "word": "логотипом",
+          "start_sec": 68.3,
+          "end_sec": 68.55
+        },
+        {
+          "word": "фильма",
+          "start_sec": 68.6,
+          "end_sec": 68.85
+        },
+        {
+          "word": "и",
+          "start_sec": 68.9,
+          "end_sec": 69.15
+        },
+        {
+          "word": "артбук",
+          "start_sec": 69.2,
+          "end_sec": 69.45
+        },
+        {
+          "word": "с",
+          "start_sec": 69.5,
+          "end_sec": 69.75
+        },
+        {
+          "word": "концепт-артами",
+          "start_sec": 69.8,
+          "end_sec": 70.05
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 70,
+      "end_sec": 74,
+      "text": "Да, мерч на высшем уровне. У меня уже есть стилбук-издание с дополнительными материалами. Там и сценарий, и раскадровки, и интервью с режиссёром.",
+      "word_timestamps": [
+        {
+          "word": "Да",
+          "start_sec": 70.0,
+          "end_sec": 70.25
+        },
+        {
+          "word": "мерч",
+          "start_sec": 70.3,
+          "end_sec": 70.55
+        },
+        {
+          "word": "на",
+          "start_sec": 70.6,
+          "end_sec": 70.85
+        },
+        {
+          "word": "высшем",
+          "start_sec": 70.9,
+          "end_sec": 71.15
+        },
+        {
+          "word": "уровне",
+          "start_sec": 71.2,
+          "end_sec": 71.45
+        },
+        {
+          "word": "У",
+          "start_sec": 71.5,
+          "end_sec": 71.75
+        },
+        {
+          "word": "меня",
+          "start_sec": 71.8,
+          "end_sec": 72.05
+        },
+        {
+          "word": "уже",
+          "start_sec": 72.1,
+          "end_sec": 72.35
+        },
+        {
+          "word": "есть",
+          "start_sec": 72.4,
+          "end_sec": 72.65
+        },
+        {
+          "word": "стилбук-издание",
+          "start_sec": 72.7,
+          "end_sec": 72.95
+        },
+        {
+          "word": "с",
+          "start_sec": 73.0,
+          "end_sec": 73.25
+        },
+        {
+          "word": "дополнительными",
+          "start_sec": 73.3,
+          "end_sec": 73.55
+        },
+        {
+          "word": "материалами",
+          "start_sec": 73.6,
+          "end_sec": 73.85
+        },
+        {
+          "word": "Там",
+          "start_sec": 73.9,
+          "end_sec": 74.15
+        },
+        {
+          "word": "и",
+          "start_sec": 74.2,
+          "end_sec": 74.45
+        },
+        {
+          "word": "сценарий",
+          "start_sec": 74.5,
+          "end_sec": 74.75
+        },
+        {
+          "word": "и",
+          "start_sec": 74.8,
+          "end_sec": 75.05
+        },
+        {
+          "word": "раскадровки",
+          "start_sec": 75.1,
+          "end_sec": 75.35
+        },
+        {
+          "word": "и",
+          "start_sec": 75.4,
+          "end_sec": 75.65
+        },
+        {
+          "word": "интервью",
+          "start_sec": 75.7,
+          "end_sec": 75.95
+        },
+        {
+          "word": "с",
+          "start_sec": 76.0,
+          "end_sec": 76.25
+        },
+        {
+          "word": "режиссёром",
+          "start_sec": 76.3,
+          "end_sec": 76.55
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 75,
+      "end_sec": 79,
+      "text": "А что насчёт философской составляющей? Фильм поднимает вопросы судьбы и свободы воли.",
+      "word_timestamps": [
+        {
+          "word": "А",
+          "start_sec": 75.0,
+          "end_sec": 75.25
+        },
+        {
+          "word": "что",
+          "start_sec": 75.3,
+          "end_sec": 75.55
+        },
+        {
+          "word": "насчёт",
+          "start_sec": 75.6,
+          "end_sec": 75.85
+        },
+        {
+          "word": "философской",
+          "start_sec": 75.9,
+          "end_sec": 76.15
+        },
+        {
+          "word": "составляющей",
+          "start_sec": 76.2,
+          "end_sec": 76.45
+        },
+        {
+          "word": "Фильм",
+          "start_sec": 76.5,
+          "end_sec": 76.75
+        },
+        {
+          "word": "поднимает",
+          "start_sec": 76.8,
+          "end_sec": 77.05
+        },
+        {
+          "word": "вопросы",
+          "start_sec": 77.1,
+          "end_sec": 77.35
+        },
+        {
+          "word": "судьбы",
+          "start_sec": 77.4,
+          "end_sec": 77.65
+        },
+        {
+          "word": "и",
+          "start_sec": 77.7,
+          "end_sec": 77.95
+        },
+        {
+          "word": "свободы",
+          "start_sec": 78.0,
+          "end_sec": 78.25
+        },
+        {
+          "word": "воли",
+          "start_sec": 78.3,
+          "end_sec": 78.55
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 80,
+      "end_sec": 84,
+      "text": "Это самая сильная часть фильма. Он не просто про путешествия во времени. Он про выбор, про ответственность за будущее. Сценарий умный, без типичных для жанра клише.",
+      "word_timestamps": [
+        {
+          "word": "Это",
+          "start_sec": 80.0,
+          "end_sec": 80.25
+        },
+        {
+          "word": "самая",
+          "start_sec": 80.3,
+          "end_sec": 80.55
+        },
+        {
+          "word": "сильная",
+          "start_sec": 80.6,
+          "end_sec": 80.85
+        },
+        {
+          "word": "часть",
+          "start_sec": 80.9,
+          "end_sec": 81.15
+        },
+        {
+          "word": "фильма",
+          "start_sec": 81.2,
+          "end_sec": 81.45
+        },
+        {
+          "word": "Он",
+          "start_sec": 81.5,
+          "end_sec": 81.75
+        },
+        {
+          "word": "не",
+          "start_sec": 81.8,
+          "end_sec": 82.05
+        },
+        {
+          "word": "просто",
+          "start_sec": 82.1,
+          "end_sec": 82.35
+        },
+        {
+          "word": "про",
+          "start_sec": 82.4,
+          "end_sec": 82.65
+        },
+        {
+          "word": "путешествия",
+          "start_sec": 82.7,
+          "end_sec": 82.95
+        },
+        {
+          "word": "во",
+          "start_sec": 83.0,
+          "end_sec": 83.25
+        },
+        {
+          "word": "времени",
+          "start_sec": 83.3,
+          "end_sec": 83.55
+        },
+        {
+          "word": "Он",
+          "start_sec": 83.6,
+          "end_sec": 83.85
+        },
+        {
+          "word": "про",
+          "start_sec": 83.9,
+          "end_sec": 84.15
+        },
+        {
+          "word": "выбор",
+          "start_sec": 84.2,
+          "end_sec": 84.45
+        },
+        {
+          "word": "про",
+          "start_sec": 84.5,
+          "end_sec": 84.75
+        },
+        {
+          "word": "ответственность",
+          "start_sec": 84.8,
+          "end_sec": 85.05
+        },
+        {
+          "word": "за",
+          "start_sec": 85.1,
+          "end_sec": 85.35
+        },
+        {
+          "word": "будущее",
+          "start_sec": 85.4,
+          "end_sec": 85.65
+        },
+        {
+          "word": "Сценарий",
+          "start_sec": 85.7,
+          "end_sec": 85.95
+        },
+        {
+          "word": "умный",
+          "start_sec": 86.0,
+          "end_sec": 86.25
+        },
+        {
+          "word": "без",
+          "start_sec": 86.3,
+          "end_sec": 86.55
+        },
+        {
+          "word": "типичных",
+          "start_sec": 86.6,
+          "end_sec": 86.85
+        },
+        {
+          "word": "для",
+          "start_sec": 86.9,
+          "end_sec": 87.15
+        },
+        {
+          "word": "жанра",
+          "start_sec": 87.2,
+          "end_sec": 87.45
+        },
+        {
+          "word": "клише",
+          "start_sec": 87.5,
+          "end_sec": 87.75
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 85,
+      "end_sec": 89,
+      "text": "Как фильм смотрится в сравнении с другими сайфай-картинами последних лет?",
+      "word_timestamps": [
+        {
+          "word": "Как",
+          "start_sec": 85.0,
+          "end_sec": 85.25
+        },
+        {
+          "word": "фильм",
+          "start_sec": 85.3,
+          "end_sec": 85.55
+        },
+        {
+          "word": "смотрится",
+          "start_sec": 85.6,
+          "end_sec": 85.85
+        },
+        {
+          "word": "в",
+          "start_sec": 85.9,
+          "end_sec": 86.15
+        },
+        {
+          "word": "сравнении",
+          "start_sec": 86.2,
+          "end_sec": 86.45
+        },
+        {
+          "word": "с",
+          "start_sec": 86.5,
+          "end_sec": 86.75
+        },
+        {
+          "word": "другими",
+          "start_sec": 86.8,
+          "end_sec": 87.05
+        },
+        {
+          "word": "сайфай-картинами",
+          "start_sec": 87.1,
+          "end_sec": 87.35
+        },
+        {
+          "word": "последних",
+          "start_sec": 87.4,
+          "end_sec": 87.65
+        },
+        {
+          "word": "лет",
+          "start_sec": 87.7,
+          "end_sec": 87.95
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 90,
+      "end_sec": 94,
+      "text": "Я бы сказал, что это лучший научно-фантастический фильм со времён «Интерстеллара». Он не копирует, а предлагает свой уникальный взгляд на тему времени.",
+      "word_timestamps": [
+        {
+          "word": "Я",
+          "start_sec": 90.0,
+          "end_sec": 90.25
+        },
+        {
+          "word": "бы",
+          "start_sec": 90.3,
+          "end_sec": 90.55
+        },
+        {
+          "word": "сказал",
+          "start_sec": 90.6,
+          "end_sec": 90.85
+        },
+        {
+          "word": "что",
+          "start_sec": 90.9,
+          "end_sec": 91.15
+        },
+        {
+          "word": "это",
+          "start_sec": 91.2,
+          "end_sec": 91.45
+        },
+        {
+          "word": "лучший",
+          "start_sec": 91.5,
+          "end_sec": 91.75
+        },
+        {
+          "word": "научно-фантастический",
+          "start_sec": 91.8,
+          "end_sec": 92.05
+        },
+        {
+          "word": "фильм",
+          "start_sec": 92.1,
+          "end_sec": 92.35
+        },
+        {
+          "word": "со",
+          "start_sec": 92.4,
+          "end_sec": 92.65
+        },
+        {
+          "word": "времён",
+          "start_sec": 92.7,
+          "end_sec": 92.95
+        },
+        {
+          "word": "«Интерстеллара»",
+          "start_sec": 93.0,
+          "end_sec": 93.25
+        },
+        {
+          "word": "Он",
+          "start_sec": 93.3,
+          "end_sec": 93.55
+        },
+        {
+          "word": "не",
+          "start_sec": 93.6,
+          "end_sec": 93.85
+        },
+        {
+          "word": "копирует",
+          "start_sec": 93.9,
+          "end_sec": 94.15
+        },
+        {
+          "word": "а",
+          "start_sec": 94.2,
+          "end_sec": 94.45
+        },
+        {
+          "word": "предлагает",
+          "start_sec": 94.5,
+          "end_sec": 94.75
+        },
+        {
+          "word": "свой",
+          "start_sec": 94.8,
+          "end_sec": 95.05
+        },
+        {
+          "word": "уникальный",
+          "start_sec": 95.1,
+          "end_sec": 95.35
+        },
+        {
+          "word": "взгляд",
+          "start_sec": 95.4,
+          "end_sec": 95.65
+        },
+        {
+          "word": "на",
+          "start_sec": 95.7,
+          "end_sec": 95.95
+        },
+        {
+          "word": "тему",
+          "start_sec": 96.0,
+          "end_sec": 96.25
+        },
+        {
+          "word": "времени",
+          "start_sec": 96.3,
+          "end_sec": 96.55
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 95,
+      "end_sec": 99,
+      "text": "Расскажи про техническую сторону. На что снимали, какие спецэффекты использовали?",
+      "word_timestamps": [
+        {
+          "word": "Расскажи",
+          "start_sec": 95.0,
+          "end_sec": 95.25
+        },
+        {
+          "word": "про",
+          "start_sec": 95.3,
+          "end_sec": 95.55
+        },
+        {
+          "word": "техническую",
+          "start_sec": 95.6,
+          "end_sec": 95.85
+        },
+        {
+          "word": "сторону",
+          "start_sec": 95.9,
+          "end_sec": 96.15
+        },
+        {
+          "word": "На",
+          "start_sec": 96.2,
+          "end_sec": 96.45
+        },
+        {
+          "word": "что",
+          "start_sec": 96.5,
+          "end_sec": 96.75
+        },
+        {
+          "word": "снимали",
+          "start_sec": 96.8,
+          "end_sec": 97.05
+        },
+        {
+          "word": "какие",
+          "start_sec": 97.1,
+          "end_sec": 97.35
+        },
+        {
+          "word": "спецэффекты",
+          "start_sec": 97.4,
+          "end_sec": 97.65
+        },
+        {
+          "word": "использовали",
+          "start_sec": 97.7,
+          "end_sec": 97.95
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 100,
+      "end_sec": 104,
+      "text": "Снимали на IMAX-камеры. Много практических эффектов — реальные декорации коллайдера, миниатюры. CGI использовали только там, где это действительно необходимо. Это чувствуется.",
+      "word_timestamps": [
+        {
+          "word": "Снимали",
+          "start_sec": 100.0,
+          "end_sec": 100.25
+        },
+        {
+          "word": "на",
+          "start_sec": 100.3,
+          "end_sec": 100.55
+        },
+        {
+          "word": "IMAX-камеры",
+          "start_sec": 100.6,
+          "end_sec": 100.85
+        },
+        {
+          "word": "Много",
+          "start_sec": 100.9,
+          "end_sec": 101.15
+        },
+        {
+          "word": "практических",
+          "start_sec": 101.2,
+          "end_sec": 101.45
+        },
+        {
+          "word": "эффектов",
+          "start_sec": 101.5,
+          "end_sec": 101.75
+        },
+        {
+          "word": "реальные",
+          "start_sec": 101.8,
+          "end_sec": 102.05
+        },
+        {
+          "word": "декорации",
+          "start_sec": 102.1,
+          "end_sec": 102.35
+        },
+        {
+          "word": "коллайдера",
+          "start_sec": 102.4,
+          "end_sec": 102.65
+        },
+        {
+          "word": "миниатюры",
+          "start_sec": 102.7,
+          "end_sec": 102.95
+        },
+        {
+          "word": "CGI",
+          "start_sec": 103.0,
+          "end_sec": 103.25
+        },
+        {
+          "word": "использовали",
+          "start_sec": 103.3,
+          "end_sec": 103.55
+        },
+        {
+          "word": "только",
+          "start_sec": 103.6,
+          "end_sec": 103.85
+        },
+        {
+          "word": "там",
+          "start_sec": 103.9,
+          "end_sec": 104.15
+        },
+        {
+          "word": "где",
+          "start_sec": 104.2,
+          "end_sec": 104.45
+        },
+        {
+          "word": "это",
+          "start_sec": 104.5,
+          "end_sec": 104.75
+        },
+        {
+          "word": "действительно",
+          "start_sec": 104.8,
+          "end_sec": 105.05
+        },
+        {
+          "word": "необходимо",
+          "start_sec": 105.1,
+          "end_sec": 105.35
+        },
+        {
+          "word": "Это",
+          "start_sec": 105.4,
+          "end_sec": 105.65
+        },
+        {
+          "word": "чувствуется",
+          "start_sec": 105.7,
+          "end_sec": 105.95
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 105,
+      "end_sec": 109,
+      "text": "Кассовые сборы уже известны? Фильм окупился?",
+      "word_timestamps": [
+        {
+          "word": "Кассовые",
+          "start_sec": 105.0,
+          "end_sec": 105.25
+        },
+        {
+          "word": "сборы",
+          "start_sec": 105.3,
+          "end_sec": 105.55
+        },
+        {
+          "word": "уже",
+          "start_sec": 105.6,
+          "end_sec": 105.85
+        },
+        {
+          "word": "известны",
+          "start_sec": 105.9,
+          "end_sec": 106.15
+        },
+        {
+          "word": "Фильм",
+          "start_sec": 106.2,
+          "end_sec": 106.45
+        },
+        {
+          "word": "окупился",
+          "start_sec": 106.5,
+          "end_sec": 106.75
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 110,
+      "end_sec": 114,
+      "text": "За первую неделю фильм собрал 450 миллионов долларов по всему миру. Учитывая бюджет в 180 миллионов и маркетинг, он уже в плюсе. Прогноз — больше миллиарда.",
+      "word_timestamps": [
+        {
+          "word": "За",
+          "start_sec": 110.0,
+          "end_sec": 110.25
+        },
+        {
+          "word": "первую",
+          "start_sec": 110.3,
+          "end_sec": 110.55
+        },
+        {
+          "word": "неделю",
+          "start_sec": 110.6,
+          "end_sec": 110.85
+        },
+        {
+          "word": "фильм",
+          "start_sec": 110.9,
+          "end_sec": 111.15
+        },
+        {
+          "word": "собрал",
+          "start_sec": 111.2,
+          "end_sec": 111.45
+        },
+        {
+          "word": "450",
+          "start_sec": 111.5,
+          "end_sec": 111.75
+        },
+        {
+          "word": "миллионов",
+          "start_sec": 111.8,
+          "end_sec": 112.05
+        },
+        {
+          "word": "долларов",
+          "start_sec": 112.1,
+          "end_sec": 112.35
+        },
+        {
+          "word": "по",
+          "start_sec": 112.4,
+          "end_sec": 112.65
+        },
+        {
+          "word": "всему",
+          "start_sec": 112.7,
+          "end_sec": 112.95
+        },
+        {
+          "word": "миру",
+          "start_sec": 113.0,
+          "end_sec": 113.25
+        },
+        {
+          "word": "Учитывая",
+          "start_sec": 113.3,
+          "end_sec": 113.55
+        },
+        {
+          "word": "бюджет",
+          "start_sec": 113.6,
+          "end_sec": 113.85
+        },
+        {
+          "word": "в",
+          "start_sec": 113.9,
+          "end_sec": 114.15
+        },
+        {
+          "word": "180",
+          "start_sec": 114.2,
+          "end_sec": 114.45
+        },
+        {
+          "word": "миллионов",
+          "start_sec": 114.5,
+          "end_sec": 114.75
+        },
+        {
+          "word": "и",
+          "start_sec": 114.8,
+          "end_sec": 115.05
+        },
+        {
+          "word": "маркетинг",
+          "start_sec": 115.1,
+          "end_sec": 115.35
+        },
+        {
+          "word": "он",
+          "start_sec": 115.4,
+          "end_sec": 115.65
+        },
+        {
+          "word": "уже",
+          "start_sec": 115.7,
+          "end_sec": 115.95
+        },
+        {
+          "word": "в",
+          "start_sec": 116.0,
+          "end_sec": 116.25
+        },
+        {
+          "word": "плюсе",
+          "start_sec": 116.3,
+          "end_sec": 116.55
+        },
+        {
+          "word": "Прогноз",
+          "start_sec": 116.6,
+          "end_sec": 116.85
+        },
+        {
+          "word": "больше",
+          "start_sec": 116.9,
+          "end_sec": 117.15
+        },
+        {
+          "word": "миллиарда",
+          "start_sec": 117.2,
+          "end_sec": 117.45
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 115,
+      "end_sec": 119,
+      "text": "Есть ли сцены после титров? Стоит ли оставаться?",
+      "word_timestamps": [
+        {
+          "word": "Есть",
+          "start_sec": 115.0,
+          "end_sec": 115.25
+        },
+        {
+          "word": "ли",
+          "start_sec": 115.3,
+          "end_sec": 115.55
+        },
+        {
+          "word": "сцены",
+          "start_sec": 115.6,
+          "end_sec": 115.85
+        },
+        {
+          "word": "после",
+          "start_sec": 115.9,
+          "end_sec": 116.15
+        },
+        {
+          "word": "титров",
+          "start_sec": 116.2,
+          "end_sec": 116.45
+        },
+        {
+          "word": "Стоит",
+          "start_sec": 116.5,
+          "end_sec": 116.75
+        },
+        {
+          "word": "ли",
+          "start_sec": 116.8,
+          "end_sec": 117.05
+        },
+        {
+          "word": "оставаться",
+          "start_sec": 117.1,
+          "end_sec": 117.35
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 120,
+      "end_sec": 124,
+      "text": "Да, есть одна сцена после титров. Она намекает на сиквел. Без спойлеров — просто останьтесь в зале, оно того стоит.",
+      "word_timestamps": [
+        {
+          "word": "Да",
+          "start_sec": 120.0,
+          "end_sec": 120.25
+        },
+        {
+          "word": "есть",
+          "start_sec": 120.3,
+          "end_sec": 120.55
+        },
+        {
+          "word": "одна",
+          "start_sec": 120.6,
+          "end_sec": 120.85
+        },
+        {
+          "word": "сцена",
+          "start_sec": 120.9,
+          "end_sec": 121.15
+        },
+        {
+          "word": "после",
+          "start_sec": 121.2,
+          "end_sec": 121.45
+        },
+        {
+          "word": "титров",
+          "start_sec": 121.5,
+          "end_sec": 121.75
+        },
+        {
+          "word": "Она",
+          "start_sec": 121.8,
+          "end_sec": 122.05
+        },
+        {
+          "word": "намекает",
+          "start_sec": 122.1,
+          "end_sec": 122.35
+        },
+        {
+          "word": "на",
+          "start_sec": 122.4,
+          "end_sec": 122.65
+        },
+        {
+          "word": "сиквел",
+          "start_sec": 122.7,
+          "end_sec": 122.95
+        },
+        {
+          "word": "Без",
+          "start_sec": 123.0,
+          "end_sec": 123.25
+        },
+        {
+          "word": "спойлеров",
+          "start_sec": 123.3,
+          "end_sec": 123.55
+        },
+        {
+          "word": "просто",
+          "start_sec": 123.6,
+          "end_sec": 123.85
+        },
+        {
+          "word": "останьтесь",
+          "start_sec": 123.9,
+          "end_sec": 124.15
+        },
+        {
+          "word": "в",
+          "start_sec": 124.2,
+          "end_sec": 124.45
+        },
+        {
+          "word": "зале",
+          "start_sec": 124.5,
+          "end_sec": 124.75
+        },
+        {
+          "word": "оно",
+          "start_sec": 124.8,
+          "end_sec": 125.05
+        },
+        {
+          "word": "того",
+          "start_sec": 125.1,
+          "end_sec": 125.35
+        },
+        {
+          "word": "стоит",
+          "start_sec": 125.4,
+          "end_sec": 125.65
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 125,
+      "end_sec": 129,
+      "text": "Ну и главный вопрос — твой вердикт. Оценка по 10-балльной шкале?",
+      "word_timestamps": [
+        {
+          "word": "Ну",
+          "start_sec": 125.0,
+          "end_sec": 125.25
+        },
+        {
+          "word": "и",
+          "start_sec": 125.3,
+          "end_sec": 125.55
+        },
+        {
+          "word": "главный",
+          "start_sec": 125.6,
+          "end_sec": 125.85
+        },
+        {
+          "word": "вопрос",
+          "start_sec": 125.9,
+          "end_sec": 126.15
+        },
+        {
+          "word": "твой",
+          "start_sec": 126.2,
+          "end_sec": 126.45
+        },
+        {
+          "word": "вердикт",
+          "start_sec": 126.5,
+          "end_sec": 126.75
+        },
+        {
+          "word": "Оценка",
+          "start_sec": 126.8,
+          "end_sec": 127.05
+        },
+        {
+          "word": "по",
+          "start_sec": 127.1,
+          "end_sec": 127.35
+        },
+        {
+          "word": "10-балльной",
+          "start_sec": 127.4,
+          "end_sec": 127.65
+        },
+        {
+          "word": "шкале",
+          "start_sec": 127.7,
+          "end_sec": 127.95
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start_sec": 130,
+      "end_sec": 134,
+      "text": "Твёрдая девятка. Балл снял только за то, что финал немного затянут. В остальном — это шедевр. Обязательно смотрите в IMAX.",
+      "word_timestamps": [
+        {
+          "word": "Твёрдая",
+          "start_sec": 130.0,
+          "end_sec": 130.25
+        },
+        {
+          "word": "девятка",
+          "start_sec": 130.3,
+          "end_sec": 130.55
+        },
+        {
+          "word": "Балл",
+          "start_sec": 130.6,
+          "end_sec": 130.85
+        },
+        {
+          "word": "снял",
+          "start_sec": 130.9,
+          "end_sec": 131.15
+        },
+        {
+          "word": "только",
+          "start_sec": 131.2,
+          "end_sec": 131.45
+        },
+        {
+          "word": "за",
+          "start_sec": 131.5,
+          "end_sec": 131.75
+        },
+        {
+          "word": "то",
+          "start_sec": 131.8,
+          "end_sec": 132.05
+        },
+        {
+          "word": "что",
+          "start_sec": 132.1,
+          "end_sec": 132.35
+        },
+        {
+          "word": "финал",
+          "start_sec": 132.4,
+          "end_sec": 132.65
+        },
+        {
+          "word": "немного",
+          "start_sec": 132.7,
+          "end_sec": 132.95
+        },
+        {
+          "word": "затянут",
+          "start_sec": 133.0,
+          "end_sec": 133.25
+        },
+        {
+          "word": "В",
+          "start_sec": 133.3,
+          "end_sec": 133.55
+        },
+        {
+          "word": "остальном",
+          "start_sec": 133.6,
+          "end_sec": 133.85
+        },
+        {
+          "word": "это",
+          "start_sec": 133.9,
+          "end_sec": 134.15
+        },
+        {
+          "word": "шедевр",
+          "start_sec": 134.2,
+          "end_sec": 134.45
+        },
+        {
+          "word": "Обязательно",
+          "start_sec": 134.5,
+          "end_sec": 134.75
+        },
+        {
+          "word": "смотрите",
+          "start_sec": 134.8,
+          "end_sec": 135.05
+        },
+        {
+          "word": "в",
+          "start_sec": 135.1,
+          "end_sec": 135.35
+        },
+        {
+          "word": "IMAX",
+          "start_sec": 135.4,
+          "end_sec": 135.65
+        }
+      ]
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "start_sec": 135,
+      "end_sec": 139,
+      "text": "Спасибо большое, Алексей, за такой подробный разбор. А вы, дорогие зрители, ставьте лайк, подписывайтесь и бегите в кинотеатры — фильм «Эхо Будущего» уже идёт!",
+      "word_timestamps": [
+        {
+          "word": "Спасибо",
+          "start_sec": 135.0,
+          "end_sec": 135.25
+        },
+        {
+          "word": "большое",
+          "start_sec": 135.3,
+          "end_sec": 135.55
+        },
+        {
+          "word": "Алексей",
+          "start_sec": 135.6,
+          "end_sec": 135.85
+        },
+        {
+          "word": "за",
+          "start_sec": 135.9,
+          "end_sec": 136.15
+        },
+        {
+          "word": "такой",
+          "start_sec": 136.2,
+          "end_sec": 136.45
+        },
+        {
+          "word": "подробный",
+          "start_sec": 136.5,
+          "end_sec": 136.75
+        },
+        {
+          "word": "разбор",
+          "start_sec": 136.8,
+          "end_sec": 137.05
+        },
+        {
+          "word": "А",
+          "start_sec": 137.1,
+          "end_sec": 137.35
+        },
+        {
+          "word": "вы",
+          "start_sec": 137.4,
+          "end_sec": 137.65
+        },
+        {
+          "word": "дорогие",
+          "start_sec": 137.7,
+          "end_sec": 137.95
+        },
+        {
+          "word": "зрители",
+          "start_sec": 138.0,
+          "end_sec": 138.25
+        },
+        {
+          "word": "ставьте",
+          "start_sec": 138.3,
+          "end_sec": 138.55
+        },
+        {
+          "word": "лайк",
+          "start_sec": 138.6,
+          "end_sec": 138.85
+        },
+        {
+          "word": "подписывайтесь",
+          "start_sec": 138.9,
+          "end_sec": 139.15
+        },
+        {
+          "word": "и",
+          "start_sec": 139.2,
+          "end_sec": 139.45
+        },
+        {
+          "word": "бегите",
+          "start_sec": 139.5,
+          "end_sec": 139.75
+        },
+        {
+          "word": "в",
+          "start_sec": 139.8,
+          "end_sec": 140.05
+        },
+        {
+          "word": "кинотеатры",
+          "start_sec": 140.1,
+          "end_sec": 140.35
+        },
+        {
+          "word": "фильм",
+          "start_sec": 140.4,
+          "end_sec": 140.65
+        },
+        {
+          "word": "«Эхо",
+          "start_sec": 140.7,
+          "end_sec": 140.95
+        },
+        {
+          "word": "Будущего»",
+          "start_sec": 141.0,
+          "end_sec": 141.25
+        },
+        {
+          "word": "уже",
+          "start_sec": 141.3,
+          "end_sec": 141.55
+        },
+        {
+          "word": "идёт",
+          "start_sec": 141.6,
+          "end_sec": 141.85
+        }
+      ]
+    }
+  ],
+  "audio_matches": [
+    {
+      "track_name": "First Step (Interstellar Theme)",
+      "artist": "Hans Zimmer",
+      "confidence": 0.88,
+      "genre": "Soundtrack",
+      "album": "Interstellar (Original Motion Picture Soundtrack)",
+      "year": 2014
+    },
+    {
+      "track_name": "Time",
+      "artist": "Hans Zimmer",
+      "confidence": 0.76,
+      "genre": "Soundtrack",
+      "album": "Inception (Original Motion Picture Soundtrack)",
+      "year": 2010
+    }
+  ],
+  "celebrity_voice": {
+    "name": "Михаил Волков",
+    "profession": "кинокритик, телеведущий",
+    "confidence": 0.92
+  }
+}

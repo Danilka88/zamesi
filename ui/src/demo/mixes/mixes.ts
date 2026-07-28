@@ -1,0 +1,115 @@
+import type { Mix } from '../../types'
+
+export const demoMixes: Record<string, Mix> = {
+  mix_headphones: {
+    mix_id: 'mix_headphones',
+    query: 'как выбрать наушники',
+    total_duration_sec: 754,
+    stages: [
+      {
+        title: 'Типы наушников',
+        description: 'Обзор основных типов наушников: вкладыши, накладные, полноразмерные. Поможем понять, какой тип подходит для разных задач.',
+        scenes: [
+          {
+            video_id: 'tech_review',
+            scene_index: 1,
+            start_sec: 12,
+            end_sec: 45,
+            summary: 'Спикер рассказывает о типах наушников и их особенностях',
+            speaker: 'SPEAKER_00',
+            text: 'Наушники делятся на вкладыши, накладные и полноразмерные. У каждого типа свои плюсы и минусы.',
+            monetization_types: ['ad_slot'],
+          },
+          {
+            video_id: 'tech_review',
+            scene_index: 2,
+            start_sec: 45,
+            end_sec: 82,
+            summary: 'Сравнение вкладышей и накладных наушников по качеству звука',
+            speaker: 'SPEAKER_00',
+            text: 'Вкладыши компактные, но уступают в звуке накладным. Накладные — золотая середина.',
+            monetization_types: ['ad_slot', 'ecom_item'],
+          },
+          {
+            video_id: 'tech_review',
+            scene_index: 3,
+            start_sec: 82,
+            end_sec: 108,
+            summary: 'Полноразмерные наушники для домашнего прослушивания',
+            speaker: 'SPEAKER_00',
+            text: 'Полноразмерные наушники дают najlepszy звук, но менее портативны.',
+            monetization_types: ['ecom_item'],
+          },
+        ],
+      },
+      {
+        title: 'Характеристики звука',
+        description: 'Разбираем ключевые характеристики: частотный диапазон, импеданс, чувствительность. Что реально важно при выборе.',
+        scenes: [
+          {
+            video_id: 'tech_review',
+            scene_index: 4,
+            start_sec: 108,
+            end_sec: 145,
+            summary: 'Частотный диапазон и импеданс: что нужно знать',
+            speaker: 'SPEAKER_00',
+            text: 'Частотный диапазон 20Гц-20кГц — стандарт. Импеданс влияет на громкость.',
+            monetization_types: ['ad_slot'],
+          },
+          {
+            video_id: 'tech_review',
+            scene_index: 5,
+            start_sec: 145,
+            end_sec: 185,
+            summary: 'Чувствительность и мощность: как громко будут играть наушники',
+            speaker: 'SPEAKER_00',
+            text: 'Чувствительность измеряется в дБ. Чем выше — тем громче наушники при той же мощности.',
+            monetization_types: ['ad_slot', 'ecom_item'],
+          },
+        ],
+      },
+      {
+        title: 'Сравнение моделей',
+        description: 'Сравниваем популярные модели Sony, Audio-Technica и Sennheiser в разных ценовых категориях.',
+        scenes: [
+          {
+            video_id: 'tech_review',
+            scene_index: 8,
+            start_sec: 210,
+            end_sec: 250,
+            summary: 'Sony WH-1000XM5: флагман с лучшим шумоподавлением',
+            speaker: 'SPEAKER_00',
+            text: 'Sony XM5 — лучшие в шумоподавлении, отличный звук, но дорогие.',
+            monetization_types: ['ecom_item', 'ad_slot'],
+          },
+          {
+            video_id: 'tech_review',
+            scene_index: 9,
+            start_sec: 250,
+            end_sec: 274,
+            summary: 'Audio-Technica ATH-M50x: легендарные студийные мониторы',
+            speaker: 'SPEAKER_00',
+            text: 'ATH-M50x — стандарт студийного мониторинга, нейтральный звук.',
+            monetization_types: ['ecom_item'],
+          },
+        ],
+      },
+      {
+        title: 'Вердикт и рекомендации',
+        description: 'Итоговые рекомендации по выбору наушников под разные задачи и бюджет.',
+        scenes: [
+          {
+            video_id: 'tech_review',
+            scene_index: 13,
+            start_sec: 350,
+            end_sec: 380,
+            summary: 'Итоговые рекомендации по выбору наушников',
+            speaker: 'SPEAKER_00',
+            text: 'Для дома — полноразмерные, для улицы — накладные с шумоподавлением. Бюджет — от 5000 до 30000 рублей.',
+            monetization_types: ['ad_slot', 'clip_candidate'],
+          },
+        ],
+      },
+    ],
+  },
+}

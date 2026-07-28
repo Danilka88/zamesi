@@ -1,3 +1,10 @@
+# MODULE_MAP: src/semantic_analyzer/
+# MODULE_CONTRACT: M-SEMANTIC
+# PURPOSE: Все LLM-промпты для SLM pass1, VLM pass2, генерации фронтмэттера
+# SCOPE: PASS1_TEXT_SYSTEM, PASS1_TEXT_USER, PASS2_VISION_SYSTEM, PASS2_VISION_USER, FRONTMATTER_SYSTEM, FRONTMATTER_USER
+# DEPENDS: none (pure strings)
+# LINKS: .grace/graph/index.xml | .grace/verification/index.xml
+# START_BLOCK: M-SEMANTIC/PROMPTS/CONSTANTS
 PASS1_TEXT_SYSTEM = """Ты — AI-аналитик видеоконтента для платформы RUTUBE.
 Твоя задача — проанализировать сегмент видео и определить точки монетизации.
 Отвечай строго в JSON, без пояснений.
@@ -71,4 +78,5 @@ FRONTMATTER_USER = """Полный транскрипт видео:
 {full_transcript}
 
 Сгенерируй SEO-метаданные в JSON."""
+# END_BLOCK: M-SEMANTIC/PROMPTS/CONSTANTS
 

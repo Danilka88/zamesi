@@ -1,0 +1,849 @@
+{
+  "frontmatter": {
+    "video_id": "cooking_dinner",
+    "domain_type": "how_to",
+    "brand_safety_score": 100,
+    "target_audience": ["home cooks", "студенты", "молодые семьи", "любители итальянской кухни"],
+    "seo_title": "Паста с томатным соусом за 15 минут: простой рецепт на ужин",
+    "seo_tags": ["паста", "томатный соус", "ужин за 15 минут", "итальянская кухня", "рецепт"],
+    "trending_cluster": "Кулинария и рецепты",
+    "auto_playlists": [
+      {
+        "id": "pl_italian_cuisine",
+        "order_index": 5,
+        "reason": "Итальянское блюдо — паста с томатным соусом, подходит в тематическую подборку итальянской кухни"
+      },
+      {
+        "id": "pl_quick_dinners",
+        "order_index": 3,
+        "reason": "Быстрый рецепт ужина за 15 минут, идеально для подборки простых ужинов"
+      }
+    ],
+    "ad_targeting_keywords": ["продукты", "кухонная техника", "посуда", "бакалея"],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 100,
+      "summary": "Безопасный контент: кулинарный рецепт пасты с томатным соусом. Нет спорных тем, насилия, политики, возрастных ограничений или нецензурной лексики."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: ведущий в фартуке, крупный план готовой пасты на тарелке, текст «15 минут» на экране",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Готовая паста с томатным соусом за 15 минут — хук для удержания зрителя",
+        "time_range_start": 0,
+        "time_range_end": 8,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.45
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Показ ингредиентов: паста, оливковое масло, пармезан, помидоры, чеснок, базилик на разделочной доске",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "паста Barilla",
+          "reason": "Пачка пасты в кадре крупным планом",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "оливковое масло extra virgin",
+          "reason": "Бутылка оливкового масла на столе",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "помидоры черри",
+          "reason": "Свежие помидоры в кадре",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.52
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Наполнение кастрюли водой, установка на плиту, включение сильного огня",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "кастрюля нержавеющая сталь 5л",
+          "reason": "Крупный план кастрюли при наполнении водой",
+          "confidence": 1.0
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Естественная пауза — ожидание закипания воды",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.38
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Подготовка помидоров: крестообразные надрезы ножом, заливка кипятком",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "нож поварской Wuesthof",
+          "reason": "Крупный план ножа при нарезке помидоров",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.41
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Снятие кожицы с помидоров и нарезка кубиками на разделочной доске",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "овощечистка нержавейка",
+          "reason": "Инструмент для очистки овощей показан в действии",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "доска разделочная бамбук",
+          "reason": "Разделочная доска в кадре при нарезке",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.44
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Очистка и мелкая нарезка чеснока ножом",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "чеснок свежий",
+          "reason": "Крупный план чеснока при очистке",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "нож шеф-повара",
+          "reason": "Профессиональный нож для нарезки чеснока",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.36
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Налив оливкового масла в сковороду, разогрев на среднем огне",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "сковорода антипригарная 28см",
+          "reason": "Чёрная сковорода на плите в центре кадра",
+          "confidence": 1.0
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Пауза между подготовкой ингредиентов и жаркой",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.39
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Обжарка чеснока в оливковом масле до золотистого цвета, аромат показан паром",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "оливковое масло Monini",
+          "reason": "Масло наливается в сковороду, видна этикетка",
+          "confidence": 1.0
+        },
+        {
+          "type": "event_ticket",
+          "search_query": null,
+          "reason": "Золотистый чеснок вызывает ассоциацию с кулинарным мастер-классом по итальянской кухне",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.42
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Добавление нарезанных помидоров в сковороду, перемешивание лопаткой",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Момент добавления томатов в раскалённое масло — шипение и яркий цвет",
+        "time_range_start": 285,
+        "time_range_end": 295,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.47
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Приправление соуса: соль, перец, свежий базилик",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "соль морская крупная",
+          "reason": "Крупный план солонки при посыпании соуса",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "перец чёрный мельница",
+          "reason": "Мельница для перца в кадре",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "базилик свежий",
+          "reason": "Листья свежего базилика добавлены в соус",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.48
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Убавление огня, соус томится на медленном огне, лопатка помешивает",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Длительная пауза — соус варится, подходит для mid-roll рекламы",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.35
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Засыпание пасты в кипящую подсоленную воду, перемешивание",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "паста De Cecco",
+          "reason": "Пачка спагетти показана перед засыпанием в воду",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "соль поваренная",
+          "reason": "Крупный план соления воды",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.43
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Перемешивание пасты деревянной ложкой, проверка на зуб",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Пауза во время варки пасты",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.37
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Сохранение воды от пасты в кружку, слив пасты через дуршлаг",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "дуршлаг металлический",
+          "reason": "Дуршлаг показан при сливе пасты",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.39
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Перекладывание пасты из дуршлага в сковороду с соусом",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Этап соединения ингредиентов — хороший момент для рекламной паузы",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.41
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Тщательное перемешивание пасты с соусом, добавление воды от пасты для кремовой текстуры",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "щипцы кухонные силиконовые",
+          "reason": "Щипцы для перемешивания пасты в кадре",
+          "confidence": 1.0
+        },
+        {
+          "type": "event_ticket",
+          "search_query": null,
+          "reason": "Профессиональная техника тоссования напоминает кулинарный фестиваль",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.48
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Натирание пармезана на мелкой тёрке, посыпание пасты сыром",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "пармезан Parmigiano Reggiano",
+          "reason": "Кусок пармезана и тёрка крупным планом",
+          "confidence": 1.0
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "тёрка для сыра микроplane",
+          "reason": "Профессиональная тёрка в действии",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.44
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Выкладывание пасты на тарелку щипцами, формирование аккуратной порции",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Эстетичная подача пасты на тарелку — ASMR-визуал для сохранения",
+        "time_range_start": 770,
+        "time_range_end": 785,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.46
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Украшение блюда листиками свежего базилика и щепоткой пармезана",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "базилик семена",
+          "reason": "Свежая зелень базилика для украшения",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.37
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Финальный кадр: крупный план готовой пасты со струящимся сыром, пар над тарелкой",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Результат: идеальная паста с томатным соусом и пармезаном — виральный финал для сохранения и репоста",
+        "time_range_start": 855,
+        "time_range_end": 890,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.40
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Призыв к действию: поставить лайк, подписаться, написать комментарий, сохранить рецепт",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Финальный CTA — возможность для end-card рекламы",
+          "confidence": 1.0
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.33
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 0,
+      "end_sec": 12,
+      "text": "Всем привет сегодня готовим пасту с томатным соусом за пятнадцать минут простой рецепт на ужин",
+      "word_timestamps": [
+        { "word": "Всем", "start_sec": 0.0, "end_sec": 0.5 },
+        { "word": "привет", "start_sec": 0.5, "end_sec": 1.2 },
+        { "word": "сегодня", "start_sec": 1.2, "end_sec": 2.2 },
+        { "word": "готовим", "start_sec": 2.2, "end_sec": 3.5 },
+        { "word": "пасту", "start_sec": 3.5, "end_sec": 4.8 },
+        { "word": "с", "start_sec": 4.8, "end_sec": 5.2 },
+        { "word": "томатным", "start_sec": 5.2, "end_sec": 6.5 },
+        { "word": "соусом", "start_sec": 6.5, "end_sec": 7.8 },
+        { "word": "за", "start_sec": 7.8, "end_sec": 8.3 },
+        { "word": "пятнадцать", "start_sec": 8.3, "end_sec": 9.5 },
+        { "word": "минут", "start_sec": 9.5, "end_sec": 10.5 },
+        { "word": "простой", "start_sec": 10.5, "end_sec": 11.2 },
+        { "word": "рецепт", "start_sec": 11.2, "end_sec": 11.7 },
+        { "word": "на", "start_sec": 11.7, "end_sec": 11.9 },
+        { "word": "ужин", "start_sec": 11.9, "end_sec": 12.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 12,
+      "end_sec": 40,
+      "text": "Для этого рецепта нам понадобятся паста оливковое масло пармезан спелые помидоры чеснок и свежий базилик",
+      "word_timestamps": [
+        { "word": "Для", "start_sec": 12.0, "end_sec": 12.5 },
+        { "word": "этого", "start_sec": 12.5, "end_sec": 13.2 },
+        { "word": "рецепта", "start_sec": 13.2, "end_sec": 14.5 },
+        { "word": "нам", "start_sec": 14.5, "end_sec": 15.2 },
+        { "word": "понадобятся", "start_sec": 15.2, "end_sec": 17.5 },
+        { "word": "паста", "start_sec": 17.5, "end_sec": 19.5 },
+        { "word": "оливковое", "start_sec": 19.5, "end_sec": 21.5 },
+        { "word": "масло", "start_sec": 21.5, "end_sec": 23.5 },
+        { "word": "пармезан", "start_sec": 23.5, "end_sec": 26.0 },
+        { "word": "спелые", "start_sec": 26.0, "end_sec": 28.0 },
+        { "word": "помидоры", "start_sec": 28.0, "end_sec": 31.0 },
+        { "word": "чеснок", "start_sec": 31.0, "end_sec": 33.5 },
+        { "word": "и", "start_sec": 33.5, "end_sec": 34.0 },
+        { "word": "свежий", "start_sec": 34.0, "end_sec": 36.0 },
+        { "word": "базилик", "start_sec": 36.0, "end_sec": 40.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 40,
+      "end_sec": 60,
+      "text": "Ставим кастрюлю с водой на сильный огонь вода должна закипеть",
+      "word_timestamps": [
+        { "word": "Ставим", "start_sec": 40.0, "end_sec": 42.0 },
+        { "word": "кастрюлю", "start_sec": 42.0, "end_sec": 45.0 },
+        { "word": "с", "start_sec": 45.0, "end_sec": 45.5 },
+        { "word": "водой", "start_sec": 45.5, "end_sec": 48.0 },
+        { "word": "на", "start_sec": 48.0, "end_sec": 48.8 },
+        { "word": "сильный", "start_sec": 48.8, "end_sec": 51.0 },
+        { "word": "огонь", "start_sec": 51.0, "end_sec": 53.0 },
+        { "word": "вода", "start_sec": 53.0, "end_sec": 55.0 },
+        { "word": "должна", "start_sec": 55.0, "end_sec": 56.5 },
+        { "word": "закипеть", "start_sec": 56.5, "end_sec": 60.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 60,
+      "end_sec": 95,
+      "text": "На помидорах делаем крестообразные надрезы и заливаем их кипятком на две минуты",
+      "word_timestamps": [
+        { "word": "На", "start_sec": 60.0, "end_sec": 60.8 },
+        { "word": "помидорах", "start_sec": 60.8, "end_sec": 64.0 },
+        { "word": "делаем", "start_sec": 64.0, "end_sec": 66.5 },
+        { "word": "крестообразные", "start_sec": 66.5, "end_sec": 71.0 },
+        { "word": "надрезы", "start_sec": 71.0, "end_sec": 74.5 },
+        { "word": "и", "start_sec": 74.5, "end_sec": 75.0 },
+        { "word": "заливаем", "start_sec": 75.0, "end_sec": 79.0 },
+        { "word": "их", "start_sec": 79.0, "end_sec": 80.0 },
+        { "word": "кипятком", "start_sec": 80.0, "end_sec": 84.5 },
+        { "word": "на", "start_sec": 84.5, "end_sec": 85.5 },
+        { "word": "две", "start_sec": 85.5, "end_sec": 87.5 },
+        { "word": "минуты", "start_sec": 87.5, "end_sec": 95.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 95,
+      "end_sec": 140,
+      "text": "После бланширования легко снимаем кожицу и нарезаем помидоры кубиками",
+      "word_timestamps": [
+        { "word": "После", "start_sec": 95.0, "end_sec": 97.0 },
+        { "word": "бланширования", "start_sec": 97.0, "end_sec": 103.0 },
+        { "word": "легко", "start_sec": 103.0, "end_sec": 106.0 },
+        { "word": "снимаем", "start_sec": 106.0, "end_sec": 110.0 },
+        { "word": "кожицу", "start_sec": 110.0, "end_sec": 116.0 },
+        { "word": "и", "start_sec": 116.0, "end_sec": 117.0 },
+        { "word": "нарезаем", "start_sec": 117.0, "end_sec": 123.0 },
+        { "word": "помидоры", "start_sec": 123.0, "end_sec": 130.0 },
+        { "word": "кубиками", "start_sec": 130.0, "end_sec": 140.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 140,
+      "end_sec": 185,
+      "text": "Чистим чеснок и мелко нарезаем его острым ножом",
+      "word_timestamps": [
+        { "word": "Чистим", "start_sec": 140.0, "end_sec": 143.0 },
+        { "word": "чеснок", "start_sec": 143.0, "end_sec": 149.0 },
+        { "word": "и", "start_sec": 149.0, "end_sec": 150.0 },
+        { "word": "мелко", "start_sec": 150.0, "end_sec": 155.0 },
+        { "word": "нарезаем", "start_sec": 155.0, "end_sec": 161.0 },
+        { "word": "его", "start_sec": 161.0, "end_sec": 163.0 },
+        { "word": "острым", "start_sec": 163.0, "end_sec": 169.0 },
+        { "word": "ножом", "start_sec": 169.0, "end_sec": 185.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 185,
+      "end_sec": 225,
+      "text": "В сковороду наливаем оливковое масло и разогреваем на среднем огне",
+      "word_timestamps": [
+        { "word": "В", "start_sec": 185.0, "end_sec": 186.0 },
+        { "word": "сковороду", "start_sec": 186.0, "end_sec": 191.0 },
+        { "word": "наливаем", "start_sec": 191.0, "end_sec": 196.0 },
+        { "word": "оливковое", "start_sec": 196.0, "end_sec": 201.0 },
+        { "word": "масло", "start_sec": 201.0, "end_sec": 206.0 },
+        { "word": "и", "start_sec": 206.0, "end_sec": 207.0 },
+        { "word": "разогреваем", "start_sec": 207.0, "end_sec": 214.0 },
+        { "word": "на", "start_sec": 214.0, "end_sec": 215.5 },
+        { "word": "среднем", "start_sec": 215.5, "end_sec": 220.0 },
+        { "word": "огне", "start_sec": 220.0, "end_sec": 225.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 225,
+      "end_sec": 270,
+      "text": "Обжариваем чеснок в масле до золотистого цвета около одной минуты",
+      "word_timestamps": [
+        { "word": "Обжариваем", "start_sec": 225.0, "end_sec": 231.0 },
+        { "word": "чеснок", "start_sec": 231.0, "end_sec": 236.0 },
+        { "word": "в", "start_sec": 236.0, "end_sec": 237.0 },
+        { "word": "масле", "start_sec": 237.0, "end_sec": 242.0 },
+        { "word": "до", "start_sec": 242.0, "end_sec": 244.0 },
+        { "word": "золотистого", "start_sec": 244.0, "end_sec": 250.0 },
+        { "word": "цвета", "start_sec": 250.0, "end_sec": 255.0 },
+        { "word": "около", "start_sec": 255.0, "end_sec": 259.0 },
+        { "word": "одной", "start_sec": 259.0, "end_sec": 264.0 },
+        { "word": "минуты", "start_sec": 264.0, "end_sec": 270.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 270,
+      "end_sec": 320,
+      "text": "Добавляем нарезанные помидоры в сковороду и хорошо перемешиваем",
+      "word_timestamps": [
+        { "word": "Добавляем", "start_sec": 270.0, "end_sec": 275.0 },
+        { "word": "нарезанные", "start_sec": 275.0, "end_sec": 281.0 },
+        { "word": "помидоры", "start_sec": 281.0, "end_sec": 288.0 },
+        { "word": "в", "start_sec": 288.0, "end_sec": 289.0 },
+        { "word": "сковороду", "start_sec": 289.0, "end_sec": 296.0 },
+        { "word": "и", "start_sec": 296.0, "end_sec": 297.0 },
+        { "word": "хорошо", "start_sec": 297.0, "end_sec": 303.0 },
+        { "word": "перемешиваем", "start_sec": 303.0, "end_sec": 320.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 320,
+      "end_sec": 370,
+      "text": "Солим и перчим соус по вкусу добавляем свежий базилик",
+      "word_timestamps": [
+        { "word": "Солим", "start_sec": 320.0, "end_sec": 324.0 },
+        { "word": "и", "start_sec": 324.0, "end_sec": 325.0 },
+        { "word": "перчим", "start_sec": 325.0, "end_sec": 331.0 },
+        { "word": "соус", "start_sec": 331.0, "end_sec": 338.0 },
+        { "word": "по", "start_sec": 338.0, "end_sec": 339.0 },
+        { "word": "вкусу", "start_sec": 339.0, "end_sec": 345.0 },
+        { "word": "добавляем", "start_sec": 345.0, "end_sec": 352.0 },
+        { "word": "свежий", "start_sec": 352.0, "end_sec": 358.0 },
+        { "word": "базилик", "start_sec": 358.0, "end_sec": 370.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 370,
+      "end_sec": 430,
+      "text": "Убавляем огонь и томим соус на медленном огне чтобы он загустел",
+      "word_timestamps": [
+        { "word": "Убавляем", "start_sec": 370.0, "end_sec": 376.0 },
+        { "word": "огонь", "start_sec": 376.0, "end_sec": 382.0 },
+        { "word": "и", "start_sec": 382.0, "end_sec": 383.0 },
+        { "word": "томим", "start_sec": 383.0, "end_sec": 389.0 },
+        { "word": "соус", "start_sec": 389.0, "end_sec": 395.0 },
+        { "word": "на", "start_sec": 395.0, "end_sec": 396.5 },
+        { "word": "медленном", "start_sec": 396.5, "end_sec": 404.0 },
+        { "word": "огне", "start_sec": 404.0, "end_sec": 409.0 },
+        { "word": "чтобы", "start_sec": 409.0, "end_sec": 413.0 },
+        { "word": "он", "start_sec": 413.0, "end_sec": 415.0 },
+        { "word": "загустел", "start_sec": 415.0, "end_sec": 430.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 430,
+      "end_sec": 480,
+      "text": "Вода закипела солим её и засыпаем пасту перемешиваем",
+      "word_timestamps": [
+        { "word": "Вода", "start_sec": 430.0, "end_sec": 434.0 },
+        { "word": "закипела", "start_sec": 434.0, "end_sec": 441.0 },
+        { "word": "солим", "start_sec": 441.0, "end_sec": 445.0 },
+        { "word": "её", "start_sec": 445.0, "end_sec": 447.0 },
+        { "word": "и", "start_sec": 447.0, "end_sec": 448.0 },
+        { "word": "засыпаем", "start_sec": 448.0, "end_sec": 455.0 },
+        { "word": "пасту", "start_sec": 455.0, "end_sec": 462.0 },
+        { "word": "перемешиваем", "start_sec": 462.0, "end_sec": 480.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 480,
+      "end_sec": 530,
+      "text": "Варим пасту до состояния аль денте примерно восемь минут",
+      "word_timestamps": [
+        { "word": "Варим", "start_sec": 480.0, "end_sec": 484.0 },
+        { "word": "пасту", "start_sec": 484.0, "end_sec": 490.0 },
+        { "word": "до", "start_sec": 490.0, "end_sec": 491.0 },
+        { "word": "состояния", "start_sec": 491.0, "end_sec": 497.0 },
+        { "word": "аль", "start_sec": 497.0, "end_sec": 500.0 },
+        { "word": "денте", "start_sec": 500.0, "end_sec": 506.0 },
+        { "word": "примерно", "start_sec": 506.0, "end_sec": 512.0 },
+        { "word": "восемь", "start_sec": 512.0, "end_sec": 518.0 },
+        { "word": "минут", "start_sec": 518.0, "end_sec": 530.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 530,
+      "end_sec": 590,
+      "text": "Сохраняем полстакана воды от пасты она пригодится для соуса",
+      "word_timestamps": [
+        { "word": "Сохраняем", "start_sec": 530.0, "end_sec": 536.0 },
+        { "word": "полстакана", "start_sec": 536.0, "end_sec": 544.0 },
+        { "word": "воды", "start_sec": 544.0, "end_sec": 549.0 },
+        { "word": "от", "start_sec": 549.0, "end_sec": 550.5 },
+        { "word": "пасты", "start_sec": 550.5, "end_sec": 557.0 },
+        { "word": "она", "start_sec": 557.0, "end_sec": 560.0 },
+        { "word": "пригодится", "start_sec": 560.0, "end_sec": 569.0 },
+        { "word": "для", "start_sec": 569.0, "end_sec": 571.0 },
+        { "word": "соуса", "start_sec": 571.0, "end_sec": 590.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 590,
+      "end_sec": 640,
+      "text": "Сливаем пасту через дуршлаг и перекладываем в сковороду с соусом",
+      "word_timestamps": [
+        { "word": "Сливаем", "start_sec": 590.0, "end_sec": 595.0 },
+        { "word": "пасту", "start_sec": 595.0, "end_sec": 600.0 },
+        { "word": "через", "start_sec": 600.0, "end_sec": 604.0 },
+        { "word": "дуршлаг", "start_sec": 604.0, "end_sec": 611.0 },
+        { "word": "и", "start_sec": 611.0, "end_sec": 612.0 },
+        { "word": "перекладываем", "start_sec": 612.0, "end_sec": 622.0 },
+        { "word": "в", "start_sec": 622.0, "end_sec": 623.0 },
+        { "word": "сковороду", "start_sec": 623.0, "end_sec": 631.0 },
+        { "word": "с", "start_sec": 631.0, "end_sec": 632.0 },
+        { "word": "соусом", "start_sec": 632.0, "end_sec": 640.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 640,
+      "end_sec": 700,
+      "text": "Тщательно перемешиваем пасту с соусом добавляем воду от пасты для кремовой текстуры",
+      "word_timestamps": [
+        { "word": "Тщательно", "start_sec": 640.0, "end_sec": 646.0 },
+        { "word": "перемешиваем", "start_sec": 646.0, "end_sec": 655.0 },
+        { "word": "пасту", "start_sec": 655.0, "end_sec": 660.0 },
+        { "word": "с", "start_sec": 660.0, "end_sec": 661.0 },
+        { "word": "соусом", "start_sec": 661.0, "end_sec": 668.0 },
+        { "word": "добавляем", "start_sec": 668.0, "end_sec": 675.0 },
+        { "word": "воду", "start_sec": 675.0, "end_sec": 679.0 },
+        { "word": "от", "start_sec": 679.0, "end_sec": 680.5 },
+        { "word": "пасты", "start_sec": 680.5, "end_sec": 687.0 },
+        { "word": "для", "start_sec": 687.0, "end_sec": 689.0 },
+        { "word": "кремовой", "start_sec": 689.0, "end_sec": 695.0 },
+        { "word": "текстуры", "start_sec": 695.0, "end_sec": 700.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 700,
+      "end_sec": 755,
+      "text": "Трём пармезан на мелкой тёрке и обильно посыпаем пасту сверху",
+      "word_timestamps": [
+        { "word": "Трём", "start_sec": 700.0, "end_sec": 704.0 },
+        { "word": "пармезан", "start_sec": 704.0, "end_sec": 712.0 },
+        { "word": "на", "start_sec": 712.0, "end_sec": 713.5 },
+        { "word": "мелкой", "start_sec": 713.5, "end_sec": 720.0 },
+        { "word": "тёрке", "start_sec": 720.0, "end_sec": 726.0 },
+        { "word": "и", "start_sec": 726.0, "end_sec": 727.0 },
+        { "word": "обильно", "start_sec": 727.0, "end_sec": 734.0 },
+        { "word": "посыпаем", "start_sec": 734.0, "end_sec": 743.0 },
+        { "word": "пасту", "start_sec": 743.0, "end_sec": 749.0 },
+        { "word": "сверху", "start_sec": 749.0, "end_sec": 755.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 755,
+      "end_sec": 810,
+      "text": "Аккуратно выкладываем пасту на тарелку щипцами формируя красивую горку",
+      "word_timestamps": [
+        { "word": "Аккуратно", "start_sec": 755.0, "end_sec": 761.0 },
+        { "word": "выкладываем", "start_sec": 761.0, "end_sec": 770.0 },
+        { "word": "пасту", "start_sec": 770.0, "end_sec": 776.0 },
+        { "word": "на", "start_sec": 776.0, "end_sec": 777.5 },
+        { "word": "тарелку", "start_sec": 777.5, "end_sec": 785.0 },
+        { "word": "щипцами", "start_sec": 785.0, "end_sec": 793.0 },
+        { "word": "формируя", "start_sec": 793.0, "end_sec": 801.0 },
+        { "word": "красивую", "start_sec": 801.0, "end_sec": 806.0 },
+        { "word": "горку", "start_sec": 806.0, "end_sec": 810.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 810,
+      "end_sec": 848,
+      "text": "Украшаем свежим базиликом и ещё немного пармезана сверху",
+      "word_timestamps": [
+        { "word": "Украшаем", "start_sec": 810.0, "end_sec": 815.0 },
+        { "word": "свежим", "start_sec": 815.0, "end_sec": 820.0 },
+        { "word": "базиликом", "start_sec": 820.0, "end_sec": 828.0 },
+        { "word": "и", "start_sec": 828.0, "end_sec": 829.0 },
+        { "word": "ещё", "start_sec": 829.0, "end_sec": 833.0 },
+        { "word": "немного", "start_sec": 833.0, "end_sec": 838.0 },
+        { "word": "пармезана", "start_sec": 838.0, "end_sec": 844.0 },
+        { "word": "сверху", "start_sec": 844.0, "end_sec": 848.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 848,
+      "end_sec": 878,
+      "text": "Посмотрите какая красивая паста получилась ароматный соус и расплавленный сыр",
+      "word_timestamps": [
+        { "word": "Посмотрите", "start_sec": 848.0, "end_sec": 853.0 },
+        { "word": "какая", "start_sec": 853.0, "end_sec": 856.0 },
+        { "word": "красивая", "start_sec": 856.0, "end_sec": 861.0 },
+        { "word": "паста", "start_sec": 861.0, "end_sec": 863.0 },
+        { "word": "получилась", "start_sec": 863.0, "end_sec": 868.0 },
+        { "word": "ароматный", "start_sec": 868.0, "end_sec": 871.0 },
+        { "word": "соус", "start_sec": 871.0, "end_sec": 873.0 },
+        { "word": "и", "start_sec": 873.0, "end_sec": 874.0 },
+        { "word": "расплавленный", "start_sec": 874.0, "end_sec": 876.5 },
+        { "word": "сыр", "start_sec": 876.5, "end_sec": 878.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_female",
+      "start_sec": 878,
+      "end_sec": 900,
+      "text": "Ставьте лайк подписывайтесь и пишите в комментариях какой у вас любимый рецепт пасты",
+      "word_timestamps": [
+        { "word": "Ставьте", "start_sec": 878.0, "end_sec": 881.0 },
+        { "word": "лайк", "start_sec": 881.0, "end_sec": 884.0 },
+        { "word": "подписывайтесь", "start_sec": 884.0, "end_sec": 890.0 },
+        { "word": "и", "start_sec": 890.0, "end_sec": 891.0 },
+        { "word": "пишите", "start_sec": 891.0, "end_sec": 893.5 },
+        { "word": "в", "start_sec": 893.5, "end_sec": 894.0 },
+        { "word": "комментариях", "start_sec": 894.0, "end_sec": 896.5 },
+        { "word": "какой", "start_sec": 896.5, "end_sec": 897.5 },
+        { "word": "у", "start_sec": 897.5, "end_sec": 898.0 },
+        { "word": "вас", "start_sec": 898.0, "end_sec": 898.5 },
+        { "word": "любимый", "start_sec": 898.5, "end_sec": 899.0 },
+        { "word": "рецепт", "start_sec": 899.0, "end_sec": 899.5 },
+        { "word": "пасты", "start_sec": 899.5, "end_sec": 900.0 }
+      ]
+    }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

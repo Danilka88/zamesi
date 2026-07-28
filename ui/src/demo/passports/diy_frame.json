@@ -1,0 +1,282 @@
+{
+  "frontmatter": {
+    "video_id": "diy_frame_001",
+    "domain_type": "diy_crafts",
+    "brand_safety_score": 98,
+    "target_audience": ["handmade_enthusiasts", "diy_beginners", "home_decor_lovers", "budget_crafters", "stay_at_home_parents"],
+    "seo_title": "Фоторамка из картона своими руками | Простой DIY за 29 секунд",
+    "seo_tags": ["фоторамка своими руками", "diy рамка из картона", "поделки из картона", "handmade фоторамка", "DIY photo frame", "картонная рамка", "бюджетный декор", "простые поделки"],
+    "trending_cluster": "short_diy_tutorials",
+    "auto_playlists": [
+      { "id": "pl_diy_home_decor", "order_index": 15, "reason": "Видео о создании предмета интерьера своими руками" },
+      { "id": "pl_cardboard_crafts", "order_index": 3, "reason": "Основной материал — картон, подходит в тематическую подборку" },
+      { "id": "pl_budget_diy", "order_index": 8, "reason": "Бюджетный проект из подручных материалов" }
+    ],
+    "ad_targeting_keywords": ["клей момент", "поделки из картона", "craft scissors", "decorative tape", "фоторамка", "diy tools", "hot glue gun", "scrapbooking"],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 98,
+      "summary": "Безопасный контент: DIY-урок по созданию фоторамки из картона. Нет спорных тем, насилия, политики или возрастных ограничений."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: крупный план готовой фоторамки, текст «29 секунд» на экране",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Готовая фоторамка за 29 секунд — хук для удержания зрителя",
+        "time_range_start": 0,
+        "time_range_end": 3,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.42
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Показ материалов: картон, ножницы, клей, линейка, декор",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "клей момент кристалл",
+          "reason": "На видео используется прозрачный клей для картона",
+          "confidence": 0.85
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "ножницы канцелярские",
+          "reason": "Крупный план ножниц при резке картона",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.38
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Разметка картона: отмеряем прямоугольник 15×20 см линейкой и карандашом",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "линейка металлическая 30 см",
+          "reason": "Инструмент для разметки в кадре",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.35
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вырезаем основу рамки ножницами по разметке",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Потенциальная mid-roll пауза между этапом резки и сборки",
+          "confidence": 0.55
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.41
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вырезаем внутреннее окно для фото, отступив 3 см от края",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Естественная пауза перед этапом декорирования",
+          "confidence": 0.50
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.39
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Декорирование рамки: обклеивание цветной бумагой и наклейками",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "цветная бумага а4 набор",
+          "reason": "Материал для декора показан крупным планом",
+          "confidence": 0.78
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "наклейки скрапбукинг",
+          "confidence": 0.65,
+          "reason": "Декоративные элементы на рамке"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.44
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вставка фото и приклеивание задней стенки рамки",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Пауза перед финальным результатом",
+          "confidence": 0.52
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.37
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Финальный кадр: готовая рамка с фото, призыв сохранить видео",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "reason": null,
+          "confidence": null
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Результат: красивая фоторамка за 29 секунд — репост и сохранение",
+        "time_range_start": 26,
+        "time_range_end": 29,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.33
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 0,
+      "end_sec": 3,
+      "text": "Всего за 29 секунд сделаем крутую фоторамку",
+      "word_timestamps": [
+        { "word": "Всего", "start_sec": 0.0, "end_sec": 0.4 },
+        { "word": "за", "start_sec": 0.4, "end_sec": 0.6 },
+        { "word": "29", "start_sec": 0.6, "end_sec": 0.9 },
+        { "word": "секунд", "start_sec": 0.9, "end_sec": 1.4 },
+        { "word": "сделаем", "start_sec": 1.4, "end_sec": 2.0 },
+        { "word": "крутую", "start_sec": 2.0, "end_sec": 2.5 },
+        { "word": "фоторамку", "start_sec": 2.5, "end_sec": 3.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 3,
+      "end_sec": 6,
+      "text": "Нам нужен картон ножницы клей и декор",
+      "word_timestamps": [
+        { "word": "Нам", "start_sec": 3.0, "end_sec": 3.3 },
+        { "word": "нужен", "start_sec": 3.3, "end_sec": 3.7 },
+        { "word": "картон", "start_sec": 3.7, "end_sec": 4.1 },
+        { "word": "ножницы", "start_sec": 4.1, "end_sec": 4.6 },
+        { "word": "клей", "start_sec": 4.6, "end_sec": 5.1 },
+        { "word": "и", "start_sec": 5.1, "end_sec": 5.3 },
+        { "word": "декор", "start_sec": 5.3, "end_sec": 6.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 6,
+      "end_sec": 10,
+      "text": "Отмеряем прямоугольник пятнадцать на двадцать сантиметров",
+      "word_timestamps": [
+        { "word": "Отмеряем", "start_sec": 6.0, "end_sec": 6.6 },
+        { "word": "прямоугольник", "start_sec": 6.6, "end_sec": 7.4 },
+        { "word": "пятнадцать", "start_sec": 7.4, "end_sec": 8.1 },
+        { "word": "на", "start_sec": 8.1, "end_sec": 8.4 },
+        { "word": "двадцать", "start_sec": 8.4, "end_sec": 9.1 },
+        { "word": "сантиметров", "start_sec": 9.1, "end_sec": 10.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 10,
+      "end_sec": 14,
+      "text": "Вырезаем основу и внутреннее окно для фото",
+      "word_timestamps": [
+        { "word": "Вырезаем", "start_sec": 10.0, "end_sec": 10.7 },
+        { "word": "основу", "start_sec": 10.7, "end_sec": 11.3 },
+        { "word": "и", "start_sec": 11.3, "end_sec": 11.5 },
+        { "word": "внутреннее", "start_sec": 11.5, "end_sec": 12.1 },
+        { "word": "окно", "start_sec": 12.1, "end_sec": 12.6 },
+        { "word": "для", "start_sec": 12.6, "end_sec": 12.9 },
+        { "word": "фото", "start_sec": 12.9, "end_sec": 14.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 14,
+      "end_sec": 19,
+      "text": "Теперь украшаем рамку цветной бумагой и наклейками",
+      "word_timestamps": [
+        { "word": "Теперь", "start_sec": 14.0, "end_sec": 14.5 },
+        { "word": "украшаем", "start_sec": 14.5, "end_sec": 15.2 },
+        { "word": "рамку", "start_sec": 15.2, "end_sec": 15.7 },
+        { "word": "цветной", "start_sec": 15.7, "end_sec": 16.3 },
+        { "word": "бумагой", "start_sec": 16.3, "end_sec": 17.0 },
+        { "word": "и", "start_sec": 17.0, "end_sec": 17.3 },
+        { "word": "наклейками", "start_sec": 17.3, "end_sec": 19.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 19,
+      "end_sec": 24,
+      "text": "Вставляем фото и закрываем задней стенкой",
+      "word_timestamps": [
+        { "word": "Вставляем", "start_sec": 19.0, "end_sec": 19.7 },
+        { "word": "фото", "start_sec": 19.7, "end_sec": 20.2 },
+        { "word": "и", "start_sec": 20.2, "end_sec": 20.5 },
+        { "word": "закрываем", "start_sec": 20.5, "end_sec": 21.3 },
+        { "word": "задней", "start_sec": 21.3, "end_sec": 21.9 },
+        { "word": "стенкой", "start_sec": 21.9, "end_sec": 24.0 }
+      ]
+    },
+    {
+      "speaker": "voiceover_male",
+      "start_sec": 24,
+      "end_sec": 29,
+      "text": "Готово сохраняйте чтобы не потерять",
+      "word_timestamps": [
+        { "word": "Готово", "start_sec": 24.0, "end_sec": 24.5 },
+        { "word": "сохраняйте", "start_sec": 24.5, "end_sec": 25.4 },
+        { "word": "чтобы", "start_sec": 25.4, "end_sec": 25.9 },
+        { "word": "не", "start_sec": 25.9, "end_sec": 26.2 },
+        { "word": "потерять", "start_sec": 26.2, "end_sec": 29.0 }
+      ]
+    }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

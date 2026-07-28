@@ -1,9 +1,16 @@
+# MODULE_MAP: src/core/
+# MODULE_CONTRACT: M-CORE
+# PURPOSE: Мульти-провайдер LLM (Ollama/OpenAI) с routing по ролям: text, vision, classifier, mixer, moderation, embedding
+# SCOPE: LLMRouter, ROLES, infer, embed. Provider selection, OpenAI/Ollama API calls.
+# DEPENDS: M-CORE (config, exceptions, json_utils)
+# LINKS: .grace/graph/index.xml | .grace/verification/index.xml
 import httpx
 
 from src.core.config import config
 from src.core.exceptions import ConfigError
 from src.core.json_utils import extract_json
 
+# START_BLOCK: M-CORE/LLM_ROUTER/ROLES
 ROLES = (
     "text_model",
     "vision_model",
@@ -14,6 +21,7 @@ ROLES = (
 )
 
 
+# START_BLOCK: M-CORE/LLM_ROUTER/CLASS
 class LLMRouter:
     def __init__(self) -> None:
         self._client: httpx.AsyncClient | None = None
@@ -149,3 +157,4 @@ class LLMRouter:
 
 
 llm_router = LLMRouter()
+# END_BLOCK: M-CORE/LLM_ROUTER/CLASS

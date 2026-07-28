@@ -19,7 +19,7 @@ ROLES = (
     "moderation_model",
     "embedding_model",
 )
-
+# END_BLOCK: M-CORE/LLM_ROUTER/ROLES
 
 # START_BLOCK: M-CORE/LLM_ROUTER/CLASS
 class LLMRouter:

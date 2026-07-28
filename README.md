@@ -53,6 +53,20 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **structlog с 56 маркерами** (`src/core/logging_config.py`) — структурированные JSON-логи формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]`. Каждый job логирует 15+ точек пайплайна с correlation_id. Без чтения кода можно диагностировать: какой компонент упал, сколько VLM-вызовов было, какой fallback сработал.
 
+- **Web UI (React + Vite + TailwindCSS)** (`ui/`) — полноценный веб-интерфейс: Dashboard с историей джобов, Passport Viewer с монетизацией по сценам, Mix Viewer, страница поиска, модерация, аудио-аналитика. Переключение Demo Mode одной кнопкой — для презентаций без запущенного бэкенда.
+
+- **SSE / EventSource — live-уведомления** (`ui/src/api/RealApiClient.ts:71`) — клиент подписывается на события через `EventSource`. При изменении статуса обработки UI обновляется в реальном времени без polling.
+
+- **Demo Mode для презентаций** (`ui/src/api/DemoApiClient.ts`) — UI работает полностью offline с 4 предзагруженными паспортами, 6 миксами и 20+ поисковыми результатами. Переключение через `DemoModeContext` в рантайме. Позволяет демонстрировать продукт судьям и заказчикам без установки Ollama, Whisper и моделей.
+
+- **Двойной формат экспорта: .md + .json** (`src/passport_builder/passport_builder.py:186`) — `save_passport_to_disk()` сохраняет каждый паспорт одновременно в Markdown (для людей и UI) и JSON (для programmatic consumption). JSON содержит полную Pydantic-схему Passport: frontmatter, timeline, метрики, модерацию, музыкальные треки, celebrity recognition. Интеграторам не нужно парсить Markdown — можно читать `output/{video_id}.json` напрямую.
+
+- **Автоиндексация в ChromaDB при сборке паспорта** (`src/passport_builder/passport_builder.py:144-151`) — после завершения паспорта `build_passport()` автоматически вызывает `index_passport()` для немедленной индексации сцен в семантическом поиске. Паспорты доступны для поиска сразу после обработки, без ручного вызова `POST /search/reindex`. Ошибки индексации не блокируют паспорт — он сохраняется в любом случае.
+
+- **Строгий режим валидации паспорта** (`src/passport_builder/validator.py:9`) — `validate(passport, strict=True)` вместо логирования ошибок выбрасывает `PipelineValidationError`, обрывая пайплайн. Проверяет: наличие `video_id`, хронологический порядок таймкодов, обязательность `search_query` для `ECOM_ITEM`. Для отладки: временно включить strict mode и пройти E2E-тест.
+
+- **FingerprintDB — персистентное хранилище аудиоотпечатков** (`src/audio_engine/audio_fingerprinter.py:22`) — `FingerprintDB` сохраняет CQT-хэши и метаданные треков в `data/fingerprint_db.json`. Функция `index_track()` позволяет программно добавить любой аудиофайл в базу отпечатков с метаданными (artist, track_name, album, year, afisha/merch/events URLs). Скрипт `scripts/index_test_tracks.py` демонстрирует пакетную индексацию. ChromaDB (`data/chroma/`) и fingerprint DB — два независимых персистентных хранилища с разными схемами данных.
+
 ---
 
 ### Экономическая эффективность
@@ -93,6 +107,8 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 
 - **Semantic Search** — возвращает сцены с фильтром по `monetization_types`. Позволяет найти все `ECOM_ITEM`-сцены для каталога товаров или все `AD_SLOT`-сцены для programmatic размещения рекламы.
 - **Mixer (Замеси)** — автоматически собирает сцены с `AD_SLOT` и `ECOM_ITEM` в структурированные видеоподборки. Каждая подборка — готовый монетизируемый плейлист: рекламные блоки + товарные сцены без ручного монтажа.
+
+**Валидация паспорта** (`src/passport_builder/validator.py:9`) — `validate()` проверяет наличие `video_id`, хронологический порядок таймкодов, обязательность `search_query` для `ECOM_ITEM`. По умолчанию ошибки только логируются; параметр `strict=True` переключает в режим исключения (`PipelineValidationError`) — для отладки и CI-гейтов.
 
 ### Соответствие критериям технического задания
 
@@ -213,6 +229,8 @@ MP4
 
 Результат: новые monetization-метки `MUSIC_TRACK`, `ARTIST_MERCH`, `EVENT_TICKET`, `CELEBRITY_APPEARANCE`.
 
+**Индексация новых треков** — `src/audio_engine/audio_fingerprinter.py:201` (`index_track()`) добавляет аудиофайл в `FingerprintDB` с метаданными (artist, album, year, afisha/merch URLs, events). `scripts/index_test_tracks.py` — CLI-скрипт для пакетной и побатчевой индексации: `--track /path/to/track.mp3 --artist "Name" --title "Track"`. После индексации новые треки автоматически обнаруживаются `match_audio()`.
+
 ---
 
 ### Визуальный анализатор
@@ -294,6 +312,14 @@ MP4
 
 Формат ответа — JSON. Маркдаун-код-фенсы (```json) стрипаются до парсинга через `extract_json()`.
 
+#### Сохранение результатов
+
+`save_passport_to_disk()` (`src/passport_builder/passport_builder.py:186`) сохраняет каждый паспорт **в двух форматах**:
+- `.md` — читаемый Markdown с YAML frontmatter, таймлайном и монетизационными метками
+- `.json` — полная Pydantic-схема Passport (frontmatter + timeline + moderation + music/celebrity data) для programmatic consumption. Интеграторам не нужно парсить Markdown.
+
+Оба файла записываются в `passport.output_dir` (по умолчанию `./output/`).
+
 ---
 
 ### Семантический поиск (VideoRAG)
@@ -304,7 +330,7 @@ MP4
 
 - **Почему:** ChromaDB — Apache 2.0, Rust core, `pip install`, embedded mode без внешнего сервера. Для масштаба тысяч сцен — оптимально.
 - **Реализация:** lazy-инициализация `PersistentClient(path=config.search_chroma_path)`. Каждая сцена → векторный чанк (speaker + ASR + summary + monetization_types) → `collection.add(embedding, metadata, id)`. Расстояние — косинусная близость.
-- **Индексация:** автоматически при сборке паспорта (в `build_passport` после `validate`). Опциональная ручная через `POST /search/reindex`.
+- **Индексация:** автоматически при сборке паспорта в `build_passport()` (после `validate` и `assess_moderation`) — `index_passport()` добавляет сцены в ChromaDB немедленно. Паспорт доступен для поиска сразу после обработки. Опциональная ручная переиндексация через `POST /search/reindex`. Ошибки индексации не блокируют паспорт (graceful degradation).
 
 #### Qwen3-Embedding:0.6b
 
@@ -453,7 +479,7 @@ models:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 50 source-файлов, 41 test-файл, 91 файл Python, 26 .grace артефактов.
+Всего: 50 source-файлов, 41 test-файл, 91 файл Python, 26 .grace артефактов, ~25 UI-файлов (React + TypeScript).
 
 ---
 
@@ -639,11 +665,55 @@ Endpoints:
 
 ---
 
+## Веб-интерфейс (UI)
+
+Полнофункциональный frontend на React 18 + TypeScript + Vite + TailwindCSS для визуализации всех возможностей пайплайна. Работает в двух режимах: **Real** (с бэкендом) и **Demo** (offline, с предзагруженными данными).
+
+### Страницы
+
+| Страница | Маршрут | Назначение |
+|---|---|---|
+| **Панель управления** | `/` | История джобов, статусы, быстрый загруз видео |
+| **Паспорт видео** | `/passport/:jobId` | Таймлайн сцен, монетизация, модерация, метрики, аудио-аналитика |
+| **Поиск сцен** | `/search` | Семантический поиск с фильтром по жанру |
+| **Подборка (Mix)** | `/mix/:mixId` | Структурированная подборка с этапами и сценами |
+
+### Компоненты
+
+- **Dashboard** — список обработанных видео со статусами, ключевыми метриками. Drag-and-drop загрузка нового видео.
+- **Passport Viewer** — таймлайн с monetization-метками, модерация (age rating + flags), метрики пайплайна, музыкальные треки и celebrity recognition.
+- **Search** — строка поиска с семантическими результатами, фильтрация по жанру, подсветка monetization-типов.
+- **Mix Viewer** — пошаговое отображение видеоподборки с таймкодами и описаниями.
+- **Moderation Panel** — вердикт + флаги + brand safety score с цветовой индикацией.
+- **Monetization Summary** — сводка по всем типам меток с иконками и tooltip'ами.
+
+### Demo Mode
+
+При запуске без бэкенда UI автоматически использует `DemoApiClient` с 4 паспортами (ремонт авто, подкаст, обзор смартфона, DIY) и 6 готовыми подборками. Переключение между Real/Demo — через контекстное меню в интерфейсе. Никаких зависимостей от API, Ollama, моделей.
+
+### Установка UI
+
+```bash
+cd ui
+npm install
+npm run dev        # http://localhost:5173 (прокси на :8000)
+```
+
+Production-сборка:
+
+```bash
+cd ui
+npm run build      # готовый билд в ui/dist/
+```
+
+---
+
 ## Установка
 
 ### Требования
 
 - Python 3.13+
+- Node.js 18+ (только для Web UI)
 - [Ollama](https://ollama.com) с моделями:
   - `gemma4:e4b` (text analysis, stage planner)
   - `qwen3.5:9b` (vision)
@@ -740,6 +810,14 @@ Prometheus метрики:
 ```bash
 curl http://localhost:8000/metrics
 ```
+
+Веб-интерфейс (требует запущенного бэкенда):
+```bash
+cd ui && npm install && npm run dev
+# → http://localhost:5173 (Dashboard, Search, Mix, Passport Viewer)
+```
+
+По умолчанию UI запускается в **Demo Mode** — с предзагруженными данными, без бэкенда. Переключение в режим Real — через кнопку в интерфейсе.
 
 ---
 
@@ -1116,14 +1194,23 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 4. ✅ **LLM-as-Judge модерация** — 9 категорий флагов, age rating 0+–18+ (реализовано)
 5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter (реализовано)
 6. ✅ **157 тестов**, 52 verification scenarios, GRACE-верификация (реализовано)
+7. ✅ **Web UI (React + Vite + TailwindCSS)** — панель управления, паспорт, поиск, миксы (реализовано)
+8. ✅ **Demo Mode** — полная offline-демонстрация без бэкенда (реализовано)
+9. ✅ **SSE / EventSource** — live-уведомления об изменении статуса (реализовано)
+10. ✅ **Двойной формат экспорта: .md + .json** — паспорта сохраняются в обоих форматах (реализовано)
+11. ✅ **Автоиндексация в ChromaDB** — паспорт индексируется сразу после сборки (реализовано)
+12. ✅ **Строгий режим валидации** — `strict=True` для CI-гейтов (реализовано)
+13. ✅ **FingerprintDB + index_track()** — персистентное хранилище аудиоотпечатков, CLI-индексация (реализовано)
 
 ### В разработке
 
-7. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
-8. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
-9. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
-10. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
-11. **Бенчмарки производительности** — `.benchmarks/` директория готова, наполнение метриками времени и стоимости по каждому релизу
+14. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
+15. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
+16. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
+17. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+18. **Бенчмарки производительности** — `.benchmarks/` директория готова, наполнение метриками времени и стоимости по каждому релизу
+19. **Развёртывание API-эндпоинтов UI (`/api/v1/jobs`, `/api/v1/jobs/{id}/passport`, `/api/v1/jobs/{id}/metrics` и др.)** — сейчас RealApiClient спроектирован, но эндпоинты на бэкенде не реализованы. UI работает через DemoApiClient
+20. **Редактор паспортов** — возможность ручного редактирования монетизационных меток через UI
 
 ---
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <verification-entry id="V-M-CORE" module="M-CORE" priority="high">
-  <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
+  <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager, multi-provider LLM fallback</description>
   <Scenarios>
     <Scenario id="S-M-CORE-1" type="success">
       <description>JobStatus enum и Pydantic-модели: все значения корректны</description>
@@ -41,6 +41,27 @@
       <evidence>
         <marker required="true">[M-CORE][CB][OPENED]</marker>
         <assert>CircuitBreakerOpenError после 3+ ошибок; восстанавливается в half-open</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-CORE-5" type="success">
+      <description>Multi-provider LLM fallback: primary fails → fallback succeeds</description>
+      <commands>
+        <command>pytest tests/core/test_llm_router.py -v -k "test_infer_fallback_success"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][LLM][FALLBACK_SUCCESS]</marker>
+        <assert>При отказе первого провайдера LLM автоматически переключается на следующий (ollama→yandex→openrouter)</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-CORE-6" type="failure">
+      <description>Multi-provider LLM fallback: все провайдеры отказали → ConfigError</description>
+      <commands>
+        <command>pytest tests/core/test_llm_router.py -v -k "test_infer_all_providers_fail or test_infer_circuit_breaker_skips_open"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-CORE][LLM][ALL_FAILED]</marker>
+        <marker required="true">[M-CORE][LLM][CB_SKIP]</marker>
+        <assert>ConfigError("All providers failed for role 'X'"); открытый circuit breaker для провайдера пропускает его без вызова</assert>
       </evidence>
     </Scenario>
   </Scenarios>

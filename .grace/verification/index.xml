@@ -10,8 +10,8 @@
     </tcoValidation>
   </Policy>
   <Entries>
-    <Entry id="V-M-CORE" routed="VD-M-CORE.xml" module="M-CORE" priority="high" scenarios="4">
-      <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
+    <Entry id="V-M-CORE" routed="VD-M-CORE.xml" module="M-CORE" priority="high" scenarios="6">
+      <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager, multi-provider LLM fallback</description>
     </Entry>
     <Entry id="V-M-AUDIO" routed="VD-M-AUDIO.xml" module="M-AUDIO" priority="high" scenarios="6">
       <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна, аудио-фингерпринтинг</description>

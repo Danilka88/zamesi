@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraceChangePlan id="C-002" project="RUTUBE Video Analyzer" version="0.1.0">
+  <title>Multi-Provider LLM Fallback Chain</title>
+  <status="active"/>
+  <phases>
+    <Phase-1 name="Config: routing as priority list" status="done">
+      <description>config.yaml: routing → списки провайдеров по приоритету. config.py: routing property → dict[str, list[dict]].</description>
+      <assertions>
+        <baseline>
+          <assert>config.yaml routing — {role: {provider, model}}</assert>
+          <assert>config.py routing property возвращает dict[str, dict]</assert>
+        </baseline>
+        <target>
+          <assert>config.yaml routing — {role: [{provider, model}, {provider, model}]}</assert>
+          <assert>config.py routing property возвращает dict[str, list[dict]]</assert>
+          <assert>Обратная совместимость: provider_for(role) возвращает первый элемент списка</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C002-T1" status="done">
+          <description>config.yaml: каждая роль — массив провайдеров (ollama → yandex → openrouter)</description>
+          <source>config.yaml (routing секция)</source>
+        </task>
+        <task id="C002-T2" status="done">
+          <description>config.py: routing property → ListConfig → list[dict]; provider_for → entries[0]; model_for → модель первого провайдера</description>
+          <source>src/core/config.py</source>
+        </task>
+      </tasks>
+    </Phase-1>
+    <Phase-2 name="LLMRouter: fallback chain" status="done">
+      <description>llm_router.py: infer()/embed() с fallback chain, per-provider CB, latency tracking.</description>
+      <assertions>
+        <baseline>
+          <assert>LLMRouter.infer() вызывает единственного провайдера</assert>
+          <assert>При ошибке — PipelineError без fallback</assert>
+        </baseline>
+        <target>
+          <assert>LLMRouter.infer() пробует провайдеров в порядке entries[]</assert>
+          <assert>При успехе — возвращает ответ; при ошибке — логирует и переходит к следующему</assert>
+          <assert>Если все отказали — ConfigError("All providers failed for role 'X'")</assert>
+          <assert>Per-provider CircuitBreaker открывается после threshold ошибок</assert>
+          <assert>latency_ema обновляется после каждого успешного вызова</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C002-T3" status="done">
+          <description>_provider_entries(role): получение списка провайдеров из config</description>
+          <source>src/core/llm_router.py</source>
+        </task>
+        <task id="C002-T4" status="done">
+          <description>_infer_one(provider, model, ...): единичный вызов к провайдеру (ollama или openai-compat)</description>
+          <source>src/core/llm_router.py</source>
+        </task>
+        <task id="C002-T5" status="done">
+          <description>infer(): fallback loop — _infer_one → success: return; error: log + next; exhausted: raise ConfigError</description>
+          <source>src/core/llm_router.py</source>
+        </task>
+        <task id="C002-T6" status="done">
+          <description>embed(): аналогичный fallback loop для embedding-запросов</description>
+          <source>src/core/llm_router.py</source>
+        </task>
+        <task id="C002-T7" status="done">
+          <description>Per-provider CircuitBreaker: dict[str, CircuitBreaker]; _update_latency() для EMA</description>
+          <source>src/core/llm_router.py</source>
+        </task>
+      </tasks>
+    </Phase-2>
+    <Phase-3 name="Tests &amp; Verification" status="done">
+      <description>12 тестов (7 classic + 5 failover) + GRACE verification scenarios</description>
+      <assertions>
+        <baseline>
+          <assert>5 тестов: ollama/vision/openai/embed/missing/unknown provider</assert>
+        </baseline>
+        <target>
+          <assert>14 тестов: +fallback_success, +all_providers_fail, +unconfigured_skip, +circuit_breaker_skip, +unknown_provider_type_skip</assert>
+          <assert>VD-M-CORE содержит 2 новых сценария для multi-provider fallback</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C002-T8" status="done">
+          <description>test_infer_fallback_success: ollama падает → yandex OK → ответ от yandex</description>
+          <source>tests/core/test_llm_router.py</source>
+        </task>
+        <task id="C002-T9" status="done">
+          <description>test_infer_all_providers_fail: все падают → ConfigError</description>
+          <source>tests/core/test_llm_router.py</source>
+        </task>
+        <task id="C002-T10" status="done">
+          <description>test_infer_unconfigured_provider_skipped: провайдер без конфига → skip</description>
+          <source>tests/core/test_llm_router.py</source>
+        </task>
+        <task id="C002-T11" status="done">
+          <description>test_infer_circuit_breaker_skips_open: открытый CB → сразу fallback</description>
+          <source>tests/core/test_llm_router.py</source>
+        </task>
+        <task id="C002-T12" status="done">
+          <description>test_infer_unknown_provider_type_skipped: неизвестный type → skip</description>
+          <source>tests/core/test_llm_router.py</source>
+        </task>
+        <task id="C002-T13" status="done">
+          <description>Обновить VD-M-CORE.xml: 2 сценария multi-provider fallback</description>
+          <source>.grace/verification/VD-M-CORE.xml</source>
+        </task>
+      </tasks>
+    </Phase-3>
+  </phases>
+  <dataflows>
+    <flow id="DF-C002-01" name="Infer Fallback Flow">
+      <steps>LLMRouter.infer(role) → _provider_entries(role) → for entry in entries: check CB → _infer_one(provider, model) → success: return | error: log + next → exhausted: raise ConfigError</steps>
+    </flow>
+  </dataflows>
+</GraceChangePlan>

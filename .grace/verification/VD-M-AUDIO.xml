@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <verification-entry id="V-M-AUDIO" module="M-AUDIO" priority="high">
-  <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна</description>
+  <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна, аудио-фингерпринтинг</description>
   <Scenarios>
     <Scenario id="S-M-AUDIO-1" type="success">
       <description>Timeline merger: корректное присвоение спикера</description>
@@ -52,8 +52,20 @@
         <assert>Пустой аудиофайл → пустой список; один спикер → все сегменты SPEAKER_00; два спикера → SPEAKER_00/SPEAKER_01; отсутствующий файл → DiarizationError</assert>
       </evidence>
     </Scenario>
+    <Scenario id="S-M-AUDIO-6" type="success">
+      <description>Audio fingerprinting: FingerprintDB, match_audio, celebrity recognition</description>
+      <commands>
+        <command>pytest tests/audio_engine/test_audio_fingerprinter.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-AUDIO][FINGERPRINTER][*]</marker>
+        <assert>FingerprintDB: add_track/match_hashes/get_track/persistence; fingerprint_audio: success/not-found/no-peaks; match_audio: matches/empty-db/below-threshold; index_track: success/no-hashes; detect_celebrity: match/below-threshold/no-collection; analyze_audio_for_monetization: both-enabled/error-graceful</assert>
+      </evidence>
+    </Scenario>
   </Scenarios>
   <RequiredMarkers>
     <marker>[M-AUDIO][*][*]</marker>
+    <marker>[M-AUDIO][CELEBRITY][*]</marker>
+    <marker>[M-AUDIO][FINGERPRINTER][*]</marker>
   </RequiredMarkers>
 </verification-entry>

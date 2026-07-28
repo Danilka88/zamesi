@@ -13,8 +13,8 @@
     <Entry id="V-M-CORE" routed="VD-M-CORE.xml" module="M-CORE" priority="high" scenarios="4">
       <description>Валидация Pydantic-моделей, загрузка конфига, корректность типов, TimeoutManager</description>
     </Entry>
-    <Entry id="V-M-AUDIO" routed="VD-M-AUDIO.xml" module="M-AUDIO" priority="high" scenarios="5">
-      <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна</description>
+    <Entry id="V-M-AUDIO" routed="VD-M-AUDIO.xml" module="M-AUDIO" priority="high" scenarios="6">
+      <description>Извлечение аудио (ffmpeg), ASR, диаризация, сборка таймлайна, аудио-фингерпринтинг</description>
     </Entry>
     <Entry id="V-M-VISION" routed="VD-M-VISION.xml" module="M-VISION" priority="high" scenarios="5">
       <description>Genre classification, DomainRouter, OCR, OCR-буфер</description>

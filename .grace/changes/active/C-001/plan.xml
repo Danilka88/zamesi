@@ -33,11 +33,11 @@
         <task id="C001-T5" status="done">
           <description>Создать C-001 spec.xml (GraceChangeSpec) и plan.xml (GraceChangePlan)</description>
         </task>
-        <task id="C001-T6" status="pending">
-          <description>CLI-валидация: grace lint --assertions current</description>
+        <task id="C001-T6" status="done">
+          <description>CLI-валидация: manual (ruff + pytest) — grace CLI не установлен</description>
         </task>
-        <task id="C001-T7" status="pending">
-          <description>Cleanup: решение по docs/ (keep/remove)</description>
+        <task id="C001-T7" status="done">
+          <description>Cleanup: docs/ уже удалена (не существует)</description>
         </task>
       </tasks>
     </Phase-0>

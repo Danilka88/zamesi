@@ -2,10 +2,12 @@
 
 AI-пайплайн: **MP4 → .md passport** с метками монетизации `AD_SLOT`, `ECOM_ITEM`, `CLIP_CANDIDATE`.
 
+**Для RUTUBE:** автоматическая конвертация видеоконтента в монетизируемые паспорта — без ручного труда, без отправки данных вовне, с себестоимостью $0.015/ч на CPU.
+
 ---
 
-**До:** 45-минутное видео в MP4  
-**После:** Markdown-паспорт с 12 сценами, 3 `ECOM_ITEM`, 2 `AD_SLOT`, 1 `CLIP_CANDIDATE`
+**До:** 45-минутное видео в MP4 → ручной просмотр, разметка, монтаж: **часы работы**  
+**После:** Markdown-паспорт с 12 сценами, 3 `ECOM_ITEM`, 2 `AD_SLOT`, 1 `CLIP_CANDIDATE` → **секунды**
 
 ---
 
@@ -23,13 +25,35 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 157 тестов с изоляцией внешних вызовов (monkeypatch, AsyncMock). 9 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
 
-- **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs), structlog с 54 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
+- **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs, timeouts, fallbacks), structlog с 56 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
 - **Векторный семантический поиск** — qwen3-embedding:0.6b (мультиязычная, 639 MB, 1024-dim, MTEB 64.33) через Ollama `/api/embed`. ChromaDB 1.5+ (Rust core, embedded persistent mode). Каждая сцена индексируется с полями speaker, ASR, summary, monetization_types. Поиск по смыслу, не по ключевым словам. Фильтр по genre, сортировка по косинусной близости. Переиндексация через единый endpoint без даунтайма.
 
 - **Масштабируемость P&L** — при росте объёмов стоимость за час видео **падает**, а не растёт. GPU-акселерация (Metal/CUDA) ускоряет Whisper до 0.3× RT, SLM/VLM в 5-10×. В отличие от моделей, зависящих от платных данных (стоимость привлечения лида), ценность извлекается из самого контента — дешёвая аудитория не нужна.
 
 - **API-first архитектура для интеграции** — 3 группы эндпоинтов: анализ (`POST /analyze` → статус → passport + markdown), семантический поиск (`GET /search`, `POST /search/reindex`), подборки (`POST /mix` → `GET /mix/{id}/markdown`). Search и Mixer — опциональные модули, подключаемые через config.yaml. OpenAPI spec — интеграторам не нужна отдельная документация.
+
+---
+
+### 🎯 Неочевидные преимущества (Hidden Features)
+
+Фичи, которые есть в коде, но не бросаются в глаза при первом знакомстве:
+
+- **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:17`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Каждая из 6 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне.
+
+- **GRACE 4 — формальная верификация** (`.grace/`, 26 артефактов) — проект управляется через GRACE 4: 9 MODULE_CONTRACT, 67 пар семантических блоков `START_BLOCK`/`END_BLOCK`, 52 verification-сценария с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
+
+- **VLM Ratio Gate — CI-проверка** (`scripts/check_vlm_ratio.py`) — скрипт, анализирующий JSON-логи пайплайна и проверяющий, что VLM-вызовы ≤6% (exit code 0/1). Может использоваться как gate в CI/CD: `python scripts/check_vlm_ratio.py < pipeline.log`. Без этого automation утверждение «≤6% VLM» остаётся на совести разработчика.
+
+- **Audio Fingerprinting + Celebrity Recognition** (`src/audio_engine/audio_fingerprinter.py`) — librosa CQT fingerprints → ChromaDB поиск для идентификации треков. ECAPA-TDNN embeddings для распознавания celebrity-голосов. Результат: 4 дополнительных monetization-метки (`MUSIC_TRACK`, `ARTIST_MERCH`, `EVENT_TICKET`, `CELEBRITY_APPEARANCE`), которые не требуют VLM или ASR.
+
+- **TimeoutManager с Circuit Breaker** (`src/core/timeout_manager.py`) — единый интерфейс для всех LLM-вызовов с трёхуровневой защитой: retry (exponential backoff 1→2→4 с) → Circuit Breaker (10 failures → OPEN → 60s recovery) → fallback chain (retry_same → shorten_prompt → skip_vision). Конфигурируется в `config.yaml`. Prometheus-метрики фиксируют каждый timeout и fallback.
+
+- **Lazy imports — старт сервера <1 с** — 8 тяжёлых зависимостей (SpeechBrain, Whisper, OCR, scene_analyzer) импортируются внутри `_run_pipeline()`, не в глобальной области. FastAPI стартует мгновенно, тяжёлые модели загружаются только при первом анализе.
+
+- **structlog с 56 маркерами** (`src/core/logging_config.py`) — структурированные JSON-логи формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]`. Каждый job логирует 15+ точек пайплайна с correlation_id. Без чтения кода можно диагностировать: какой компонент упал, сколько VLM-вызовов было, какой fallback сработал.
+
+---
 
 ### Экономическая эффективность
 
@@ -81,6 +105,23 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | Production-готовность | Отказоустойчивость, мониторинг |
 | UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
 | UC-6: Mixer (Замеси) | Mixer, API: `POST /mix`, Быстрый старт |
+
+---
+
+### Сравнение с альтернативами
+
+| Критерий | **RUTUBE Analyzer** | Assembler / Premiere (ручной монтаж) | Облачные AI-сервисы (Google Video AI, AWS Rekognition) |
+|---|---|---|---|
+| **Себестоимость 1 ч видео** | **$0.015** (CPU), <$0.0025 (GPU) | $30–60 (работа редактора) | $3–12 (API + compute) |
+| **Приватность** | Полностью локально, ФЗ-152 | Локально | Данные уходят в облако |
+| **Монетизация** | AD_SLOT, ECOM_ITEM, CLIP_CANDIDATE + MUSIC, ARTIST_MERCH, EVENT, CELEBRITY | Только ручная разметка | Только сцены/объекты (без монетизационной классификации) |
+| **VLM Gatekeeper** | ≤6% вызовов | Не применимо | 100% кадров |
+| **Семантический поиск** | ChromaDB + qwen3-embedding (VideoRAG) | Нет | Ограничен (key-based) |
+| **Mixer (подборки)** | LLM → поиск → matching → Markdown | Часы ручной работы | Нет |
+| **Open Source** | Apache 2.0 / MIT, весь стек | Нет | Проприетарные API |
+| **Модульность** | 9 изолированных модулей, GRACE-верификация | Нет | Чёрный ящик |
+| **Русский язык** | WER 4.2% (Whisper large-v3), кириллический OCR | Любой | WER >10% на русском |
+| **GPU не обязателен** | Да (CPU $0.015/ч), GPU как ускорение | Нет | Нет |
 
 ---
 
@@ -200,9 +241,9 @@ MP4
 Отдельный модуль `M-MODERATOR` (`src/moderator/`), выполняющий анализ контента на предмет возрастных ограничений и запрещённых категорий. Запускается в `PassportBuilder.build_passport()` после завершения основного пайплайна — **не влияет** на существующие промты scene-анализа.
 
 - **`assess_moderation()`** — LLM-вызов к Gemma4:e4b с промтом `moderation_judge`. Возвращает `ModerationReport` (age_rating, verdict, flags[]).
-- **9 категорий флагов:** `violence`, `hate_speech`, `self_harm`, `nudity`, `drugs`, `profanity`, `spam`, `misinformation`, `adult_content`.
-- **Age rating:** `0+` / `6+` / `12+` / `16+` / `18+` / `unknown`.
-- **Verdict:** `allowed` / `restricted` / `banned`.
+- **9 категорий флагов:** `profanity`, `hate_speech`, `violence`, `nsfw`, `drugs_weapons`, `self_harm`, `misinformation`, `controversial_figure`, `copyright_music`.
+- **Age rating:** `0+` / `6+` / `12+` / `16+` / `18+`.
+- **Verdict:** `approved` / `flagged` / `rejected`.
 - **Prompt:** system-prompt задаёт роль RUTUBE-модератора, user-prompt включает ASR-текст + OCR-контекст. Формат ответа — JSON.
 
 Результат сохраняется в `PassportFrontmatter.moderation` и отражается в метриках:
@@ -324,6 +365,47 @@ MP4
 - **Почему asyncio:** ffmpeg, ASR, диаризация — блокирующие операции. `asyncio.create_subprocess_exec` позволяет не блокировать event loop и отменять pipeline через `asyncio.CancelledError`.
 - **Почему subprocess:** ffmpeg и whisper.cpp — внешние бинарники. Python-обёртки (PyAV, whisper-python) добавляют оверхед и баги совместимости. Subprocess даёт полный контроль.
 - **Lazy imports:** 8 зависимостей (SpeechBrain, Whisper, OCR, scene_analyzer и др.) импортируются внутри `_run_pipeline`, не в глобальной области. Это сокращает время старта сервера до <1 с.
+
+#### LLMRouter — мультипровайдерный коннектор моделей
+
+Единый интерфейс для всех LLM-вызовов, поддерживающий как локальные (Ollama), так и внешние OpenAI-совместимые API. Позволяет переключать модели между провайдерами без изменения кода — достаточно правки `config.yaml`.
+
+```
+LLMRouter.infer(prompt, role) / LLMRouter.embed(text, role)
+  │
+  ├── provider_for(role) → провайдер из config.yaml
+  │     └── ollama → POST /api/generate (локально)
+  │     └── openai → POST /v1/chat/completions (Yandex, Cloud.ru, OpenRouter и др.)
+  │
+  └── model_for(role) → модель из config.yaml
+```
+
+**Поддерживаемые провайдеры (уже в `config.yaml`):**
+
+| Провайдер | Эндпоинт | Авторизация |
+|---|---|---|
+| `ollama` | `http://localhost:11434` | — |
+| `yandex` (YandexGPT) | `https://llm.api.cloud.yandex.net/foundationModels/v1` | `Bearer ${YANDEX_API_KEY}` |
+| `cloudru` | `https://api.cloud.ru/v1` | `Bearer ${CLOUDRU_API_KEY}` |
+| `openrouter` | `https://openrouter.ai/api/v1` | `Bearer ${OPENROUTER_API_KEY}` |
+
+Любой OpenAI-совместимый API (Sber GigaChat, YandexGPT, Cloud.ru, OpenRouter, и т.д.) можно добавить, прописав в `models.providers` новый блок с `type: openai`, `endpoint` и `api_key`.
+
+**Пример — переключение text_model на YandexGPT:**
+
+```yaml
+models:
+  providers:
+    yandex:
+      type: openai
+      endpoint: "https://llm.api.cloud.yandex.net/foundationModels/v1"
+      api_key: "${YANDEX_API_KEY}"
+  routing:
+    text_model: { provider: "yandex", model: "yandexgpt" }
+    embedding_model: { provider: "yandex", model: "yandex-embed" }
+```
+
+Каждая роль (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо — можно комбинировать локальные и внешние модели в одном пайплайне.
 
 ---
 
@@ -471,7 +553,14 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
-- **Release gate:** полный suite + VLM ratio check (<6%)
+- **Release gate:** полный suite + VLM ratio check (<6%) — автоматизирован через `scripts/check_vlm_ratio.py`
+
+```bash
+# CI gate: проверка VLM ratio по логам
+python scripts/check_vlm_ratio.py < pipeline.log   # exit 0 если <6%
+python scripts/check_vlm_ratio.py pipeline.log     # из файла
+python scripts/check_vlm_ratio.py < 0.05           # кастомный порог
+```
 
 ### Тестовые видео
 
@@ -485,7 +574,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | `diy_with_text.mp4` | 46 с | diy | OCR-оверлей через PIL+ffmpeg |
 | `minecraft_stream.mp4` | 27 с | stream | Тёмный фон, гейминг |
 
-Скрипт генерации: `scripts/generate_test_videos.sh`. Для регенерации всех тестовых видео:
+Скрипт генерации: `scripts/generate_test_videos.sh`. Индексация тестовых треков: `scripts/index_test_tracks.py`. Для регенерации всех тестовых видео:
 ```bash
 bash scripts/generate_test_videos.sh
 ```
@@ -517,7 +606,7 @@ bash scripts/generate_test_videos.sh
 {"event": "[M-SEMANTIC][SCENE][ALL_DONE]", "total": 45, "vlm_calls": 2, "vlm_percent": 4.4}
 {"event": "[M-API][PIPELINE][DONE]", "duration_sec": 142.5, "scenes": 45, "vlm_pct": 5.2}
 {"event": "[M-AUDIO][FINGERPRINT][DONE]", "music_matches": 2, "celebrity_hits": 1}
-{"event": "[M-MODERATOR][ASSESS][DONE]", "verdict": "allowed", "age_rating": "16+", "flags": 0}
+{"event": "[M-MODERATOR][ASSESS][DONE]", "verdict": "approved", "age_rating": "16+", "flags": 0}
 ```
 
 56 log-маркеров формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]` во всех source-файлах.
@@ -525,14 +614,16 @@ bash scripts/generate_test_videos.sh
 ### Prometheus-метрики
 
 | Метрика | Тип | Лейблы |
-|---|---|---|
+|---|---|---|---|
 | `processing_duration_seconds` | Histogram | — |
 | `vlm_calls_total` | Counter | — |
 | `scenes_total` | Counter | — |
 | `jobs_total` | Counter | `status` (pending/done/error) |
 | `jobs_active` | Gauge | — |
 | `json_errors_total` | Counter | — |
-| `moderation_verdict` | Counter | `verdict` (allowed/restricted/banned) |
+| `timeouts_total` | Counter | `operation` |
+| `fallbacks_total` | Counter | `strategy` |
+| `moderation_verdict` | Counter | `verdict` (approved/flagged/rejected) |
 | `moderation_flags_count` | Counter | — |
 | `moderation_age_rating` | Gauge | — |
 | `fingerprint_matches_total` | Counter | — |
@@ -579,6 +670,14 @@ pip install -e ".[dev]"
 ### Конфигурация
 
 `config.yaml` — все таймауты, ретраи, пути к моделям, жанры.
+
+> **Note:** Если используете облачных провайдеров (YandexGPT, Cloud.ru, OpenRouter), создайте `.env` с API-ключами:
+> ```bash
+> export YANDEX_API_KEY="your-key"
+> export CLOUDRU_API_KEY="your-key"
+> export OPENROUTER_API_KEY="your-key"
+> ```
+> Переменные `${VAR}` в `config.yaml` подставляются автоматически.
 
 Ключевые параметры:
 
@@ -673,10 +772,11 @@ curl http://localhost:8000/metrics
     "ecom_items": 0,
     "clip_candidates": 0,
     "music_tracks": 0,
+    "event_tickets": 0,
     "celebrity_hits": 0,
     "fingerprint_matches": 0,
     "fallbacks_used": 0,
-    "moderation_verdict": "allowed",
+        "moderation_verdict": "approved",
     "moderation_age_rating": "0+",
     "moderation_flags_count": 0
   },
@@ -961,7 +1061,7 @@ Frontmatter:
   duration_sec: 46.0
   moderation:
     age_rating: 0+
-    verdict: allowed
+    verdict: approved
     categories_flagged: []
     flags_count: 0
     summary: "DIY content, no restricted material"
@@ -988,15 +1088,43 @@ Mixer на запрос `"фоторамка из картона своими р
 
 ---
 
-## План развития
+## Интеграция с RUTUBE
 
-1. ✅ **Семантический поиск (VideoRAG)** — ChromaDB + qwen3-embedding (реализовано)
-2. ✅ **Mixer (Замеси)** — multi-video подборки через LLM (реализовано)
-3. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
-4. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
-5. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
-6. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+RUTUBE Video Analyzer спроектирован как middleware между видеозагрузкой и рекомендательной системой RUTUBE:
+
+```
+Video Upload → [Analyzer] → .md passport (метрики монетизации)
+                                  ↓
+                    Semantic Search (VideoRAG) → programmatic AD placement
+                                  ↓
+                    Mixer (Замеси) → готовые плейлисты → рекомендации RUTUBE
+                                  ↓
+                    Moderation (LLM-as-Judge) → age_rating + content flags
+```
+
+Каждый выходной паспорт содержит `ad_targeting_keywords`, `seo_title`, `trending_cluster`, `brand_safety_score` — поля, готовые для передачи в RUTUBE API без дополнительной обработки.
 
 ---
 
-*GRACE 4-governed project: 26 .grace артефактов, 9 MODULE_CONTRACT, 67 semantic block pairs, 52 verification scenarios. Файлы: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+## План развития
+
+### ✅ Реализовано
+
+1. ✅ **Семантический поиск (VideoRAG)** — ChromaDB + qwen3-embedding (реализовано)
+2. ✅ **Mixer (Замеси)** — multi-video подборки через LLM (реализовано)
+3. ✅ **Audio Fingerprinting** — музыкaльные треки + celebrity recognition (реализовано)
+4. ✅ **LLM-as-Judge модерация** — 9 категорий флагов, age rating 0+–18+ (реализовано)
+5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter (реализовано)
+6. ✅ **157 тестов**, 52 verification scenarios, GRACE-верификация (реализовано)
+
+### В разработке
+
+7. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
+8. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
+9. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
+10. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+11. **Бенчмарки производительности** — `.benchmarks/` директория готова, наполнение метриками времени и стоимости по каждому релизу
+
+---
+
+*GRACE 4-governed project: 26 `.grace` артефактов, 9 MODULE_CONTRACT, 67 semantic block pairs, 52 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`. GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

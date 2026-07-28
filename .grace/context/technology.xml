@@ -18,6 +18,9 @@
     <library name="structlog" version="24.0+" purpose="Структурированное логирование"/>
     <library name="prometheus-client" version="0.20+" purpose="Prometheus-метрики"/>
     <library name="python-multipart" version="0.0.12+" purpose="Загрузка видеофайлов"/>
+    <library name="uvicorn" version="standard" purpose="ASGI-сервер для FastAPI"/>
+    <library name="anyio" version="4.0+" purpose="Async-рантайм для asyncio-совместимости"/>
+    <library name="librosa" version="0.10+" purpose="Audio fingerprinting (спектрограммы, STFT, поиск пиков)"/>
     <library name="chromadb" version="1.5+" purpose="Vector search (Rust core, embedded mode)"/>
   </key-libraries>
 

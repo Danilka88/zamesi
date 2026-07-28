@@ -168,6 +168,36 @@
         </task>
       </tasks>
     </Phase-5>
+    <Phase-6 name="API Layer &amp; Integration" status="built">
+      <description>FastAPI-endpoints, job queue, оркестрация пайплайна, Prometheus-метрики, интеграционные тесты.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет API-слоя</assert>
+        </baseline>
+        <target>
+          <assert>M-API экспортирует POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health, GET /metrics</assert>
+          <assert>Prometheus-метрики включают latency_histogram, vlm_calls_total, error rate</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="Phase6-T1" status="done">
+          <description>FastAPI приложение: POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health</description>
+          <source>src/api/app.py, src/api/routes.py</source>
+        </task>
+        <task id="Phase6-T2" status="done">
+          <description>Job queue: фоновый запуск пайплайна (asyncio.create_task), хранение статуса in-memory, correlation_id</description>
+          <source>src/api/routes.py (_run_pipeline)</source>
+        </task>
+        <task id="Phase6-T3" status="done">
+          <description>Метрики: Prometheus counter/histogram (jobs, vlm_calls, scenes, processing duration)</description>
+          <source>src/api/metrics.py, src/core/metrics.py</source>
+        </task>
+        <task id="Phase6-T4" status="done">
+          <description>Интеграция всех модулей: эндпоинт POST /analyze запускает полный пайплайн (Audio→Vision→Semantic→Passport)</description>
+          <source>src/api/routes.py</source>
+        </task>
+      </tasks>
+    </Phase-6>
     <Phase-7 name="Semantic Search / VideoRAG" status="built">
       <description>Паспорт → сцены → embedding → ChromaDB. Поиск: запрос → embedding → top-K сцен.</description>
       <assertions>
@@ -228,36 +258,6 @@
         </task>
       </tasks>
     </Phase-8>
-    <Phase-6 name="API Layer &amp; Integration" status="built">
-      <description>FastAPI-endpoints, job queue, оркестрация пайплайна, Prometheus-метрики, интеграционные тесты.</description>
-      <assertions>
-        <baseline>
-          <assert>Нет API-слоя</assert>
-        </baseline>
-        <target>
-          <assert>M-API экспортирует POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health, GET /metrics</assert>
-          <assert>Prometheus-метрики включают latency_histogram, vlm_calls_total, error rate</assert>
-        </target>
-      </assertions>
-      <tasks>
-        <task id="Phase6-T1" status="done">
-          <description>FastAPI приложение: POST /analyze, GET /analyze/{job_id}, GET /analyze/{job_id}/status, GET /analyze/{job_id}/markdown, GET /health</description>
-          <source>src/api/app.py, src/api/routes.py</source>
-        </task>
-        <task id="Phase6-T2" status="done">
-          <description>Job queue: фоновый запуск пайплайна (asyncio.create_task), хранение статуса in-memory, correlation_id</description>
-          <source>src/api/routes.py (_run_pipeline)</source>
-        </task>
-        <task id="Phase6-T3" status="done">
-          <description>Метрики: Prometheus counter/histogram (jobs, vlm_calls, scenes, processing duration)</description>
-          <source>src/api/metrics.py, src/core/metrics.py</source>
-        </task>
-        <task id="Phase6-T4" status="done">
-          <description>Интеграция всех модулей: эндпоинт POST /analyze запускает полный пайплайн (Audio→Vision→Semantic→Passport)</description>
-          <source>src/api/routes.py</source>
-        </task>
-      </tasks>
-    </Phase-6>
   </phases>
   <dataflows>
     <flow id="DF-001" name="Audio-First Pipeline">

@@ -22,6 +22,7 @@ async def build_frontmatter(video_id: str, full_transcript: str, log=None) -> Pa
             auto_playlists=data.get("auto_playlists", []),
             ad_targeting_keywords=data.get("ad_targeting_keywords", []),
         )
+        log.info("[M-PASSPORT][FRONTMATTER][DONE]", video_id=video_id)
     except Exception as e:
         log.warning("[M-PASSPORT][FRONTMATTER][FALLBACK]", error=str(e))
         return PassportFrontmatter(

@@ -5,7 +5,7 @@
 # DEPENDS: M-CORE, M-VISION
 # LINKS: .grace/graph/index.xml | .grace/context/requirements.xml | .grace/verification/index.xml
 # START_BLOCK: M-SEMANTIC/INIT
-from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_vision_segment, generate_frontmatter
+from src.semantic_analyzer.llm_client import analyze_text_segment, analyze_vision_segment, generate_frontmatter
 from src.semantic_analyzer.scene_analyzer import analyze_scenes
 
 __all__ = [

@@ -3,9 +3,9 @@
   <description>SLM-анализ (gemma4:e4b), VLM Gatekeeper, analyze_scenes. Критично для TCO.</description>
   <Scenarios>
     <Scenario id="S-M-SEMANTIC-1" type="success">
-      <description>qwen_client: analyze_text_segment возвращает JSON, analyze_vision_segment, generate_frontmatter</description>
+      <description>llm_client: analyze_text_segment возвращает JSON, analyze_vision_segment, generate_frontmatter</description>
       <commands>
-        <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_analyze_text_segment or test_analyze_vision_segment or test_generate_frontmatter"</command>
+        <command>pytest tests/semantic_analyzer/test_llm_client.py -v -k "test_analyze_text_segment or test_analyze_vision_segment or test_generate_frontmatter"</command>
       </commands>
       <evidence>
         <marker required="true">[M-CORE][TIMEOUT][LLM_SUCCESS]</marker>
@@ -13,9 +13,9 @@
       </evidence>
     </Scenario>
     <Scenario id="S-M-SEMANTIC-2" type="failure">
-      <description>qwen_client: _extract_json_checked рейзит JSONParseError на пустом/невалидном JSON</description>
+      <description>llm_client: _extract_json_checked рейзит JSONParseError на пустом/невалидном JSON</description>
       <commands>
-        <command>pytest tests/semantic_analyzer/test_qwen_client.py -v -k "test_extract_json_checked_raises"</command>
+        <command>pytest tests/semantic_analyzer/test_llm_client.py -v -k "test_extract_json_checked_raises"</command>
       </commands>
       <evidence>
         <marker required="true">[M-SEMANTIC][QWEN][VISION_FILE_MISSING]</marker>

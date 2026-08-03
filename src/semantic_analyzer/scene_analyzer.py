@@ -3,7 +3,7 @@ import time
 
 from src.core.logging_config import get_logger
 from src.core.schemas import CelebrityVoice, ClipCandidate, MusicMatch, SceneAnalysisResult, TimelineSegment
-from src.semantic_analyzer.qwen_client import analyze_text_segment, analyze_vision_segment
+from src.semantic_analyzer.llm_client import analyze_text_segment, analyze_vision_segment
 from src.vision_scanner.ocr_buffer import OCRBuffer
 
 

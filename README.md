@@ -570,7 +570,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-CORE | 46 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py`, `test_llm_router.py` |
 | M-AUDIO | 29 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py` |
 | M-VISION | 23 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
-| M-SEMANTIC | 12 | `test_qwen_client.py`, `test_scene_analyzer.py` |
+| M-SEMANTIC | 12 | `test_llm_client.py`, `test_scene_analyzer.py` |
 | M-PASSPORT | 16 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
 | M-SEARCH | 8 | `test_indexer.py` (4), `test_searcher.py` (4) |
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |

@@ -59,6 +59,6 @@ def mock_ollama_response(monkeypatch):
     async def mock_call(*args, **kwargs):
         return '{"action_is_clear": true, "requires_vision": false, "scene_summary": "test", "monetization": []}'
 
-    import src.semantic_analyzer.qwen_client as qc
+    import src.semantic_analyzer.llm_client as qc
     monkeypatch.setattr(qc, "_extract_json_checked", lambda x: x)
     monkeypatch.setattr(qc.timeout_manager, "call_llm", mock_call)

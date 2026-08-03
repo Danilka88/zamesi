@@ -2,7 +2,7 @@ import json
 
 from src.core.logging_config import get_logger
 from src.core.schemas import PassportFrontmatter
-from src.semantic_analyzer.qwen_client import generate_frontmatter
+from src.semantic_analyzer.llm_client import generate_frontmatter
 
 
 # START_BLOCK: M-PASSPORT/FRONTMATTER/BUILD

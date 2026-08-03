@@ -30,6 +30,13 @@ export const demoJobs: JobSummary[] = [
     updated_at: '2026-07-27T14:20:00Z',
   },
   {
+    job_id: 'iphone_50k_wylsacom',
+    video_id: 'iphone_50k_wylsacom',
+    status: 'done',
+    created_at: '2026-07-28T10:00:00Z',
+    updated_at: '2026-07-28T10:25:00Z',
+  },
+  {
     job_id: 'podcast_ai',
     video_id: 'podcast_ai',
     status: 'processing',

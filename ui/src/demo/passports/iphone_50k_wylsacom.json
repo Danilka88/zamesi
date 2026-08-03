@@ -1,0 +1,1123 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_iphone_50k_wylsacom_001",
+    "domain_type": "tech_review",
+    "brand_safety_score": 84,
+    "target_audience": [
+      "покупатели смартфонов",
+      "фанаты Apple",
+      "гики",
+      "читатели маркетплейсов",
+      "охотники за скидками",
+      "подписчики Wylsacom"
+    ],
+    "seo_title": "Какой iPhone выбрать за 50 000 рублей в 2026 — сравнение iPhone 15, 16e, 16 и 17e",
+    "seo_tags": [
+      "iPhone за 50000",
+      "какой iPhone выбрать",
+      "iPhone 15",
+      "iPhone 16e",
+      "iPhone 16",
+      "iPhone 17e",
+      "дешёвый iPhone 2026",
+      "Wylsacom",
+      "обзор смартфона",
+      "купить айфон"
+    ],
+    "trending_cluster": "tech/gadgets/phones",
+    "auto_playlists": [
+      {
+        "id": "best_of_tech",
+        "order_index": 1,
+        "reason": "детальный разбор цен и характеристик четырёх актуальных моделей"
+      },
+      {
+        "id": "iphone_2026",
+        "order_index": 0,
+        "reason": "прямое попадание в тематику iPhone 2026"
+      },
+      {
+        "id": "smartphone_buying_guide",
+        "order_index": 2,
+        "reason": "практический гид по выбору смартфона с бюджетом 50 000 рублей"
+      }
+    ],
+    "ad_targeting_keywords": [
+      "iPhone 15",
+      "iPhone 16e",
+      "iPhone 16",
+      "iPhone 17e",
+      "купить iPhone",
+      "дешёвый айфон",
+      "iPhone за 50000",
+      "смартфон до 60000",
+      "bigbig.ru",
+      "защитное стекло 3D",
+      "царское стекло",
+      "iCloud Plus",
+      "AirPods подделка",
+      "маркетплейс смартфоны"
+    ],
+    "moderation": {
+      "age_rating": "16+",
+      "verdict": "approved",
+      "categories_flagged": [
+        "language",
+        "scam_warning"
+      ],
+      "flags": [
+        {
+          "category": "language",
+          "severity": "medium",
+          "timestamp_sec": 743,
+          "evidence": "нецензурная лексика при обсуждении отсутствия MagSafe в iPhone 16e ('ублюдочное решение')"
+        },
+        {
+          "category": "language",
+          "severity": "low",
+          "timestamp_sec": 210,
+          "evidence": "грубое выражение 'нам в России в целом похеру' при обсуждении Apple Intelligence"
+        },
+        {
+          "category": "scam_warning",
+          "severity": "medium",
+          "timestamp_sec": 688,
+          "evidence": "предупреждение о мошенниках на маркетплейсах — дешёвые айфоны, 'развод на тенге'"
+        },
+        {
+          "category": "scam_warning",
+          "severity": "medium",
+          "timestamp_sec": 965,
+          "evidence": "история про подделку iPhone 10R в корпусе iPhone Air за 25 000–26 000 рублей на Авито"
+        }
+      ],
+      "brand_safety_score": 84,
+      "summary": "Видео допущено к рекламе. Есть нецензурная лексика (несколько эпизодов, максимум 16+), а также важное защитное предупреждение о мошенниках при покупке iPhone на маркетплейсах и Авито. Контент не содержит алкоголя, политики и запрещённой тематики; площадка-партнёр bigbig.ru и мерч канала представлены позитивно."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Интро: ведущий (Wylsacom) анонсирует разбор — сколько реально стоит самый дешёвый актуальный iPhone за 50 000 рублей; скриншот из Telegram с предложением iPhone 17 Pro Max за 8 000 рублей и предупреждение 'так делать не надо'",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "самый дешёвый iPhone 2026",
+          "reason": "hook с интригой про цену и скриншотом-пруфом",
+          "confidence": 0.9
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "pre-roll в самом начале ролика",
+          "confidence": 0.86
+        }
+      ],
+      "clip_candidate": {
+        "hook": "iPhone 17 Pro Max за 8 000 рублей? Так делать не надо!",
+        "time_range_start": 0,
+        "time_range_end": 34,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 0,
+      "end_sec": 60
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Вступление: критерии выбора — всё ниже USB-C улетает в историю, ценник 50 000 руб, четыре актуальные модели: iPhone 15, 16e, 16, 17E; призыв поставить видео на паузу и изучить таблицу соответствий",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "какой iPhone купить в 2026",
+          "reason": "анонс четырёх моделей и таблица — сильный вовлекающий фрагмент",
+          "confidence": 0.82
+        }
+      ],
+      "clip_candidate": {
+        "hook": "4 актуальных iPhone за 50 000 ₽: что выбрать?",
+        "time_range_start": 41,
+        "time_range_end": 121,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.6,
+      "start_sec": 41,
+      "end_sec": 128
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Обзор iPhone 15: цена 53 990 ₽ на bigbig.ru, полноценный старый iPhone — Dynamic Island, две камеры 48 МП, USB-C (медленный), MagSafe, но без camera control и Action button; официально снят с продажи и без Apple Intelligence",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 15 128GB купить",
+          "reason": "прямой обзор и цена модели из магазина-партнёра",
+          "confidence": 0.97
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 15 чехол MagSafe",
+          "reason": "демонстрация MagSafe как ключевой фичи",
+          "confidence": 0.6
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.3,
+      "start_sec": 128,
+      "end_sec": 244
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Вердикт по iPhone 15: покупать сейчас нет смысла — процессор H16 старый, время прошло; бренд 'полноценный iPhone, пусть и старый'; совет не тратить 53 990 ₽",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза-размышление после вердикта",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.8,
+      "start_sec": 244,
+      "end_sec": 258
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Обзор iPhone 16e: цена 49 990 ₽ за 128 ГБ, процессор A18, 26 часов автономности, Action button, матовый чёрный корпус; минусы — нет Face ID (доустановили), чёлка, 128 ГБ; совет подключить iCloud Plus",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 16e купить",
+          "reason": "прямой обзор и цена модели из магазина-партнёра",
+          "confidence": 0.97
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "iCloud Plus тариф",
+          "reason": "рекомендация сервиса для компенсации малой памяти",
+          "confidence": 0.78
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.2,
+      "start_sec": 258,
+      "end_sec": 336
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Интегрированная реклама мерча: матовое 3D-стекло 'Царское стекло' от Wylsacom для iPhone 16e/17 — новая партия поступила на маркетплейсы, QR-код на упаковке с видеоинструкцией",
+      "monetization": [
+        {
+          "type": "artist_merch",
+          "search_query": "царское стекло Wylsacom 3D",
+          "reason": "собственный мерч канала — защитные стёкла от Wylsacom",
+          "confidence": 0.98
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "3D стекло Дядя Валли iPhone 17 Pro",
+          "reason": "прямая продажа товара на маркетплейсах",
+          "confidence": 0.93
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "полноценный рекламный интеграционный блок мерча",
+          "confidence": 0.88
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.5,
+      "start_sec": 336,
+      "end_sec": 400
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Распаковка и поклейка стекла: комплект — рамка для установки, стикеры для пыли, спиртовая салфетка, тряпочка (в новой версии золотая); аппликатор Super AR и стёкла с анти-отражением выйдут к сентябрю к iPhone 18 Pro Max",
+      "monetization": [
+        {
+          "type": "artist_merch",
+          "search_query": "царское стекло комплект для поклейки",
+          "reason": "разбор комплектации мерча канала",
+          "confidence": 0.91
+        },
+        {
+          "type": "music_track",
+          "search_query": "фоновая музыка поклейка стекла",
+          "reason": "музыкальная вставка во время процесса поклейки",
+          "confidence": 0.55
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.4,
+      "start_sec": 400,
+      "end_sec": 490
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Поклейка стекла на iPhone 16e: центрирование рамкой, выгонка пузырей от центра к краю, матовый финиш; лайфхак — стекло скрывает мелкие царапины на экране; 17 Pro Max стоит 100 000 ₽, поэтому защита оправдана",
+      "monetization": [
+        {
+          "type": "artist_merch",
+          "search_query": "защитное стекло iPhone матовое",
+          "reason": "прямая демонстрация преимуществ продукта",
+          "confidence": 0.9
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "защитное стекло для старого iPhone",
+          "reason": "совет покупать стёкла для 14 и 15 моделей",
+          "confidence": 0.71
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.1,
+      "start_sec": 490,
+      "end_sec": 560
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Обзор iPhone 16: цена 65 990 ₽ в bigbig.ru (на маркетплейсе 67 000+), самый сбалансированный в линейке — дизайн как у iPhone 17, голубой цвет, Dynamic Island + Action button + camera control, но экран 60 Гц ('в 2026 незаконно')",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 16 купить",
+          "reason": "прямой обзор и цена модели из магазина-партнёра",
+          "confidence": 0.97
+        },
+        {
+          "type": "clip_candidate",
+          "search_query": "iPhone 16 обзор 2026",
+          "reason": "детальный разбор главного претендента",
+          "confidence": 0.74
+        }
+      ],
+      "clip_candidate": {
+        "hook": "iPhone 16 — пусечка за 65 990 ₽",
+        "time_range_start": 601,
+        "time_range_end": 660,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 2.3,
+      "start_sec": 601,
+      "end_sec": 678
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Предупреждение о мошенниках: дешёвые айфоны — 'замануха', развод на тенге, важно покупать в проверенном магазине с хорошими отзывами",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "мошенники маркетплейс айфон",
+          "reason": "социально важное предупреждение с виральным потенциалом",
+          "confidence": 0.85
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Дешёвый iPhone — это замануха для мошенников",
+        "time_range_start": 678,
+        "time_range_end": 705,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.4,
+      "start_sec": 678,
+      "end_sec": 707
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Обзор iPhone 17E: цена 58 990 ₽ в bigbig.ru, стартовые 256 ГБ, добавлен MagSafe (в отличие от 16e), процессор A19 (вышел в марте), стекло Shield 2, модем C1X, 26 часов работы; минусы — одна камера, вырез вместо Dynamic Island, экран без camera control и угашенная яркость",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 17e купить",
+          "reason": "прямой обзор и цена модели из магазина-партнёра",
+          "confidence": 0.97
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "iPhone 17e защитное стекло",
+          "reason": "совет докупить стекло поверх Shield 2",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.4,
+      "start_sec": 707,
+      "end_sec": 833
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Сравнительная сводка: все четыре телефона 6,1 дюйма с USB-C; если взять за суперадекватные деньги — хватит на 2–3 года; по соотношению цена-качество-возможности победитель — iPhone 17E",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "итоги какой iPhone купить",
+          "reason": "финальный вердикт со сравнением",
+          "confidence": 0.87
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Итог: за 50 000 ₽ берите iPhone 17e",
+        "time_range_start": 833,
+        "time_range_end": 860,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.5,
+      "start_sec": 833,
+      "end_sec": 875
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Побочная тема: проводные наушники в моде у поколения Альфа, но дешёвые AirPods за 2 000 ₽ — это подделка за 200 ₽; покупка техники стала лотереей с граблями",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "AirPods оригинал как отличить",
+          "reason": "предупреждение о подделках наушников",
+          "confidence": 0.66
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "проводные наушники рейтинг",
+          "reason": "тренд на проводные наушники",
+          "confidence": 0.55
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 875,
+      "end_sec": 895
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Анонс розыгрыша: совместно с bigbig.ru разыгрывают iPhone 16 — условия: перейти по ссылке в описании и подписаться в Telegram на канал 'Царские стёкла' и на bigbig.ru; участников мало, шансы большие",
+      "monetization": [
+        {
+          "type": "event_ticket",
+          "search_query": "розыгрыш iPhone 16",
+          "reason": "конкурс с призом — привлечение аудитории через подписку",
+          "confidence": 0.92
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "партнёрский промо-блок bigbig.ru",
+          "confidence": 0.85
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.9,
+      "start_sec": 895,
+      "end_sec": 940
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Аутро: призыв подписаться на Telegram, Max и ВК; напоминание, что 50 000 ₽ — это дешёвый iPhone только в 2026 году; дисклеймер про пересобранное китайское фуфло и про мошенников на Авито (iPhone 10R в корпусе iPhone Air)",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "подделка iPhone Авито",
+          "reason": "шокирующий пример подделки iPhone 10R в корпусе Air",
+          "confidence": 0.88
+        },
+        {
+          "type": "music_track",
+          "search_query": "аутро музыка подписка",
+          "reason": "музыкальная вставка в финале",
+          "confidence": 0.5
+        }
+      ],
+      "clip_candidate": {
+        "hook": "iPhone 10R в корпусе iPhone Air за 26 000 ₽?!",
+        "time_range_start": 960,
+        "time_range_end": 985,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.7,
+      "start_sec": 940,
+      "end_sec": 985
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "Ведущий",
+      "start_sec": 0,
+      "end_sec": 9,
+      "text": "Народ, всем привет. С вами Wylsacom. Меня часто спрашивают, как купить самый дешёвый iPhone.",
+      "word_timestamps": [
+        {
+          "word": "Народ,",
+          "start_sec": 0,
+          "end_sec": 1
+        },
+        {
+          "word": "всем",
+          "start_sec": 1,
+          "end_sec": 1.6
+        },
+        {
+          "word": "привет.",
+          "start_sec": 1.6,
+          "end_sec": 2.2
+        },
+        {
+          "word": "С",
+          "start_sec": 2.2,
+          "end_sec": 2.5
+        },
+        {
+          "word": "вами",
+          "start_sec": 2.5,
+          "end_sec": 3
+        },
+        {
+          "word": "Wylsacom.",
+          "start_sec": 3,
+          "end_sec": 4
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 16,
+      "end_sec": 21,
+      "text": "В Telegram скинули: iPhone 17 Pro Max за 8 000 рублей. [смех] Так делать не надо.",
+      "word_timestamps": [
+        {
+          "word": "В",
+          "start_sec": 16,
+          "end_sec": 16.5
+        },
+        {
+          "word": "Telegram",
+          "start_sec": 16.5,
+          "end_sec": 17.4
+        },
+        {
+          "word": "скинули:",
+          "start_sec": 17.4,
+          "end_sec": 18.2
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 39,
+      "end_sec": 47,
+      "text": "Всё, что ниже USB-C, улетает в историю. Берём ценник в 50 000 руб. И актуальные модельки четыре.",
+      "word_timestamps": [
+        {
+          "word": "Всё,",
+          "start_sec": 39,
+          "end_sec": 40
+        },
+        {
+          "word": "что",
+          "start_sec": 40,
+          "end_sec": 40.5
+        },
+        {
+          "word": "ниже",
+          "start_sec": 40.5,
+          "end_sec": 41.2
+        },
+        {
+          "word": "USB-C,",
+          "start_sec": 41.2,
+          "end_sec": 42.4
+        },
+        {
+          "word": "улетает",
+          "start_sec": 42.4,
+          "end_sec": 43.2
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 143,
+      "end_sec": 149,
+      "text": "Стоит сказать, что на старые айфоны цена варьируется в зависимости от цвета.",
+      "word_timestamps": [
+        {
+          "word": "Стоит",
+          "start_sec": 143,
+          "end_sec": 144
+        },
+        {
+          "word": "сказать,",
+          "start_sec": 144,
+          "end_sec": 145
+        },
+        {
+          "word": "что",
+          "start_sec": 145,
+          "end_sec": 145.6
+        },
+        {
+          "word": "цена",
+          "start_sec": 145.6,
+          "end_sec": 147
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 150,
+      "end_sec": 162,
+      "text": "Говорим спасибо нашим друзьям из bigbig.ru, которые прислали нам эти телефоны. Эта штука стоит 53 990 рублей.",
+      "word_timestamps": [
+        {
+          "word": "Говорим",
+          "start_sec": 150,
+          "end_sec": 151
+        },
+        {
+          "word": "спасибо",
+          "start_sec": 151,
+          "end_sec": 152
+        },
+        {
+          "word": "нашим",
+          "start_sec": 152,
+          "end_sec": 153
+        },
+        {
+          "word": "друзьям",
+          "start_sec": 153,
+          "end_sec": 154.4
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 202,
+      "end_sec": 210,
+      "text": "Нам в России в целом похеру на Apple Intelligence. Но всё-таки это очень старый iPhone.",
+      "word_timestamps": [
+        {
+          "word": "Нам",
+          "start_sec": 202,
+          "end_sec": 203
+        },
+        {
+          "word": "в",
+          "start_sec": 203,
+          "end_sec": 203.4
+        },
+        {
+          "word": "России",
+          "start_sec": 203.4,
+          "end_sec": 204.6
+        },
+        {
+          "word": "похеру",
+          "start_sec": 204.6,
+          "end_sec": 206
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 258,
+      "end_sec": 270,
+      "text": "iPhone 16e: цена самое важное — 49 990 ₽ на 128 ГБ. Внутри процессор A18, кнопка действия, офигенная автономность — 26 часов.",
+      "word_timestamps": [
+        {
+          "word": "iPhone",
+          "start_sec": 258,
+          "end_sec": 259.5
+        },
+        {
+          "word": "16e:",
+          "start_sec": 259.5,
+          "end_sec": 261
+        },
+        {
+          "word": "49",
+          "start_sec": 261,
+          "end_sec": 262
+        },
+        {
+          "word": "990",
+          "start_sec": 262,
+          "end_sec": 264
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 336,
+      "end_sec": 344,
+      "text": "Этому чёрному iPhone офигенно подошло бы матовое царское стекло от Wylsacom. Зашлите мне его срочно.",
+      "word_timestamps": [
+        {
+          "word": "Этому",
+          "start_sec": 336,
+          "end_sec": 337
+        },
+        {
+          "word": "чёрному",
+          "start_sec": 337,
+          "end_sec": 338.4
+        },
+        {
+          "word": "iPhone",
+          "start_sec": 338.4,
+          "end_sec": 340
+        },
+        {
+          "word": "офигенно",
+          "start_sec": 340,
+          "end_sec": 341.6
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 357,
+      "end_sec": 366,
+      "text": "Новые стёкла поступили на все ваши любимые маркетплейсы. Заказываете на 17 Pro 3D-стекло от Дяди Валли.",
+      "word_timestamps": [
+        {
+          "word": "Новые",
+          "start_sec": 357,
+          "end_sec": 358
+        },
+        {
+          "word": "стёкла",
+          "start_sec": 358,
+          "end_sec": 359.6
+        },
+        {
+          "word": "поступили",
+          "start_sec": 359.6,
+          "end_sec": 361.4
+        },
+        {
+          "word": "на",
+          "start_sec": 361.4,
+          "end_sec": 362
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 409,
+      "end_sec": 419,
+      "text": "В комплекте рамка для установки, стикеры от пыли, спиртовая салфеточка и офигенная тряпочка. В новой версии она будет золотая.",
+      "word_timestamps": [
+        {
+          "word": "В",
+          "start_sec": 409,
+          "end_sec": 409.5
+        },
+        {
+          "word": "комплекте",
+          "start_sec": 409.5,
+          "end_sec": 411
+        },
+        {
+          "word": "рамка",
+          "start_sec": 411,
+          "end_sec": 412.6
+        },
+        {
+          "word": "для",
+          "start_sec": 412.6,
+          "end_sec": 413.2
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 489,
+      "end_sec": 500,
+      "text": "Рамка позволяет отцентрировать стекло. Матовое стекло — кайф какой. Телефон защищён.",
+      "word_timestamps": [
+        {
+          "word": "Рамка",
+          "start_sec": 489,
+          "end_sec": 490.4
+        },
+        {
+          "word": "позволяет",
+          "start_sec": 490.4,
+          "end_sec": 492
+        },
+        {
+          "word": "отцентрировать",
+          "start_sec": 492,
+          "end_sec": 494.4
+        },
+        {
+          "word": "стекло.",
+          "start_sec": 494.4,
+          "end_sec": 496
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 549,
+      "end_sec": 561,
+      "text": "Царское стекло заказывайте прямо сейчас, ссылка в описании. Клеится с первого раза.",
+      "word_timestamps": [
+        {
+          "word": "Царское",
+          "start_sec": 549,
+          "end_sec": 550.4
+        },
+        {
+          "word": "стекло",
+          "start_sec": 550.4,
+          "end_sec": 552
+        },
+        {
+          "word": "заказывайте",
+          "start_sec": 552,
+          "end_sec": 554
+        },
+        {
+          "word": "сейчас,",
+          "start_sec": 554,
+          "end_sec": 556
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 601,
+      "end_sec": 615,
+      "text": "iPhone 16 — самый сбалансированный, балдёжный дешёвый iPhone. Но есть один нюанс — цена 65 990 рублей.",
+      "word_timestamps": [
+        {
+          "word": "iPhone",
+          "start_sec": 601,
+          "end_sec": 602.6
+        },
+        {
+          "word": "16",
+          "start_sec": 602.6,
+          "end_sec": 604
+        },
+        {
+          "word": "самый",
+          "start_sec": 604,
+          "end_sec": 605.4
+        },
+        {
+          "word": "сбалансированный,",
+          "start_sec": 605.4,
+          "end_sec": 608.6
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 678,
+      "end_sec": 690,
+      "text": "Умоляю вас: дешёвые айфоны — это замануха для мошенников. Они разводят вас на тенге через конфигурации.",
+      "word_timestamps": [
+        {
+          "word": "Умоляю",
+          "start_sec": 678,
+          "end_sec": 679.4
+        },
+        {
+          "word": "вас:",
+          "start_sec": 679.4,
+          "end_sec": 680.4
+        },
+        {
+          "word": "дешёвые",
+          "start_sec": 680.4,
+          "end_sec": 682
+        },
+        {
+          "word": "айфоны",
+          "start_sec": 682,
+          "end_sec": 684.4
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 707,
+      "end_sec": 721,
+      "text": "iPhone 17E идёт с 256 ГБ на борту, добавлен MagSafe. Процессор A19 вышел в марте этого года. Свежачок.",
+      "word_timestamps": [
+        {
+          "word": "iPhone",
+          "start_sec": 707,
+          "end_sec": 708.6
+        },
+        {
+          "word": "17E",
+          "start_sec": 708.6,
+          "end_sec": 710.4
+        },
+        {
+          "word": "идёт",
+          "start_sec": 710.4,
+          "end_sec": 711.6
+        },
+        {
+          "word": "с",
+          "start_sec": 711.6,
+          "end_sec": 712
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 794,
+      "end_sec": 808,
+      "text": "Стоит он 58 990 ₽ в Бигике, где вас не обманут. Стекло Shield 2, модем C1X, 26 часов работы.",
+      "word_timestamps": [
+        {
+          "word": "Стоит",
+          "start_sec": 794,
+          "end_sec": 795.4
+        },
+        {
+          "word": "он",
+          "start_sec": 795.4,
+          "end_sec": 796
+        },
+        {
+          "word": "58",
+          "start_sec": 796,
+          "end_sec": 797.4
+        },
+        {
+          "word": "990",
+          "start_sec": 797.4,
+          "end_sec": 799
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 833,
+      "end_sec": 852,
+      "text": "Если вы хотите взять по соотношению цена-качество-возможности, то 17E — добро пожаловать на вечеринку.",
+      "word_timestamps": [
+        {
+          "word": "Если",
+          "start_sec": 833,
+          "end_sec": 834
+        },
+        {
+          "word": "вы",
+          "start_sec": 834,
+          "end_sec": 834.6
+        },
+        {
+          "word": "хотите",
+          "start_sec": 834.6,
+          "end_sec": 836
+        },
+        {
+          "word": "взять",
+          "start_sec": 836,
+          "end_sec": 838
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 875,
+      "end_sec": 892,
+      "text": "AirPods за 2 000 ₽ — а там супердешёвая подделка за 200 рублей, которая подаётся под видом настоящих.",
+      "word_timestamps": [
+        {
+          "word": "AirPods",
+          "start_sec": 875,
+          "end_sec": 877
+        },
+        {
+          "word": "за",
+          "start_sec": 877,
+          "end_sec": 877.6
+        },
+        {
+          "word": "2000",
+          "start_sec": 877.6,
+          "end_sec": 879.4
+        },
+        {
+          "word": "подделка",
+          "start_sec": 879.4,
+          "end_sec": 882
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 895,
+      "end_sec": 910,
+      "text": "Ребята из Бегика написали: 'Хочешь разыграть телефон?' Конечно. Разыграем iPhone 16 — подпишитесь в Telegram на царские стёкла и на ребят из Бегика.",
+      "word_timestamps": [
+        {
+          "word": "Ребята",
+          "start_sec": 895,
+          "end_sec": 896.4
+        },
+        {
+          "word": "из",
+          "start_sec": 896.4,
+          "end_sec": 897
+        },
+        {
+          "word": "Бегика",
+          "start_sec": 897,
+          "end_sec": 899
+        },
+        {
+          "word": "написали:",
+          "start_sec": 899,
+          "end_sec": 901
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 920,
+      "end_sec": 930,
+      "text": "Условия максимально простые: ссылка в описании, подписаться в Telegram на царские стёкла и на ребят из Бегика — и через неделю получаете iPhone 16.",
+      "word_timestamps": [
+        {
+          "word": "Условия",
+          "start_sec": 920,
+          "end_sec": 921.4
+        },
+        {
+          "word": "максимально",
+          "start_sec": 921.4,
+          "end_sec": 923.4
+        },
+        {
+          "word": "простые:",
+          "start_sec": 923.4,
+          "end_sec": 925.4
+        },
+        {
+          "word": "ссылка",
+          "start_sec": 925.4,
+          "end_sec": 927
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 940,
+      "end_sec": 965,
+      "text": "50 000 ₽ — это дешёвый iPhone только в 2026 году. На Авито видел iPhone 10R в корпусе iPhone Air за 26 000 рублей.",
+      "word_timestamps": [
+        {
+          "word": "50",
+          "start_sec": 940,
+          "end_sec": 941.4
+        },
+        {
+          "word": "000",
+          "start_sec": 941.4,
+          "end_sec": 943
+        },
+        {
+          "word": "это",
+          "start_sec": 943,
+          "end_sec": 943.8
+        },
+        {
+          "word": "дешёвый",
+          "start_sec": 943.8,
+          "end_sec": 946
+        }
+      ]
+    },
+    {
+      "speaker": "Ведущий",
+      "start_sec": 965,
+      "end_sec": 985,
+      "text": "Не повторяйте моих ошибок. Все ссылки в описании. Пока.",
+      "word_timestamps": [
+        {
+          "word": "Не",
+          "start_sec": 965,
+          "end_sec": 965.6
+        },
+        {
+          "word": "повторяйте",
+          "start_sec": 965.6,
+          "end_sec": 968
+        },
+        {
+          "word": "моих",
+          "start_sec": 968,
+          "end_sec": 969.4
+        },
+        {
+          "word": "ошибок.",
+          "start_sec": 969.4,
+          "end_sec": 971.4
+        }
+      ]
+    }
+  ],
+  "audio_matches": [
+    {
+      "track_name": "Royalty-Free Background Beat",
+      "artist": "Epidemic Sound",
+      "confidence": 0.55,
+      "genre": "Electronic / Lo-fi",
+      "album": null,
+      "year": null
+    },
+    {
+      "track_name": "Cinematic Outro Stinger",
+      "artist": "Artlist",
+      "confidence": 0.5,
+      "genre": "Cinematic / Ambient",
+      "album": null,
+      "year": null
+    }
+  ],
+  "celebrity_voice": {
+    "name": "Wylsacom (Валентин Петухов)",
+    "profession": "техноблогер",
+    "confidence": 0.96
+  }
+}

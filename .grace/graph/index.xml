@@ -29,7 +29,7 @@
     <Module id="M-MODERATOR" routed="GD-009-M-MODERATOR.xml" name="Moderation Judge" type="PROCESSOR" status="built">
       <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений.</Purpose>
     </Module>
-    <Module id="M-EXTENSION" routed="GD-010-M-EXTENSION.xml" name="Chrome Extension (Замеси)" type="INTERFACE" status="building">
+    <Module id="M-EXTENSION" routed="GD-010-M-EXTENSION.xml" name="Chrome Extension (Замеси)" type="INTERFACE" status="built">
       <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE. Vanilla TS + Vite.</Purpose>
     </Module>
   </Modules>
@@ -81,11 +81,11 @@
     </Flow>
     <Flow id="DF-007" name="Extension Injection Flow">
       <description>Детект видео-страницы → подбор паспорта → монтаж Shadow DOM</description>
-      <steps>M-EXTENSION.detectVideoPage → M-EXTENSION.parseVideoId → M-EXTENSION.resolveBinding → M-EXTENSION.mountShadowHost</steps>
+      <steps>M-EXTENSION.isVideoPage → M-EXTENSION.parseVideoId → M-EXTENSION.resolveBinding → M-EXTENSION.mountHost</steps>
     </Flow>
     <Flow id="DF-008" name="Extension Analyst Flow">
       <description>Паспорт → панели монетизации/модерации/аудио/метрики в сайдбаре</description>
-      <steps>M-EXTENSION.getPassport → M-EXTENSION.renderMonetization → M-EXTENSION.renderModeration → M-EXTENSION.renderMetrics</steps>
+      <steps>M-EXTENSION.getPassport → M-EXTENSION.computeMetrics → M-EXTENSION.renderAnalyst → M-EXTENSION.renderCta</steps>
     </Flow>
   </DataFlows>
 </graph-index>

@@ -2,7 +2,7 @@
 
 AI-пайплайн: **MP4 → .md passport** с метками монетизации `AD_SLOT`, `ECOM_ITEM`, `CLIP_CANDIDATE`.
 
-**Для RUTUBE:** автоматическая конвертация видеоконтента в монетизируемые паспорта — без ручного труда, без отправки данных вовне, с себестоимостью ~$0.004/ч электроэнергии (TCO ~$0.07/ч, на масштабе <$0.005/ч).
+**Для RUTUBE:** автоматическая конвертация видеоконтента в монетизируемые паспорта — без ручного труда, без отправки данных вовне, с себестоимостью ~$0.004/ч электроэнергии (TCO ~$0.07/ч, на масштабе <$0.005/ч). Chrome-расширение **«RUTUBE Замеси»** (MV3 + Shadow DOM + Vitest) накладывает монетизацию прямо на страницу видео rutube.ru.
 
 ---
 
@@ -23,7 +23,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 193 теста с изоляцией внешних вызовов (monkeypatch, AsyncMock). 9 независимых модулей, каждый с MODULE_CONTRACT и отдельным набором тестов. Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 193 pytest + 22 vitest с изоляцией внешних вызовов (monkeypatch, AsyncMock). 10 независимых модулей (9 Python + Chrome-расширение M-EXTENSION), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs, timeouts, fallbacks), structlog с 56 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -39,9 +39,9 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 Фичи, которые есть в коде, но не бросаются в глаза при первом знакомстве:
 
-- **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:17`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Каждая из 6 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне.
+- **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:17`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Более того, каждая роль задаётся **списком провайдеров с приоритетом** — при отказе первого LLMRouter автоматически переключается на следующий (per-provider Circuit Breaker + отслеживание latency), так что локальный Ollama работает как primary, а облачные API — как автоматический fallback при недоступности. Каждая из 6 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне.
 
-- **GRACE 4 — формальная верификация** (`.grace/`, 26 артефактов) — проект управляется через GRACE 4: 9 MODULE_CONTRACT, 67 пар семантических блоков `START_BLOCK`/`END_BLOCK`, 52 verification-сценария с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
+- **GRACE 4 — формальная верификация** (`.grace/`, 30 артефактов) — проект управляется через GRACE 4: 10 MODULE_CONTRACT (9 Python-модулей + M-EXTENSION — Chrome-расширение), 72 пары семантических блоков `START_BLOCK`/`END_BLOCK`, 52 verification-сценария с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
 
 - **VLM Ratio Gate — CI-проверка** (`scripts/check_vlm_ratio.py`) — скрипт, анализирующий JSON-логи пайплайна и проверяющий, что VLM-вызовы ≤6% (exit code 0/1). Может использоваться как gate в CI/CD: `python scripts/check_vlm_ratio.py < pipeline.log`. Без этого automation утверждение «≤6% VLM» остаётся на совести разработчика.
 
@@ -54,6 +54,8 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 - **structlog с 56 маркерами** (`src/core/logging_config.py`) — структурированные JSON-логи формата `[M-{DOMAIN}][{COMPONENT}][{EVENT}]`. Каждый job логирует 15+ точек пайплайна с correlation_id. Без чтения кода можно диагностировать: какой компонент упал, сколько VLM-вызовов было, какой fallback сработал.
 
 - **Web UI (React + Vite + TailwindCSS)** (`ui/`) — полноценный веб-интерфейс: Dashboard с историей джобов, Passport Viewer с монетизацией по сценам, Mix Viewer, страница поиска, модерация, аудио-аналитика. Переключение Demo Mode одной кнопкой — для презентаций без запущенного бэкенда.
+
+- **Chrome-расширение «RUTUBE Замеси»** (`chrome-extension/`, MV3 + Shadow DOM + Vanilla TS + Vitest) — монетизация прямо на странице видео `rutube.ru/video/*`: кликабельные маркеры `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` на прогресс-баре (клик → seek), панель текущей сцены поверх плеера и сайдбар аналитика. 3 режима: «Зритель», «Аналитик», «Симуляция». Shadow DOM-изоляция — ноль конфликтов с CSS RUTUBE и ноль layout-shift (NFR-6). Привязка паспорта к видео: вручную в попапе / автоподбор по keywords заголовка / по `video_id` в реестре. Контракт `DataProvider` готов под реальный FastAPI `/analyze` (`RealDataProvider` — stub). 22 vitest-теста, GRACE-модуль M-EXTENSION (change C-003).
 
 - **SSE / EventSource — live-уведомления** (`ui/src/api/RealApiClient.ts:71`) — клиент подписывается на события через `EventSource`. При изменении статуса обработки UI обновляется в реальном времени без polling.
 
@@ -147,7 +149,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | **Семантический поиск** | ChromaDB + qwen3-embedding (VideoRAG) | Нет | Ограничен (key-based) |
 | **Mixer (подборки)** | LLM → поиск → matching → Markdown | Часы ручной работы | Нет |
 | **Open Source** | Apache 2.0 / MIT, весь стек | Нет | Проприетарные API |
-| **Модульность** | 9 изолированных модулей, GRACE-верификация | Нет | Чёрный ящик |
+| **Модульность** | 10 модулей (9 Python + Chrome-расширение MV3), GRACE-верификация | Нет | Чёрный ящик |
 | **Русский язык** | WER 4.2% (Whisper large-v3), кириллический OCR | Любой | WER >10% на русском |
 | **GPU не обязателен** | Да (CPU $0.015/ч), GPU как ускорение | Нет | Нет |
 
@@ -411,9 +413,11 @@ MP4
 ```
 LLMRouter.infer(prompt, role) / LLMRouter.embed(text, role)
   │
-  ├── provider_for(role) → провайдер из config.yaml
-  │     └── ollama → POST /api/generate (локально)
-  │     └── openai → POST /v1/chat/completions (Yandex, Cloud.ru, OpenRouter и др.)
+  ├── entries_for(role) → список провайдеров с приоритетом из config.yaml
+  │     для каждого (свой per-provider Circuit Breaker):
+  │        ollama → POST /api/generate (локально)
+  │        openai → POST /v1/chat/completions (Yandex, Cloud.ru, OpenRouter и др.)
+  │     первый успешный → результат; failure → следующий в списке (auto-fallback)
   │
   └── model_for(role) → модель из config.yaml
 ```
@@ -439,8 +443,14 @@ models:
       endpoint: "https://llm.api.cloud.yandex.net/foundationModels/v1"
       api_key: "${YANDEX_API_KEY}"
   routing:
-    text_model: { provider: "yandex", model: "yandexgpt" }
-    embedding_model: { provider: "yandex", model: "yandex-embed" }
+    # каждая роль = список провайдеров с приоритетом (primary → fallback…)
+    text_model:
+      - { provider: "ollama",  model: "gemma4:e4b" }    # primary (локально)
+      - { provider: "yandex",  model: "yandexgpt" }     # fallback при отказе
+      - { provider: "openrouter", model: "openai/gpt-4o-mini" }
+    embedding_model:
+      - { provider: "ollama", model: "qwen3-embedding:0.6b" }
+      - { provider: "yandex", model: "yandex-embed" }
 ```
 
 Каждая роль (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо — можно комбинировать локальные и внешние модели в одном пайплайне.
@@ -476,7 +486,7 @@ models:
 ┌──────▼────┐ ┌────▼──────────┐
 │ M-AUDIO   │ │ M-VISION      │
 │ 6 файлов  │ │ 5 файлов      │
-│ 29 тестов │ │ 23 теста      │
+│ 60 тестов │ │ 23 теста      │
 │ Whisper   │ │ OCR, Genre,   │
 │ SpeechBrain│ │ DomainRouter  │
 │ ffmpeg    │ │ OCRBuffer     │
@@ -484,14 +494,14 @@ models:
 └───────────┘ └───────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│  M-CORE — 13 файлов, 46 тестов                              │
+│  M-CORE — 13 файлов, 51 тест                               │
 │  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
 │  LLMRouter, Exceptions, logging_config, json_utils,          │
 │  time_utils, Moderation schemas, embedding, метрики           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 50 source-файлов, 41 test-файл, 91 файл Python, 26 .grace артефактов, ~25 UI-файлов (React + TypeScript).
+Всего: 50 source-файлов, 42 test-файла, 92 файла Python, 30 .grace артефактов, ~25 UI-файлов (React + TypeScript), Chrome-расширение (MV3): 20 TS source + 6 test-файлов.
 
 ---
 
@@ -561,14 +571,14 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 193 теста, 0 failures, 1 skipped
+### Test suite: 193 pytest + 22 vitest, 0 failures
 
 Покрытие тестов по модулям:
 
 | Модуль | Тестов | Файлы |
-|---|---|---|---|
-| M-CORE | 46 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py`, `test_llm_router.py` |
-| M-AUDIO | 29 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py` |
+|---|---|---|
+| M-CORE | 51 | `test_schemas.py`, `test_timeout_manager.py`, `test_time_utils.py`, `test_json_utils.py`, `test_metrics.py`, `test_embedding.py`, `test_store.py`, `test_llm_router.py` |
+| M-AUDIO | 60 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py`, `test_audio_fingerprinter.py` |
 | M-VISION | 23 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py`, `test_genre_classifier.py` |
 | M-SEMANTIC | 12 | `test_llm_client.py`, `test_scene_analyzer.py` |
 | M-PASSPORT | 16 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
@@ -576,6 +586,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
 | M-MODERATOR | 4 | `test_moderator.py` (parse, invalid, empty, flag) |
+| M-EXTENSION | 22 (vitest) | `chrome-extension/tests/`: `registry.test.ts`, `bindings.test.ts`, `data.test.ts`, `layout.test.ts`, `markers.test.ts`, `modes.test.ts` |
 | Интеграция | 1 | `test_integration.py` |
 
 ### Методология
@@ -673,7 +684,7 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-67 пар `START_BLOCK`/`END_BLOCK` в 51 source-файле. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+72 пары `START_BLOCK`/`END_BLOCK` в 50 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
@@ -720,12 +731,63 @@ npm run build      # готовый билд в ui/dist/
 
 ---
 
+## Chrome-расширение «RUTUBE Замеси» (MV3)
+
+Отдельный продукт-слой (GRACE-модуль **M-EXTENSION**, change C-003): Vanilla TypeScript + Shadow DOM, работает в браузере Chrome на живой странице видео RUTUBE, без изменений Python-бэкенда и React-UI.
+
+**До:** зритель не видит монетизационные возможности ролика — товары, интеграции, клипы живут только в паспорте за кулисами.  
+**После:** на странице `rutube.ru/video/*` появляются кликабельные маркеры монетизаций на прогресс-баре, панель текущей сцены и сайдбар аналитики — в 3 режимах.
+
+### Возможности
+
+- **Маркеры монетизаций на прогресс-баре** — точки `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` из паспорта позиционируются по времени сцен; клик перематывает видео (`currentTime + play`).
+- **Панель текущей сцены** — по `timeupdate` показывает summary и монетизацию активной сцены поверх плеера.
+- **3 режима:** «Зритель» (маркеры + сцена + CTA), «Аналитик» (4 блока: монетизации, модерация, аудио, метрики), «Симуляция» (анимированный разбор ASR → сцены → метки).
+- **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по keywords заголовка + регистрация по `video_id` в реестре.
+- **Shadow DOM-изоляция** — каскад фолбэков селекторов плеера, ноль конфликтов с CSS RUTUBE, ноль layout-shift (NFR-6).
+- **Privacy by design** — демо-данные локально, ноль внешних запросов в демо-режимах (NFR-7).
+
+### Архитектура
+
+```
+rutube.ru/video/* (content-script, document_idle)
+   │ parseVideoId(video_id)
+   ▼
+resolveBinding(videoId, title) ── manual (popup) / auto (keywords) / registry (video_id)
+   │
+   ▼
+DataProvider.load(videoId) ── DemoDataProvider (4 локальных паспорта .json)
+   │                          RealDataProvider (stub → future POST /analyze)
+   ▼
+mountHost() → Shadow DOM → ModesController
+   ├─ viewer:     markers + sceneOverlay + CTA
+   ├─ analyst:    sidebar (монетизации/модерация/аудио/метрики)
+   └─ simulation: анимированный разбор → переход в analyst
+```
+
+Контракт `DataProvider` в `src/content/data/provider.ts` уже готов под реальный FastAPI: для живой аналитики достаточно реализовать `load(videoId)` как `POST {API}/analyze` — бэкенд и `ui/` не меняются.
+
+### Установка и тесты
+
+```bash
+cd chrome-extension
+npm install
+npm run build   # dist/{content,popup,background}.js + manifest.json
+npm test        # vitest: 22 теста, 6 файлов
+```
+
+**Load unpacked:** `chrome://extensions` → «Режим разработчика» → «Загрузить распакованное» → `chrome-extension/dist/` → открыть [референсное видео](https://rutube.ru/video/2013f4eba6ade7b01582fb411f9e901a) и выбрать сценарий в попапе.
+
+Content-script — 113 kB (gzip ~27 kB), единственное permission — `storage`.
+
+---
+
 ## Установка
 
 ### Требования
 
 - Python 3.13+
-- Node.js 18+ (только для Web UI)
+- Node.js 18+ (для Web UI и Chrome-расширения «RUTUBE Замеси»)
 - [Ollama](https://ollama.com) с моделями:
   - `gemma4:e4b` (text analysis, stage planner)
   - `qwen3.5:9b` (vision)
@@ -830,6 +892,12 @@ cd ui && npm install && npm run dev
 ```
 
 По умолчанию UI запускается в **Demo Mode** — с предзагруженными данными, без бэкенда. Переключение в режим Real — через кнопку в интерфейсе.
+
+Chrome-расширение «RUTUBE Замеси» (независимо от бэкенда):
+```bash
+cd chrome-extension && npm install && npm test   # vitest: 22 теста
+npm run build    # dist/ → «Загрузить распакованное» в chrome://extensions
+```
 
 ---
 
@@ -1205,7 +1273,7 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 3. ✅ **Audio Fingerprinting** — музыкaльные треки + celebrity recognition (реализовано)
 4. ✅ **LLM-as-Judge модерация** — 9 категорий флагов, age rating 0+–18+ (реализовано)
 5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter (реализовано)
-6. ✅ **193 теста**, 52 verification scenarios, GRACE-верификация (реализовано)
+6. ✅ **193 pytest + 22 vitest**, 52 verification scenarios, GRACE-верификация (реализовано)
 7. ✅ **Web UI (React + Vite + TailwindCSS)** — панель управления, паспорт, поиск, миксы (реализовано)
 8. ✅ **Demo Mode** — полная offline-демонстрация без бэкенда (реализовано)
 9. ✅ **SSE / EventSource** — live-уведомления об изменении статуса (реализовано)
@@ -1213,17 +1281,20 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 11. ✅ **Автоиндексация в ChromaDB** — паспорт индексируется сразу после сборки (реализовано)
 12. ✅ **Строгий режим валидации** — `strict=True` для CI-гейтов (реализовано)
 13. ✅ **FingerprintDB + index_track()** — персистентное хранилище аудиоотпечатков, CLI-индексация (реализовано)
+14. ✅ **Chrome-расширение «RUTUBE Замеси»** — MV3 + Shadow DOM + Vitest (22 теста), GRACE-модуль M-EXTENSION, change C-003 (реализовано)
+15. ✅ **LLM fallback chain** — приоритетный список провайдеров на каждую роль, автоматический fallback при отказе primary (реализовано)
 
 ### В разработке
 
-14. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
-15. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
-16. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
-17. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
-18. **Бенчмарки производительности** — `.benchmarks/` директория готова, наполнение метриками времени и стоимости по каждому релизу
-19. **Развёртывание API-эндпоинтов UI (`/api/v1/jobs`, `/api/v1/jobs/{id}/passport`, `/api/v1/jobs/{id}/metrics` и др.)** — сейчас RealApiClient спроектирован, но эндпоинты на бэкенде не реализованы. UI работает через DemoApiClient
-20. **Редактор паспортов** — возможность ручного редактирования монетизационных меток через UI
+16. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
+17. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
+18. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
+19. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
+20. **Бенчмарки производительности** — `.benchmarks/` директория готова, наполнение метриками времени и стоимости по каждому релизу
+21. **Развёртывание API-эндпоинтов UI (`/api/v1/jobs`, `/api/v1/jobs/{id}/passport`, `/api/v1/jobs/{id}/metrics` и др.)** — сейчас RealApiClient спроектирован, но эндпоинты на бэкенде не реализованы. UI работает через DemoApiClient
+22. **Редактор паспортов** — возможность ручного редактирования монетизационных меток через UI
+23. **Реальный DataProvider расширения** — коннект `RealDataProvider` к FastAPI `/analyze` (контракт готов)
 
 ---
 
-*GRACE 4-governed project: 26 `.grace` артефактов, 9 MODULE_CONTRACT, 67 semantic block pairs, 52 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`. GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+*GRACE 4-governed project: 30 `.grace` артефактов, 10 MODULE_CONTRACT, 72 semantic block pairs, 52 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `chrome-extension/` (M-EXTENSION). GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

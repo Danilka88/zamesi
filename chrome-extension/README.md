@@ -17,7 +17,7 @@
 - **Маркеры монетизаций на прогресс-баре** — точки AD_SLOT / ECOM_ITEM / CLIP_CANDIDATE из паспорта позиционируются по времени сцен; клик перематывает видео (`currentTime + play`).
 - **Панель текущей сцены** — по `timeupdate` показывает summary и монетизацию активной сцены, как субтитры поверх плеера.
 - **3 режима работы** — «Зритель» (маркеры + сцена + CTA), «Аналитик» (4 блока: монетизации, модерация, аудио, метрики), «Симуляция» (анимированный разбор ASR → сцены → метки).
-- **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по ключевым словам заголовка («Какой iPhone выбрать за 50 000 рублей?» → `tech_review`) + регистрация по `video_id` в реестре.
+- **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по ключевым словам заголовка («Какой iPhone выбрать за 50 000 рублей?» → `tech_review`) + регистрация по `video_id` в реестре; если ни одна привязка не сработала — автоматически применяется паспорт по умолчанию `iphone_50k_wylsacom` через `getDefaultPassport()` (демо-сценарий из коробки на любом видео).
 - **Shadow DOM-изоляция** — стили панелей не конфликтуют с CSS RUTUBE, ноль layout-shift (NFR-6).
 - **Privacy by design** — демо-данные хранятся локально, ноль внешних запросов в демо-режимах (NFR-7).
 - **Готов к реальному провайдеру** — контракт `DataProvider` реализован заглушкой `RealDataProvider` (возвращает `not_implemented`), интерфейс готов под FastAPI `/analyze`.
@@ -56,7 +56,7 @@ mountHost() → Shadow DOM → ModesController
 cd chrome-extension
 npm install
 npm run build        # dist/{content,popup,background}.js + manifest.json + иконки
-npm test             # vitest: 22 теста
+npm test             # vitest: 24 теста
 ```
 
 **Load unpacked (ручной smoke):**
@@ -92,7 +92,7 @@ src/
 │   ├── types.ts            Passport, SceneAnalysisResult, MonetizationItem …
 │   ├── labels.ts           метки монетизаций (цвет/иконка/тултип)
 │   ├── registry.ts         реестр + привязка tech_review ↔ video_id
-│   └── passports/          4 демо-паспорта (.json)
+│   └── passports/          5 демо-паспортов (.json)
 └── popup/                  выбор сценария + автоподбор (chrome.runtime messaging)
 ```
 
@@ -103,6 +103,7 @@ src/
 | id | Тип | Привязка |
 |---|---|---|
 | `tech_review` | обзор техники (iPhone) | video_id `2013f4eba6ade7b01582fb411f9e901a` + keywords |
+| `iphone_50k_wylsacom` | обзор iPhone за 50 000 ₽ (Wylsacom, ~16:25) | keywords + паспорт по умолчанию (`getDefaultPassport()`) |
 | `movie_review` | кинообзор | keywords |
 | `diy_frame` | DIY/мастер-класс | keywords |
 | `cooking_dinner` | кулинария | keywords |
@@ -111,14 +112,14 @@ src/
 
 | Файл | Покрытие |
 |---|---|
-| `registry.test.ts` | валидация 4 паспортов под TS `Passport`, реестр |
+| `registry.test.ts` | валидация 5 паспортов под TS `Passport`, реестр, дефолтный паспорт |
 | `bindings.test.ts` | автоподбор по заголовку, method=auto/manual |
 | `data.test.ts` | DemoDataProvider / RealDataProvider-stub / computeMetrics |
 | `layout.test.ts` | sceneStarts (монотонность), fmtTime/fmtDur |
 | `markers.test.ts` | рендер `.rz-chip`, клик → `seekTo(startSec)` |
 | `modes.test.ts` | Shadow-хост (идемпотентность), переключение режимов |
 
-Проверка: `npm run typecheck && npm test` (22 теста, зелёные).
+Проверка: `npm run typecheck && npm test` (24 теста, зелёные).
 
 ## Подключение реального анализатора (FastAPI)
 
@@ -128,6 +129,6 @@ src/
 
 - ✅ A1–A3: spec/plan C-003, requirements (UC-7, NFR-6/7), graph (GD-010), technology
 - ✅ P0–P8: скаффолд, порт данных, data-layer, инъекция, режимы, popup
-- ✅ P9: vitest suite (22), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
+- ✅ P9: vitest suite (24), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
 - ⏳ Real-провайдер: коннект к FastAPI `/analyze`
 - ⏳ Больше паспортов и keywords в реестре

@@ -32,7 +32,7 @@ async def classify(full_asr_text: str, log=None) -> VideoGenre:
     try:
         prompt = _build_classifier_prompt()
         user_text = f"\n\nТекст видео:\n{full_asr_text[:3000]}"
-        raw = await timeout_manager.call_ollama(
+        raw = await timeout_manager.call_llm(
             prompt=prompt + user_text,
             timeout_name="domain_router",
             call_name="genre_classifier",

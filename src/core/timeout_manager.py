@@ -109,7 +109,7 @@ class TimeoutManager:
                 return await self.call_with_retry(call_name + "_novision", timeout_name, func, log=log, **kwargs)
         raise FallbackTriggered(f"fallback '{strategy}' not applicable")
 
-    async def call_ollama(
+    async def call_llm(
         self,
         prompt: str,
         image_base64: str | None = None,

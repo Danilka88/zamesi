@@ -30,7 +30,7 @@ async def analyze_text_segment(
     )
     full_prompt = f"{PASS1_TEXT_SYSTEM}\n\n{user_prompt}"
 
-    raw = await timeout_manager.call_ollama(
+    raw = await timeout_manager.call_llm(
         prompt=full_prompt,
         timeout_name="qwen_pass1_text",
         call_name="pass1_text",
@@ -62,7 +62,7 @@ async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> st
 
     full_prompt = f"{PASS2_VISION_SYSTEM}\n\n{PASS2_VISION_USER}\n\nКонтекст ASR: {asr_text[:500]}"
 
-    raw = await timeout_manager.call_ollama(
+    raw = await timeout_manager.call_llm(
         prompt=full_prompt,
         image_base64=image_b64,
         timeout_name="qwen_pass2_vision",
@@ -82,7 +82,7 @@ async def generate_frontmatter(full_transcript: str, log=None) -> str:
     user_prompt = FRONTMATTER_USER.format(full_transcript=full_transcript[:8000])
     full_prompt = f"{FRONTMATTER_SYSTEM}\n\n{user_prompt}"
 
-    raw = await timeout_manager.call_ollama(
+    raw = await timeout_manager.call_llm(
         prompt=full_prompt,
         timeout_name="qwen_frontmatter",
         call_name="frontmatter",

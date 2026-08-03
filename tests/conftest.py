@@ -61,4 +61,4 @@ def mock_ollama_response(monkeypatch):
 
     import src.semantic_analyzer.qwen_client as qc
     monkeypatch.setattr(qc, "_extract_json_checked", lambda x: x)
-    monkeypatch.setattr(qc.timeout_manager, "call_ollama", mock_call)
+    monkeypatch.setattr(qc.timeout_manager, "call_llm", mock_call)

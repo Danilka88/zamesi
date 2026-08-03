@@ -13,11 +13,11 @@ async def test_compose_mix_basic(monkeypatch):
             summary="Test scene", speaker="A", text="hello",
         )]
 
-    async def mock_call_ollama(*a, **kw):
+    async def mock_call_llm(*a, **kw):
         return '{"matched_indices": [0]}'
 
     monkeypatch.setattr("src.mixer.mix_composer.search_scenes", mock_search)
-    monkeypatch.setattr("src.mixer.mix_composer.timeout_manager.call_ollama", mock_call_ollama)
+    monkeypatch.setattr("src.mixer.mix_composer.timeout_manager.call_llm", mock_call_llm)
 
     from src.mixer.mix_composer import compose_mix
     stages = [Stage(title="Step 1", description="First step")]
@@ -51,11 +51,11 @@ async def test_compose_mix_match(monkeypatch):
             SearchResult(video_id="v2", scene_index=1, start_sec=10.0, end_sec=20.0, summary="B"),
         ]
 
-    async def mock_call_ollama(*a, **kw):
+    async def mock_call_llm(*a, **kw):
         return '{"matched_indices": [1]}'
 
     monkeypatch.setattr("src.mixer.mix_composer.search_scenes", mock_search)
-    monkeypatch.setattr("src.mixer.mix_composer.timeout_manager.call_ollama", mock_call_ollama)
+    monkeypatch.setattr("src.mixer.mix_composer.timeout_manager.call_llm", mock_call_llm)
 
     from src.mixer.mix_composer import compose_mix
     stages = [Stage(title="Match", description="Pick one")]

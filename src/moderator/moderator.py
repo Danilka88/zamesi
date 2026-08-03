@@ -35,7 +35,7 @@ async def assess_moderation(
     log.info("[M-MODERATOR][ASSESS_START]")
 
     try:
-        raw = await timeout_manager.call_ollama(
+        raw = await timeout_manager.call_llm(
             prompt=full_prompt,
             timeout_name="llm_general_default",
             call_name="moderation_judge",

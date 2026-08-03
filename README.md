@@ -487,10 +487,10 @@ models:
 
 ### TimeoutManager
 
-Единый интерфейс для всех LLM-вызовов (`call_ollama`):
+Единый интерфейс для всех LLM-вызовов (`call_llm`):
 
 ```
-call_ollama(prompt, timeout_name, call_name, model, max_tokens)
+call_llm(prompt, timeout_name, call_name, model, max_tokens)
   │
   ├── Circuit Breaker (CB) проверяет состояние
   │     └── OPEN → CircuitBreakerOpenError → немедленный fallback

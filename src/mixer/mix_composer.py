@@ -45,7 +45,7 @@ async def compose_mix(
         )
         prompt = f"{system}\n\n{instructions}"
 
-        raw = await timeout_manager.call_ollama(
+        raw = await timeout_manager.call_llm(
             prompt=prompt,
             timeout_name="llm_general_default",
             call_name="mix_match_scenes",

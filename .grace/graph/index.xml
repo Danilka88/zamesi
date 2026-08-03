@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graph-index project="RUTUBE Video Analyzer" version="0.1.0">
-  <description>Knowledge graph — 9 modules, cross-links, exported types and functions</description>
+  <description>Knowledge graph — 10 modules, cross-links, exported types and functions</description>
   <Modules>
     <Module id="M-CORE" routed="GD-001-M-CORE.xml" name="Core Types &amp; Contracts" type="LIBRARY" status="built">
       <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager, MemoryStore, метрики — общие для всех модулей</Purpose>
@@ -29,8 +29,11 @@
     <Module id="M-MODERATOR" routed="GD-009-M-MODERATOR.xml" name="Moderation Judge" type="PROCESSOR" status="built">
       <Purpose>LLM-as-Judge оценка контента: age_rating, вердикт, флаги нарушений.</Purpose>
     </Module>
+    <Module id="M-EXTENSION" routed="GD-010-M-EXTENSION.xml" name="Chrome Extension (Замеси)" type="INTERFACE" status="building">
+      <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE. Vanilla TS + Vite.</Purpose>
+    </Module>
   </Modules>
-  <CrossLinks summary="17 cross-module dependencies">
+  <CrossLinks summary="19 cross-module dependencies">
     <Link from="M-CORE" to="M-AUDIO" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-VISION" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-SEMANTIC" relation="defines-types-for"/>
@@ -48,6 +51,8 @@
     <Link from="M-SEARCH" to="M-MIXER" relation="feeds-into"/>
     <Link from="M-MIXER" to="M-API" relation="orchestrates"/>
     <Link from="M-MODERATOR" to="M-PASSPORT" relation="feeds-into"/>
+    <Link from="M-EXTENSION" to="M-CORE" relation="uses-types"/>
+    <Link from="M-EXTENSION" to="M-PASSPORT" relation="renders-output-of"/>
   </CrossLinks>
   <DataFlows>
     <Flow id="DF-001" name="Audio-First Pipeline">
@@ -73,6 +78,14 @@
     <Flow id="DF-006" name="Mix Flow">
       <description>Query → stages → search → compose → render</description>
       <steps>M-MIXER.plan_stages → M-MIXER.search_scenes → M-MIXER.compose_mix → M-MIXER.mix_to_md</steps>
+    </Flow>
+    <Flow id="DF-007" name="Extension Injection Flow">
+      <description>Детект видео-страницы → подбор паспорта → монтаж Shadow DOM</description>
+      <steps>M-EXTENSION.detectVideoPage → M-EXTENSION.parseVideoId → M-EXTENSION.resolveBinding → M-EXTENSION.mountShadowHost</steps>
+    </Flow>
+    <Flow id="DF-008" name="Extension Analyst Flow">
+      <description>Паспорт → панели монетизации/модерации/аудио/метрики в сайдбаре</description>
+      <steps>M-EXTENSION.getPassport → M-EXTENSION.renderMonetization → M-EXTENSION.renderModeration → M-EXTENSION.renderMetrics</steps>
     </Flow>
   </DataFlows>
 </graph-index>

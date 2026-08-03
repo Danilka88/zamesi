@@ -1,0 +1,18 @@
+:root {
+  --bg: #1b1e2b;
+  --panel: #232838;
+  --text: #e8eaf0;
+  --muted: #9aa1b5;
+  --brand: #fb5f93;
+  --accent: #6c8cff;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  width: 300px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.5 -apple-system, "Segoe UI", sans-serif;
+}
+#app { padding: 14px; }

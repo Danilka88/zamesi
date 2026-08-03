@@ -39,6 +39,16 @@
     <redaction>Логи не содержат сырых аудио/видео данных, только ссылки на job_id</redaction>
   </observability>
 
+  <frontend-extension>
+    <description>Chrome-расширение MV3 «RUTUBE Замеси» (M-EXTENSION) — демо-слой на странице видео RUTUBE. Изолированный фронтенд без зависимости от React ui/.</description>
+    <runtime language="TypeScript" version="5.x"/>
+    <build tool="Vite" purpose="Сборка content-script (IIFE), popup, background, иконки"/>
+    <test runner="Vitest" purpose="Юнит-тесты: валидация паспортов, binding, seek, режимы, Shadow DOM"/>
+    <manifest>Chrome Manifest V3: content_scripts, action (popup), background service_worker, host_permissions ограничены rutube.ru</manifest>
+    <shadow-dom>Изоляция стилей панелей от CSS страницы (NFR-6)</shadow-dom>
+    <privacy>Демо-данные локально, ноль внешних запросов (NFR-7); Real-провайдер (заглушка) готов к FastAPI /analyze</privacy>
+  </frontend-extension>
+
   <ai-models>
     <slm name="gemma4:e4b" provider="Ollama" endpoint="http://localhost:11434" purpose="Текстовый пайплайн (pass1 text analysis)">
       <params temperature="0.1" max_tokens="4096"/>

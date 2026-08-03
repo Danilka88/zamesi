@@ -87,6 +87,22 @@
         <marker required="true">[M-MIXER][COMPOSER][DONE]</marker>
       </evidence>
     </UseCase>
+    <UseCase id="UC-7" name="Chrome Extension — in-page monetization overlay" priority="medium">
+      <description>Chrome-расширение MV3 «RUTUBE Замеси» внедряет демо-панели анализатора (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE rutube.ru/video/*. Маркеры на прогресс-баре с перемоткой, панель текущей сцены, сайдбар аналитика, симуляция разбора, демо-CTA (товар/билет/афиша/мерч). Vanilla TS + Shadow DOM.</description>
+      <actor>Зритель (браузер Chrome, страница видео RUTUBE)</actor>
+      <precondition>Открыта страница rutube.ru/video/*, расширение включено, доступен демо-паспорт (или автоподбор по keywords)</precondition>
+      <steps>
+        <step order="1">Детект видео-страницы rutube.ru/video/*, извлечение video_id из URL</step>
+        <step order="2">Подбор паспорта: ручной выбор (popup) или автоподбор по ключевым словам заголовка / video_id</step>
+        <step order="3">Монтаж Shadow DOM-хоста: маркеры монетизаций на прогресс-баре, панель текущей сцены</step>
+        <step order="4">Переключение режимов Зритель / Аналитик / Симуляция; Real-провайдер (заглушка) готов к FastAPI /analyze</step>
+      </steps>
+      <postcondition>Зритель видит интерактивные панели монетизаций/модерации/аудио/метрики и демо-CTA на странице видео без изменения бэкенда</postcondition>
+      <evidence>
+        <marker required="true">[M-EXTENSION][HOST][MOUNTED]</marker>
+        <marker required="true">[M-EXTENSION][BINDING][RESOLVED]</marker>
+      </evidence>
+    </UseCase>
   </UseCases>
 
   <NonFunctionalRequirements>
@@ -104,6 +120,12 @@
     </Requirement>
     <Requirement id="NFR-5" category="maintainability">
       <description>Каждый модуль изолирован (PBS): audio_engine, vision_scanner, semantic_analyzer, passport_builder, api. Модули коммуницируют через Pydantic-модели в core.</description>
+    </Requirement>
+    <Requirement id="NFR-6" category="maintainability">
+      <description>Расширение M-EXTENSION изолирует стили через Shadow DOM: не вызывает layout-shift и не конфликтует с CSS RUTUBE. Vanilla TS без внешних фреймворков.</description>
+    </Requirement>
+    <Requirement id="NFR-7" category="security">
+      <description>Privacy: демо-данные расширения хранятся и обрабатываются только локально; ноль внешних сетевых запросов при демо-режимах (кроме опционального Real-провайдера к FastAPI /analyze).</description>
     </Requirement>
   </NonFunctionalRequirements>
 </requirements>

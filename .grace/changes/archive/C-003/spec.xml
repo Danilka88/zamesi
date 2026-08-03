@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraceChangeSpec id="C-003" project="RUTUBE Video Analyzer" version="0.1.0">
+  <title>Chrome Extension — in-page RUTUBE monetization overlay (demo) «RUTUBE Замеси»</title>
+  <status>approved</status>
+  <priority>high</priority>
+  <designContext>
+    <summary>Chrome-расширение MV3 (Vanilla TypeScript + Shadow DOM) в отдельной папке chrome-extension/. Доставляет демо-возможности UI-анализатора (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE rutube.ru/video/*: маркеры монетизаций на прогресс-баре с перемоткой, плавающая панель текущей сцены, сайдбар аналитика, анимированная симуляция разбора, демо-CTA (товары/билеты/афиша/мерч). 3 демо-режима + заглушка реального провайдера (интерфейс DataProvider готов к подключению FastAPI /analyze).</summary>
+    <rationale>UI (React) уже умеет рендерить паспорта, но только в своей SPA. Расширение доставляет эти возможности прямо зрителю на живой RUTUBE без изменения Python-бэкенда и ui/. Презентация анализатора на площадке: обзор «Какой iPhone выбрать за 50 000 рублей?» (video_id 2013f4eba6ade7b01582fb411f9e901a) привязывается к демо-паспорту tech_review по video_id + ключевым словам.</rationale>
+    <scope>
+      <modules>
+        <module id="M-EXTENSION" action="create"/>
+        <module id="M-CORE" action="consume"/>  <!-- types/schema mirror only -->
+        <module id="M-PASSPORT" action="consume"/> <!-- passport output render -->
+      </modules>
+      <constraints>Python-бэкенд (src/), ui/** и существующие 9 модулей графа НЕ изменяются. Расширение — только новый код в chrome-extension/ + GRACE-артефакты (.grace).</constraints>
+    </scope>
+    <decisions>
+      <decision id="D-001">
+        <question>Где разместить расширение относительно существующего монорепо?</question>
+        <answer>Отдельная папка chrome-extension/ со своим node_modules, vite и vitest</answer>
+        <rationale>Изоляция зависимостей (Vanilla TS vs React ui/), независимая сборка и CI, без влияния на ui/ и Python-пайплайн</rationale>
+      </decision>
+      <decision id="D-002">
+        <question>Как доставлять данные на живой RUTUBE?</question>
+        <answer>Content-script (IIFE) + Shadow DOM-хост. Демо-данные локально, ноль внешних запросов</answer>
+        <rationale>MV3 изолирует DOM страницы; Shadow DOM исключает конфликт стилей; privacy NFR-7</rationale>
+      </decision>
+      <decision id="D-003">
+        <question>Как обрабатывать хрупкие селекторы React-SPA плеера?</question>
+        <answer>Эмпирический вывод селекторов + каскад фолбэков + дев-мок-страница из реального SSR-исходника</answer>
+        <rationale>Плеер рендерится клиентски (федеративные модули Woodpecker); закладываем устойчивость к изменению DOM</rationale>
+      </decision>
+      <decision id="D-004">
+        <question>Привязка паспорта к видео?</question>
+        <answer>Ручной выбор в попапе + автоподбор по ключевым словам заголовка + регистрация по video_id в реестре</answer>
+        <rationale>Референсное видео tech_review (iPhone) подбирается автоматически; новые паспорта добавляются в реестр без переделки UI</rationale>
+      </decision>
+    </decisions>
+  </designContext>
+  <assertions>
+    <assertion id="A-C003-01" type="feature">
+      <description>На rutube.ru/video/* расширение монтирует Shadow DOM-хост с панелями</description>
+      <check>После инъекции в DOM существует shadow-root с панелью, детектируется video_id из URL; на не-видео страницах ничего не монтируется</check>
+    </assertion>
+    <assertion id="A-C003-02" type="feature">
+      <description>Маркеры монетизаций на прогресс-баре, клик → перемотка</description>
+      <check>Маркеры позиционируются по времени сцен; клик по маркеру вызывает currentTime + play (seek)</check>
+    </assertion>
+    <assertion id="A-C003-03" type="feature">
+      <description>4 демо-паспорта валидны под TS-схему Passport</description>
+      <check>diy_frame, tech_review, movie_review, cooking_dinner проходят валидацию типа Passport (video_id, timeline, monetization)</check>
+    </assertion>
+    <assertion id="A-C003-04" type="feature">
+      <description>Привязка паспорта: ручной выбор + автоподбор по ключевым словам</description>
+      <check>Заголовок «Какой iPhone выбрать за 50 000 рублей?» автоподбирает tech_review; ручной выбор перекрывает авто</check>
+    </assertion>
+    <assertion id="A-C003-05" type="feature">
+      <description>Режимы Зритель/Аналитик/Симуляция переключаются без потери данных</description>
+      <check>Переключение режимов сохраняет выбранный паспорт и позицию; каждый режим рендерит свои панели</check>
+    </assertion>
+    <assertion id="A-C003-06" type="feature">
+      <description>Real-провайдер — заглушка, интерфейс DataProvider готов</description>
+      <check>DataProvider — контракт; DemoDataProvider работает; RealDataProvider возвращает not_implemented без сбоев UI</check>
+    </assertion>
+    <assertion id="A-C003-07" type="config">
+      <description>Manifest MV3 с минимальными разрешениями</description>
+      <check>content-script на rutube.ru/video/*, host_permissions ограничены, нет удалённого кода, разрешения минимальны</check>
+    </assertion>
+    <assertion id="A-C003-08" type="backward">
+      <description>Обратная совместимость: ui/ и Python-бэкенд не затрагиваются</description>
+      <check>git status: изменения только в chrome-extension/** и .grace/**; 193 Python-теста зелёные без изменений</check>
+    </assertion>
+  </assertions>
+</GraceChangeSpec>

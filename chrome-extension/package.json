@@ -1,0 +1,27 @@
+{
+  "name": "rutube-zamesi-extension",
+  "version": "0.1.0",
+  "description": "RUTUBE Замеси — Chrome MV3 extension: in-page monetization overlay (demo)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:app && npm run build:content",
+    "build:app": "vite build",
+    "build:content": "vite build -c vite.content.config.ts",
+    "dev": "vite build -w",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "happy-dom": "^20.11.1",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.21.5": true
+  }
+}

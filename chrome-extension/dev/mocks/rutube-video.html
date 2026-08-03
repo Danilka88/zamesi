@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta property="og:title" content="Какой iPhone выбрать за 50 000 рублей?" />
+  <title>Какой iPhone выбрать за 50 000 рублей? — RUTUBE</title>
+</head>
+<body>
+  <!--
+    Дев-мок видео-страницы RUTUBE для тестов инъекции вне сети (P3).
+    Структура плеера — эмпирическая, повторяет реальную: video, прогресс-бар,
+    таймкод. Селекторы в src/content/rutube.ts должны находить эти элементы.
+  -->
+  <header class="site-header">
+    <a class="logo" href="/">RUTUBE</a>
+    <nav class="genres">
+      <a href="/">Главная</a>
+      <a href="/video/">Видео</a>
+      <a href="/channel/">Каналы</a>
+    </nav>
+  </header>
+
+  <main id="video-layout">
+    <section class="player-portal">
+      <div class="player-shell">
+        <video id="main-video" class="video"
+               src="https://example.com/sample.mp4"
+               preload="metadata" controls>
+        </video>
+        <div class="player-controls">
+          <div class="player-progress">
+            <div class="progress-fill" style="width:0%"></div>
+          </div>
+          <span class="player-timecode"><span class="time-current">00:00</span> / <span class="time-duration">00:00</span></span>
+        </div>
+      </div>
+      <h1 class="video-title">Какой iPhone выбрать за 50 000 рублей?</h1>
+      <div class="video-meta">
+        <span class="channel-name">Большой обзорочный канал</span>
+        <input type="range" class="seek-progress" min="0" max="100" value="0" />
+      </div>
+    </main>
+  </main>
+
+  <script>
+    // Поддержка <video> для мока (в реальном Chrome-расширении не требуется).
+    console.log("RUTUBE dev-mock loaded");
+  </script>
+</body>
+</html>

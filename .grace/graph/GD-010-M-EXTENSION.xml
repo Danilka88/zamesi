@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-EXTENSION" name="Chrome Extension (Замеси)" type="INTERFACE" status="building">
+  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE rutube.ru/video/*. 3 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
+  <Source path="chrome-extension/src/"/>
+  <Test path="chrome-extension/tests/"/>
+  <Exports>
+    <function name="detectVideoPage">Детект rutube.ru/video/* и извлечение video_id</function>
+    <function name="resolveBinding">Подбор паспорта: ручной выбор + автоподбор по keywords/video_id</function>
+    <function name="mountShadowHost">Монтаж Shadow DOM-хоста с изоляцией стилей</function>
+    <function name="renderMarkers">Маркеры монетизаций на прогресс-баре, клик=seek</function>
+    <function name="renderSceneOverlay">Плавающая панель текущей сцены</function>
+    <function name="renderSidebar">Сайдбар аналитика: монетизации/модерация/аудио/метрики</function>
+    <function name="renderCTA">Демо-CTA: товар/билет/афиша/мерч</function>
+    <function name="renderSimulation">Анимированный разбор ASR→сцены→метки</function>
+    <function name="DataProvider">Контракт данных: Demo/Real(stub)</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-PASSPORT" relation="renders-output-of"/>
+  </CrossLinks>
+  <Verification ref="V-M-EXTENSION"/>
+</module-graph>

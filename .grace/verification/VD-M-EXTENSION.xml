@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-EXTENSION" module="M-EXTENSION" priority="high">
+  <description>Chrome extension MV3: валидация 4 демо-паспортов под TS-схему Passport, binding (ручной+автоподбор), DataProvider (Demo/Real-stub), маркеры монетизаций+seek, режимы, Shadow DOM-хост</description>
+  <Scenarios>
+    <Scenario id="S-M-EXT-1" type="success">
+      <description>A-C003-03: 4 демо-паспорта валидны под TS Passport; реестр с привязкой tech_review↔video_id</description>
+      <commands>
+        <command>npx vitest run tests/registry.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][DATA][PASSPORTS_VALID]</marker>
+        <assert>diy_frame, tech_review, movie_review, cooking_dinner проходят валидацию; реестр мапит tech_review → 2013f4eba6ade7b01582fb411f9e901a</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-2" type="success">
+      <description>A-C003-04: автоподбор по ключевым словам заголовка + листинг</description>
+      <commands>
+        <command>npx vitest run tests/bindings.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][BINDING][AUTO_MATCH]</marker>
+        <assert>«Какой iPhone выбрать за 50 000 рублей?» автоподбирает tech_review по keywords; resolveBindingDetailed method=auto</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-3" type="success">
+      <description>A-C003-06: DemoDataProvider работает, RealDataProvider — заглушка без сбоев</description>
+      <commands>
+        <command>npx vitest run tests/data.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][DATA][DEMO_OK]</marker>
+        <marker required="true">[M-EXTENSION][DATA][REAL_STUB]</marker>
+        <assert>DemoDataProvider.load возвращает passport+metrics; RealDataProvider возвращает not_implemented без исключений; computeMetrics агрегаты</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-4" type="success">
+      <description>A-C003-02: маркеры позиционируются по времени сцен; клик → seek</description>
+      <commands>
+        <command>npx vitest run tests/markers.test.ts tests/layout.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][MARKERS][SEEK]</marker>
+        <assert>sceneStarts монотонно растут; collectMarkers sorted; клик по .rz-chip вызывает player.seekTo(startSec)</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-5" type="success">
+      <description>A-C003-01/05: Shadow DOM-хост монтируется; режимы переключаются с сохранением данных</description>
+      <commands>
+        <command>npx vitest run tests/modes.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][SHADOW][HOST]</marker>
+        <marker required="true">[M-EXTENSION][MODES][SWITCH]</marker>
+        <assert>mountHost создаёт shadowRoot с панелью, идемпотентен; ModesController переключает viewer/analyst/simulation без сбоев</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-6" type="backward">
+      <description>A-C003-08: Python-бэкенд и ui/ не затронуты; сборка расширения успешна</description>
+      <commands>
+        <command>npm run build && pytest tests/ --timeout=60 -q</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][BUILD][OK]</marker>
+        <assert>vite build даёт dist/{content,popup,background}.js + manifest.json; сузейс-тесты бэкенда зелёные без изменений</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-EXTENSION][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

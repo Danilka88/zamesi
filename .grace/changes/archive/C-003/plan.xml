@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraceChangePlan id="C-003" project="RUTUBE Video Analyzer" version="0.1.0">
+  <title>Chrome Extension «RUTUBE Замеси» — in-page monetization overlay</title>
+  <phases>
+    <Phase-0 name="Scaffold (MV3 + Vite + Vitest)" status="built">
+      <description>Скаффолд chrome-extension/: manifest MV3, vite-сборка (content IIFE + popup + background), tsconfig strict, vitest, иконки 16/32/48/128.</description>
+      <assertions>
+        <baseline>
+          <assert>chrome-extension/ не существует</assert>
+        </baseline>
+        <target>
+          <assert>manifest.json MV3 объявляет content-script, popup, background, host_permissions ограничены rutube.ru</assert>
+          <assert>npm run build даёт dist/ (content IIFE, popup, background, иконки)</assert>
+          <assert>npm run test запускает vitest</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P0-T1" status="done">
+          <description>Инициализация chrome-extension/: package.json, tsconfig strict, vite.config.ts (multi-input), vitest config</description>
+        </task>
+        <task id="C003-P0-T2" status="done">
+          <description>manifest.json MV3: content_scripts, action (popup), background service_worker, icons, permissions</description>
+        </task>
+        <task id="C003-P0-T3" status="done">
+          <description>Иконки 16/32/48/128 (assets) + entry-заглушки src/background.ts, src/popup/</description>
+        </task>
+      </tasks>
+    </Phase-0>
+    <Phase-1 name="Data Port" status="built">
+      <description>Порт 4 демо-паспортов, MONETIZATION_LABELS, типов (зеркало src/core/schemas.py + ui/src/types). Реестр с привязкой tech_review ↔ video_id.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет данных в chrome-extension/src/data/</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-03: 4 паспорта валидны под TS-схему Passport</assert>
+          <assert>Реестр содержит привязку tech_review ↔ video_id 2013f4eba6ade7b01582fb411f9e901a + keywords</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P1-T1" status="done">
+          <description>Перенос src/types из ui/: Passport, SceneAnalysisResult, MonetizationItem, ModerationFlag, JobMetrics</description>
+        </task>
+        <task id="C003-P1-T2" status="done">
+          <description>Перенос 4 паспортов из ui/src/demo/passports/*.json</description>
+        </task>
+        <task id="C003-P1-T3" status="done">
+          <description>Перенос MONETIZATION_LABELS (7 меток: цвет/иконка/тултип) в src/data/labels.ts</description>
+        </task>
+        <task id="C003-P1-T4" status="done">
+          <description>Реестр passports.ts + bindings (video_id → passport, keywords)</description>
+        </task>
+      </tasks>
+    </Phase-1>
+    <Phase-2 name="Data Layer" status="built">
+      <description>DataProvider интерфейс, DemoDataProvider, RealDataProvider (stub, готов к FastAPI /analyze), логика bindings (ручной + автоподбор).</description>
+      <assertions>
+        <baseline>
+          <assert>Нет слоя данных расширения</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-06: DataProvider контракт, Demo работает, Real — заглушка без сбоев</assert>
+          <assert>A-C003-04: автоподбор по keywords из реестра</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P2-T1" status="done">
+          <description>src/content/data/provider.ts — interface DataProvider (getPassport, getJobMetrics, getModeration, subscribe)</description>
+        </task>
+        <task id="C003-P2-T2" status="done">
+          <description>src/content/data/demo.ts — DemoDataProvider поверх src/data/</description>
+        </task>
+        <task id="C003-P2-T3" status="done">
+          <description>src/content/data/real-stub.ts — RealDataProvider (stub, готов под fetch /analyze)</description>
+        </task>
+        <task id="C003-P2-T4" status="done">
+          <description>src/content/data/bindings.ts — resolveBinding(videoId, title): ручной + автоподбор по keywords</description>
+        </task>
+      </tasks>
+    </Phase-2>
+    <Phase-3 name="Injection &amp; Host" status="built">
+      <description>Детект rutube.ru/video/*, парсинг video_id, Shadow DOM-хост, селекторы плеера + каскад фолбэков, дев-мок из MHTML.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет кода инъекции</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-01: Shadow DOM-хост монтируется только на видео-странице; video_id извлечён</assert>
+          <assert>Селекторы плеера (video, прогресс-бар, таймкод) с фолбэками; дев-мок-страница для тестов</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P3-T1" status="done">
+          <description>src/content/index.ts — entry: детект, монтаж, точки монтирования</description>
+        </task>
+        <task id="C003-P3-T2" status="done">
+          <description>src/content/shadow.ts — Shadow DOM-хост + CSS-изоляция</description>
+        </task>
+        <task id="C003-P3-T3" status="done">
+          <description>src/content/rutube.ts — селекторы плеера + фолбэки (video, progress, timecode)</description>
+        </task>
+        <task id="C003-P3-T4" status="done">
+          <description>dev/mocks/rutube-video.html — дев-мок из реального SSR-исходника MHTML + смоделированный плеер</description>
+        </task>
+      </tasks>
+    </Phase-3>
+    <Phase-4 name="Viewer Mode" status="built">
+      <description>Режим «Зритель»: маркеры монетизаций на прогресс-баре (клик=seek), плавающая панель текущей сцены.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет режима зрителя</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-02: маркеры на прогресс-баре по времени сцен; клик → currentTime+play</assert>
+          <assert>Панель сцены показывает текущую сцену (summary, monetization) по таймкоду воспроизведения</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P4-T1" status="done">
+          <description>src/content/render/markers.ts — маркеры + обработчик seek</description>
+        </task>
+        <task id="C003-P4-T2" status="done">
+          <description>src/content/render/sceneOverlay.ts — плавающая панель текущей сцены (подписка на timeupdate)</description>
+        </task>
+      </tasks>
+    </Phase-4>
+    <Phase-5 name="CTA Panel" status="built">
+      <description>Демо-CTA: «Купить товар / билет / афиша / мерч» из монетизационных точек паспорта (tech_review → товары iPhone).</description>
+      <assertions>
+        <baseline>
+          <assert>Нет CTA-панели</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-05: CTA рендерится из ECOM_ITEM/AD_SLOT точек текущей сцены; клик показывает демо-карточку</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P5-T1" status="done">
+          <description>src/content/render/cta.ts — демо-CTA (товар/билет/афиша/мерч) по типу монетизации</description>
+        </task>
+      </tasks>
+    </Phase-5>
+    <Phase-6 name="Analyst Sidebar" status="built">
+      <description>Режим «Аналитик»: сайдбар с блоками монетизации, модерации, аудио и метрик (зеркало UI).</description>
+      <assertions>
+        <baseline>
+          <assert>Нет сайдбара</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-05: сайдбар рендерит 4 блока (монетизации, модерация, аудио, метрики) из паспорта</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P6-T1" status="done">
+          <description>src/content/render/sidebar.ts — сайдбар: монетизации + модерация + аудио + метрики</description>
+        </task>
+      </tasks>
+    </Phase-6>
+    <Phase-7 name="Simulation Mode" status="built">
+      <description>Режим «Симуляция»: анимированный разбор (ASR → сцены → метки) с переходом в Аналитик.</description>
+      <assertions>
+        <baseline>
+          <assert>Нет режима симуляции</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-05: анимация проходит стадии ASR→сцены→метки и завершается переходом в Аналитик</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P7-T1" status="done">
+          <description>src/content/render/simulation.ts — анимированный разбор (стадии, прогресс)</description>
+        </task>
+      </tasks>
+    </Phase-7>
+    <Phase-8 name="Popup &amp; Binding UI" status="built">
+      <description>Popup: ручной выбор сценария, автоподбор по ключевым словам, статус, хранение выбора (chrome.storage).</description>
+      <assertions>
+        <baseline>
+          <assert>Нет попапа</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-04: popup выбирает сценарий (ручной + авто); выбор синхронизируется с content-script</assert>
+          <assert>Автоподбор на реальном заголовке iPhone → tech_review</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P8-T1" status="done">
+          <description>src/popup/ — UI выбора сценария + авто + статус</description>
+        </task>
+        <task id="C003-P8-T2" status="done">
+          <description>src/content/modes.ts — оркестрация режимов + обмен с popup (chrome.runtime messages)</description>
+        </task>
+      </tasks>
+    </Phase-8>
+    <Phase-9 name="Verification &amp; Release" status="built">
+      <description>Полный vitest suite, ручной smoke на референсной ссылке (load unpacked), README расширения, сборка dist.</description>
+      <assertions>
+        <baseline>
+          <assert>Расширение собрано, тесты написаны</assert>
+        </baseline>
+        <target>
+          <assert>A-C003-01/02: на реальном rutube.ru/video/2013f4... монтируется хост, маркеры кликабельны</assert>
+          <assert>README: сборка, load unpacked, режимы, подключение FastAPI /analyze</assert>
+          <assert>release-gate: полный vitest + ручной smoke</assert>
+        </target>
+      </assertions>
+      <tasks>
+        <task id="C003-P9-T1" status="done">
+          <description>Написание vitest-тестов по всем assertions (валидация, binding, seek, режимы, shadow)</description>
+        </task>
+        <task id="C003-P9-T2" status="done">
+          <description>Сборка dist/ + чек-лист ручного smoke для пользователя</description>
+        </task>
+        <task id="C003-P9-T3" status="done">
+          <description>README.md расширения: сборка, load unpacked, режимы, подключение FastAPI /analyze</description>
+        </task>
+      </tasks>
+    </Phase-9>
+  </phases>
+  <dataflows>
+    <flow id="DF-EXT-001" name="Extension Injection Flow">
+      <steps>M-EXTENSION.detectVideoPage → M-EXTENSION.parseVideoId → M-EXTENSION.mountShadowHost → M-EXTENSION.resolveBinding</steps>
+    </flow>
+    <flow id="DF-EXT-002" name="Viewer Render Flow">
+      <steps>M-EXTENSION.getPassport → M-EXTENSION.renderMarkers → M-EXTENSION.onSeek → M-EXTENSION.renderSceneOverlay</steps>
+    </flow>
+    <flow id="DF-EXT-003" name="Analyst Render Flow">
+      <steps>M-EXTENSION.getJobMetrics → M-EXTENSION.renderMonetization → M-EXTENSION.renderModeration → M-EXTENSION.renderAudio</steps>
+    </flow>
+    <flow id="DF-EXT-004" name="Real Provider Stub Flow">
+      <steps>M-EXTENSION.resolveProvider → RealDataProvider.stub → (future) POST /analyze</steps>
+    </flow>
+  </dataflows>
+</GraceChangePlan>

@@ -36,13 +36,15 @@ describe("ModesController", () => {
     const host = mountHost();
     const tech = PASSPORT_REGISTRY.find((e) => e.id === "tech_review")!.passport;
     const ctrl = new ModesController(host, makePlayer(), { passport: tech, metrics: computeMetrics(tech) });
-    expect(ctrl.current).toBe("viewer");
+    expect(ctrl.current).toBe("simulation");
     ctrl.setMode("analyst");
     expect(ctrl.current).toBe("analyst");
     ctrl.setMode("simulation");
     expect(ctrl.current).toBe("simulation");
     ctrl.setMode("viewer");
     expect(ctrl.current).toBe("viewer");
+    ctrl.setMode("simulation");
+    expect(ctrl.current).toBe("simulation");
     ctrl.destroy();
     unmountHost();
   });

@@ -25,9 +25,10 @@ function validatePassport(p: unknown): string[] {
 }
 
 describe("PASSPORT_REGISTRY", () => {
-  it("contains exactly the 4 demo passports", () => {
+  it("contains exactly the 5 demo passports", () => {
     expect(PASSPORT_REGISTRY.map((e) => e.id)).toEqual([
       "tech_review",
+      "iphone_50k_wylsacom",
       "diy_frame",
       "movie_review",
       "cooking_dinner",

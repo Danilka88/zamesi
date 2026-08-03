@@ -17,7 +17,7 @@ type Cleanup = () => void;
 const noop: Cleanup = () => undefined;
 
 export class ModesController {
-  private mode: ViewerMode = "viewer";
+  private mode: ViewerMode = "simulation";
   private cleanup: Cleanup = noop;
 
   constructor(
@@ -66,9 +66,9 @@ export class ModesController {
     const bar = document.createElement("div");
     bar.className = "rz-toggle";
     const items: { id: ViewerMode; label: string }[] = [
-      { id: "viewer", label: "👁 Зритель" },
-      { id: "analyst", label: "📊 Аналитик" },
       { id: "simulation", label: "⚙️ Симуляция" },
+      { id: "analyst", label: "📊 Аналитик" },
+      { id: "viewer", label: "👁 Зритель" },
     ];
     for (const it of items) {
       const b = document.createElement("button");

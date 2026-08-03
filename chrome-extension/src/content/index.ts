@@ -5,10 +5,10 @@
 // ручной привязки паспорта (A-C003-04).
 import { DemoDataProvider, computeMetrics } from "./data/demo";
 import { resolveBindingDetailed } from "./data/bindings";
-import { PASSPORT_REGISTRY, getPassportById } from "../data/registry";
+import { getPassportById, getDefaultPassport } from "../data/registry";
 import type { Passport } from "../data/types";
 import { mountHost, type ExtensionHost } from "./shadow";
-import { waitForPlayer, type PlayerHandle } from "./rutube";
+import { waitForPlayer, waitForSidebar, type PlayerHandle } from "./rutube";
 import { ModesController } from "./modes";
 
 export function parseVideoId(url: string): string | null {
@@ -33,21 +33,28 @@ let hostRef: ExtensionHost | null = null;
 let playerRef: PlayerHandle | null = null;
 
 async function main(): Promise<void> {
+  console.log("[M-EXTENSION] injected");
   const videoId = parseVideoId(location.href);
   if (!videoId) return; // не видео-страница — не монтируемся
+  console.log("[M-EXTENSION] videoId:", videoId);
 
   const title = pageTitle();
   const binding = resolveBindingDetailed(videoId, title);
+  console.log("[M-EXTENSION] binding:", binding.method, binding.entry?.id ?? "none");
 
   const provider = new DemoDataProvider();
   const res = await provider.load(videoId);
 
-  // Гарантируем паспорт для UI: если провайдер не вернул — привязанный/первый
+  // Гарантируем паспорт для UI: приоритет у привязки (video_id/заголовок),
+  // затем провайдер, затем дефолтный паспорт как крайний фолбэк.
   const passport: Passport =
-    res.passport ?? binding.entry?.passport ?? PASSPORT_REGISTRY[0].passport;
+    binding.entry?.passport ?? res.passport ?? getDefaultPassport();
 
-  hostRef = mountHost();
+  const sidebar = await waitForSidebar();
+  hostRef = mountHost(sidebar ?? document.body, { fixed: sidebar === null });
+  console.log("[M-EXTENSION] sidebar:", sidebar ? "found" : "fallback overlay");
   playerRef = await waitForPlayer();
+  console.log("[M-EXTENSION] player:", playerRef.video ? "found" : "null");
 
   const metrics = res.metrics ?? computeMetrics(passport);
   controller = new ModesController(hostRef, playerRef, { passport, metrics });

@@ -1,7 +1,7 @@
 // [M-EXTENSION][TEST-LAYOUT][START_BLOCK]
 // sceneStarts/collectMarkers/fmtTime (A-C003-02, позиционирование маркеров).
 import { describe, it, expect } from "vitest";
-import { sceneStarts, fmtTime, fmtDur } from "../src/content/render/layout";
+import { sceneStarts, fmtTime, fmtDur, videoDuration } from "../src/content/render/layout";
 import { collectMarkers } from "../src/content/render/markers";
 import { PASSPORT_REGISTRY } from "../src/data/registry";
 
@@ -13,6 +13,19 @@ describe("layout", () => {
     for (let i = 1; i < starts.length; i += 1) {
       expect(starts[i].startSec).toBeGreaterThanOrEqual(starts[i - 1].startSec);
     }
+  });
+
+  it("prefers explicit scene.start_sec over fallback distribution", () => {
+    const iphone = PASSPORT_REGISTRY.find((e) => e.id === "iphone_50k_wylsacom")!.passport;
+    const starts = sceneStarts(iphone);
+    expect(starts.length).toBe(iphone.timeline.length);
+    for (const s of starts) {
+      expect(s.startSec).toBeGreaterThanOrEqual(0);
+      expect(s.startSec).toBeLessThanOrEqual(videoDuration(iphone));
+    }
+    const first = iphone.timeline[0];
+    expect(first.start_sec).toBeTypeOf("number");
+    expect(starts[0].startSec).toBe(first.start_sec);
   });
 
   it("formats time as mm:ss", () => {

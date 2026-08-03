@@ -33,6 +33,14 @@ const TIMECODE_SELECTORS = [
   'span[class*="time"]',
 ];
 
+// Правый сайдбар страницы видео (React монтирует его клиентски). Классы — это
+// CSS-модули Woodpecker, поэтому каскад фолбэков как у плеера.
+const SIDEBAR_SELECTORS = [
+  ".side-container-module__side",
+  ".video-page-layout-module__side",
+  ".video-page-layout-module__right",
+];
+
 function first(selectors: string[]): HTMLElement | null {
   for (const sel of selectors) {
     try {
@@ -75,6 +83,27 @@ export function waitForPlayer(timeoutMs = 8000): Promise<PlayerHandle> {
       if (p.video || performance.now() - started > timeoutMs) {
         clearInterval(timer);
         resolve(capturePlayer());
+      }
+    }, 300);
+  });
+}
+
+/** Найти правый сайдбар под панель расширения (или null). */
+export function findSidebar(): HTMLElement | null {
+  return first(SIDEBAR_SELECTORS);
+}
+
+/** Ждать появления сайдбара (SPA монтирует его клиентски). Возвращает null по таймауту. */
+export function waitForSidebar(timeoutMs = 8000): Promise<HTMLElement | null> {
+  const probe = findSidebar();
+  if (probe) return Promise.resolve(probe);
+  return new Promise((resolve) => {
+    const started = performance.now();
+    const timer = window.setInterval(() => {
+      const el = findSidebar();
+      if (el || performance.now() - started > timeoutMs) {
+        clearInterval(timer);
+        resolve(findSidebar());
       }
     }, 300);
   });

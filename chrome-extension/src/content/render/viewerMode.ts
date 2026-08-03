@@ -1,8 +1,8 @@
 // [M-EXTENSION][VIEWER-MODE][START_BLOCK]
-// Режим «Зритель»: маркеры (P4) + панель текущей сцены (P4) + демо-CTA (P5).
+// Режим «Зритель»: таймлайн монетизаций (P4) + карточка текущей сцены + демо-CTA (P5).
 import type { ModeData } from "../modes";
 import type { PlayerHandle } from "../rutube";
-import { renderMarkers } from "./markers";
+import { renderMarkerTimeline, renderMarkers } from "./markers";
 import { renderSceneOverlay, currentScene } from "./sceneOverlay";
 import { renderCta } from "./cta";
 
@@ -16,7 +16,9 @@ export function renderViewer(
   title.textContent = `👁 Зритель · ${data.passport.frontmatter.seo_title || "Демо-видео"}`;
   container.append(title);
 
+  // Часто используемые типы — чипы-«атомы» для быстрой перемотки
   renderMarkers(container, player, data.passport);
+  const cleanupTimeline = renderMarkerTimeline(container, player, data.passport);
   const cleanupOverlay = renderSceneOverlay(container, player, data.passport);
 
   // CTA зависит от текущей сцены при перемотке
@@ -31,6 +33,7 @@ export function renderViewer(
   player.video?.addEventListener("timeupdate", tickCta);
 
   return () => {
+    cleanupTimeline();
     cleanupOverlay();
     player.video?.removeEventListener("timeupdate", tickCta);
   };

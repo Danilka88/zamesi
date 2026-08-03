@@ -7,7 +7,11 @@ export interface ExtensionHost {
   root: ShadowRoot;
   /** Корневой контейнер для панелей (viewer/analyst/simulation). */
   panel: HTMLElement;
+  /** Отключить наблюдатели (вызывается при демонтаже хоста). */
+  disconnect?: () => void;
 }
+
+const observers = new WeakMap<HTMLElement, MutationObserver | null>();
 
 const CSS = `
   :host { all: initial; }
@@ -48,8 +52,16 @@ const CSS = `
   .rz-toggle button.active { background: #fb5f93; color: #fff; border-color: #fb5f93; }
 `;
 
-/** Смонтировать/получить хост на выбранном контейнере. */
-export function mountHost(container: ParentNode = document.body): ExtensionHost {
+/**
+ * Смонтировать/получить хост на выбранном контейнере.
+ * opts.fixed=false — потоковое размещение внутри контейнера (например, сайдбар);
+ * opts.fixed=true — overlay поверх страницы справа вверху (фолбэк).
+ */
+export function mountHost(
+  container: ParentNode = document.body,
+  opts?: { fixed?: boolean },
+): ExtensionHost {
+  const fixed = opts?.fixed ?? true;
   const existing = document.getElementById(HOST_ID) as HTMLElement | null;
   if (existing?.shadowRoot) {
     return readHost(existing);
@@ -61,11 +73,35 @@ export function mountHost(container: ParentNode = document.body): ExtensionHost 
   style.textContent = CSS;
   const panel = document.createElement("div");
   panel.className = "rz-root";
-  panel.style.position = "absolute";
-  panel.style.zIndex = "9999";
+  if (fixed) {
+    panel.style.position = "fixed";
+    panel.style.top = "96px";
+    panel.style.right = "16px";
+    panel.style.zIndex = "2147483647";
+    panel.style.maxWidth = "360px";
+  } else {
+    panel.style.position = "static";
+    panel.style.marginBottom = "16px";
+    panel.style.maxWidth = "360px";
+  }
   shadow.append(style, panel);
   container.append(host);
-  return { host, root: shadow, panel };
+  // SPA (React Woodpecker) может перерисовать контейнер и вычистить наш хост.
+  // Наблюдаем и возвращаем его первым ребёнком (только для потокового режима).
+  let observer: MutationObserver | null = null;
+  if (!fixed && typeof MutationObserver !== "undefined") {
+    observer = new MutationObserver(() => {
+      if (!host.isConnected) container.prepend(host);
+    });
+    observer.observe(container, { childList: true });
+  }
+  observers.set(host, observer);
+  return {
+    host,
+    root: shadow,
+    panel,
+    disconnect: () => observer?.disconnect(),
+  };
 }
 
 export function readHost(host: HTMLElement): ExtensionHost {
@@ -77,10 +113,16 @@ export function readHost(host: HTMLElement): ExtensionHost {
       root.appendChild(p);
       return p;
     })();
-  return { host, root, panel };
+  const observer = observers.get(host);
+  return { host, root, panel, disconnect: () => observer?.disconnect() };
 }
 
 export function unmountHost(): void {
-  document.getElementById(HOST_ID)?.remove();
+  const host = document.getElementById(HOST_ID);
+  if (host) {
+    readHost(host).disconnect?.();
+    host.remove();
+    observers.delete(host);
+  }
 }
 // = [M-EXTENSION][SHADOW][END_BLOCK]

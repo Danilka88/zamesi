@@ -1,6 +1,6 @@
 // [M-EXTENSION][POPUP][START_BLOCK]
 // Popup: выбор демо-сценария (ручной) + автоподбор + статус. Полная логика — P8.
-import { PASSPORT_REGISTRY } from "../data/registry";
+import { PASSPORT_REGISTRY, DEFAULT_PASSPORT_ID } from "../data/registry";
 import { resolveBinding } from "../content/data/bindings";
 import "./popup.css";
 
@@ -28,6 +28,18 @@ PASSPORT_REGISTRY.forEach((entry) => {
   select.appendChild(opt);
 });
 
+// Отправка выбранного паспорта в контент-скрипт активной вкладки.
+function applyToTab(id: string, msg: string): void {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tabId = tabs[0]?.id;
+    if (tabId != null) {
+      chrome.tabs.sendMessage(tabId, { type: "rz-set-binding", id }).catch(() => {});
+    }
+    select.value = id;
+    note.textContent = msg;
+  });
+}
+
 // Автоподбор для текущей вкладки
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const tab = tabs[0];
@@ -40,21 +52,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       tab?.title?.replace(/\s+-\s+.*$/, "") || PASSPORT_REGISTRY[0]?.title || "";
     const resolved = resolveBinding(videoId, title);
     if (resolved) {
-      select.value = resolved.id;
-      note.textContent = `Авто: «${resolved.title}» под видео ${videoId}`;
+      applyToTab(resolved.id, `Авто: «${resolved.title}» под видео ${videoId}`);
     } else {
-      note.textContent = `Нет паспорта под video_id ${videoId}`;
+      // По умолчанию применяем дефолтный паспорт расширения.
+      applyToTab(DEFAULT_PASSPORT_ID, `Нет паспорта под ${videoId} — применён «${PASSPORT_REGISTRY.find((e) => e.id === DEFAULT_PASSPORT_ID)?.title}»`);
     }
   } else {
+    select.value = DEFAULT_PASSPORT_ID;
     note.textContent = "Откройте страницу видео RUTUBE, чтобы подобрать сценарий.";
   }
 });
 
 document.getElementById("bind-form")!.addEventListener("submit", (e) => {
   e.preventDefault();
-  const id = select.value;
-  chrome.storage.local.set({ rzBinding: { id, ts: Date.now() } }, () => {
-    note.textContent = `Сценарий «${id}» применён к вкладке.`;
-  });
+  applyToTab(select.value, `Сценарий «${select.value}» применён к вкладке.`);
 });
 // [M-EXTENSION][POPUP][END_BLOCK]

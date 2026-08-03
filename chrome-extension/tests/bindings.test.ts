@@ -11,9 +11,9 @@ describe("bindings", () => {
     expect(matchByVideoId(REAL_ID)?.id).toBe("tech_review");
   });
 
-  it("autoselects tech_review for the real iPhone title", () => {
+  it("autoselects iphone_50k_wylsacom for the real iPhone title", () => {
     const resolved = matchByTitle(REAL_TITLE);
-    expect(resolved?.id).toBe("tech_review");
+    expect(resolved?.id).toBe("iphone_50k_wylsacom");
     expect(resolved?.keywords.some((k) => REAL_TITLE.toLowerCase().includes(k))).toBe(true);
   });
 

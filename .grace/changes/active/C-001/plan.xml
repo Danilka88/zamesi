@@ -55,7 +55,7 @@
       <tasks>
         <task id="Phase1-T1" status="done">
           <description>Реализация core типов: JobStatus, TimelineSegment, SceneAnalysisResult, Passport, AppConfig. Pydantic v2 модели с валидацией. TimeoutManager с circuit breaker + retry + fallback chain.</description>
-          <source>src/core/schemas.py, src/core/exceptions.py, src/core/logging_config.py, src/core/timeout_manager.py, src/core/circuit_breaker.py, src/core/metrics.py, src/core/json_utils.py, src/config.py</source>
+          <source>src/core/schemas.py, src/core/exceptions.py, src/core/logging_config.py, src/core/timeout_manager.py, src/core/circuit_breaker.py, src/core/metrics.py, src/core/json_utils.py, src/core/config.py</source>
         </task>
       </tasks>
     </Phase-1>

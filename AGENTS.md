@@ -41,7 +41,7 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/core/timeout_manager.py` — Timeout, retry, fallback chain
 - `src/core/exceptions.py` — 13 custom exception types
 - `src/core/logging_config.py` — structlog config with correlation_id
-- `src/config.py` — YAML config loader
+- `src/core/config.py` — YAML config loader
 - `src/audio_engine/pyav_reader.py` — Audio + I-frame extraction
 - `src/audio_engine/whisper_asr.py` — Whisper.cpp ASR
 - `src/audio_engine/diarization_speechbrain.py` — Speaker diarization (SpeechBrain ECAPA)

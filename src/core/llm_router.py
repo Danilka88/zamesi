@@ -91,7 +91,10 @@ class LLMRouter:
 
             provider_type = provider_cfg.get("type", "ollama")
             if provider_type not in ("ollama", "openai"):
-                log.warning("[M-CORE][LLM][PROVIDER_SKIP]", provider=pname, type=provider_type, reason="unsupported_type")
+                log.warning(
+                    "[M-CORE][LLM][PROVIDER_SKIP]",
+                    provider=pname, type=provider_type, reason="unsupported_type",
+                )
                 last_error = ConfigError(f"Unknown provider type '{provider_type}' for '{pname}'")
                 continue
 

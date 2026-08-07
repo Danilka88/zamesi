@@ -6,10 +6,10 @@ from src.semantic_analyzer.llm_client import generate_frontmatter
 
 
 # START_BLOCK: M-PASSPORT/FRONTMATTER/BUILD
-async def build_frontmatter(video_id: str, full_transcript: str, log=None) -> PassportFrontmatter:
+async def build_frontmatter(video_id: str, full_transcript: str, genre: str = "", log=None) -> PassportFrontmatter:
     log = log or get_logger()
     try:
-        raw_json = await generate_frontmatter(full_transcript, log=log)
+        raw_json = await generate_frontmatter(full_transcript, genre=genre, log=log)
         data = json.loads(raw_json)
         return PassportFrontmatter(
             video_id=video_id,

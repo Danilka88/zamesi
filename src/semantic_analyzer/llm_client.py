@@ -75,11 +75,14 @@ async def analyze_vision_segment(asr_text: str, image_path: str, log=None) -> st
 # END_BLOCK: M-SEMANTIC/QWEN/ANALYZE_VISION
 
 
-async def generate_frontmatter(full_transcript: str, log=None) -> str:
+async def generate_frontmatter(full_transcript: str, genre: str = "", log=None) -> str:
     log = log or get_logger()
     from src.semantic_analyzer.prompt_templates import FRONTMATTER_SYSTEM, FRONTMATTER_USER
 
-    user_prompt = FRONTMATTER_USER.format(full_transcript=full_transcript[:8000])
+    user_prompt = FRONTMATTER_USER.format(
+        full_transcript=full_transcript[:8000],
+        genre=genre or "unknown",
+    )
     full_prompt = f"{FRONTMATTER_SYSTEM}\n\n{user_prompt}"
 
     raw = await timeout_manager.call_llm(

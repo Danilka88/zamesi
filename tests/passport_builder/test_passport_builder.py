@@ -2,7 +2,9 @@
 import pytest
 
 from src.core.schemas import (
+    CelebrityVoice,
     MonetizationItem,
+    MusicMatch,
     Passport,
     PassportFrontmatter,
     SceneAnalysisResult,
@@ -137,3 +139,82 @@ def test_passport_to_markdown_monetization_items():
     assert "AD_SLOT" in md
     assert "Уверенность: 85%" in md
     assert "Таргетинг" in md
+
+
+def test_passport_to_markdown_includes_audio_and_celebrity():
+    passport = Passport(
+        frontmatter=PassportFrontmatter(video_id="audio_test", domain_type="game_review"),
+        timeline=[],
+        raw_timeline_segments=[],
+        audio_matches=[
+            MusicMatch(track_name="Sound of Silence", artist="Disturbed", confidence=0.93, genre="rock", year=2015),
+            MusicMatch(track_name="Hurt", artist="Nine Inch Nails", confidence=0.81),
+        ],
+        celebrity_voice=CelebrityVoice(name="Дмитрий Нагиев", profession="актёр", confidence=0.87),
+    )
+    md = passport_to_markdown(passport)
+    assert "# Музыка" in md
+    assert "Disturbed — Sound of Silence" in md
+    assert "уверенность: 93%" in md
+    assert "Nine Inch Nails — Hurt" in md
+    assert "# Знаменитость" in md
+    assert "Дмитрий Нагиев" in md
+    assert "актёр" in md
+
+
+def test_passport_to_markdown_no_audio_celebrity():
+    passport = Passport(
+        frontmatter=PassportFrontmatter(video_id="plain", domain_type="how_to"),
+        timeline=[],
+        raw_timeline_segments=[],
+    )
+    md = passport_to_markdown(passport)
+    assert "Треки не найдены" in md
+    assert "Знаменитость не распознана" in md
+
+
+def test_passport_roundtrip_audio_and_celebrity():
+    passport = Passport(
+        frontmatter=PassportFrontmatter(video_id="rt", domain_type="travel_vlog"),
+        timeline=[],
+        raw_timeline_segments=[],
+        audio_matches=[MusicMatch(track_name="t", artist="a", confidence=0.7, genre="g", album="al", year=2020)],
+        celebrity_voice=CelebrityVoice(name="n", profession="p", confidence=0.8),
+    )
+    dumped = passport.model_dump_json(indent=2)
+    assert '"audio_matches"' in dumped
+    assert '"celebrity_voice"' in dumped
+    restored = Passport.model_validate_json(dumped)
+    assert restored.audio_matches[0].artist == "a"
+    assert restored.celebrity_voice.name == "n"
+
+
+@pytest.mark.asyncio
+async def test_build_passport_fills_scene_timing(monkeypatch, sample_timeline, sample_scenes):
+    async def fake_frontmatter(*a, **kw):
+        return PassportFrontmatter(video_id="timing", domain_type="how_to")
+
+    monkeypatch.setattr("src.passport_builder.passport_builder.build_frontmatter", fake_frontmatter)
+    passport = await build_passport("timing", sample_timeline, sample_scenes)
+    assert passport.timeline[0].start_sec == 0.0
+    assert passport.timeline[0].end_sec == 10.0
+    assert passport.timeline[1].start_sec == 10.0
+    assert passport.timeline[1].end_sec == 20.0
+
+
+@pytest.mark.asyncio
+async def test_build_passport_stores_audio_and_celebrity(monkeypatch, sample_timeline, sample_scenes):
+    async def fake_frontmatter(*a, **kw):
+        return PassportFrontmatter(video_id="audio", domain_type="game_review")
+
+    monkeypatch.setattr("src.passport_builder.passport_builder.build_frontmatter", fake_frontmatter)
+    passport = await build_passport(
+        "audio",
+        sample_timeline,
+        sample_scenes,
+        music_matches=[MusicMatch(track_name="t", artist="a", confidence=0.9)],
+        celebrity_voice=CelebrityVoice(name="celeb", profession="", confidence=0.7),
+    )
+    assert len(passport.audio_matches) == 1
+    assert passport.audio_matches[0].track_name == "t"
+    assert passport.celebrity_voice.name == "celeb"

@@ -30,6 +30,26 @@ def test_keyword_fallback_prefers_first_match():
     assert genre == VideoGenre.podcast
 
 
+def test_keyword_fallback_game_review():
+    genre = _keyword_fallback("геймплей Atomic Heart на максималках")
+    assert genre == VideoGenre.game_review
+
+
+def test_keyword_fallback_travel_vlog():
+    genre = _keyword_fallback("отпуск во Вьетнаме, зимовка")
+    assert genre == VideoGenre.travel_vlog
+
+
+def test_keyword_fallback_entertainment():
+    genre = _keyword_fallback("обсуждение нового сериала на выходных")
+    assert genre == VideoGenre.entertainment
+
+
+def test_keyword_fallback_diy_crafts():
+    genre = _keyword_fallback("мастер-класс по изготовлению рамки")
+    assert genre == VideoGenre.diy_crafts
+
+
 @pytest.mark.asyncio
 async def test_classify_success(monkeypatch):
     async def fake_ollama(**kwargs):

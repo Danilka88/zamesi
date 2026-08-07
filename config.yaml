@@ -115,6 +115,22 @@ genres:
       description: "сделай сам, крафт, хендмейд, рукоделие"
       vision_blocked: false
       fallback_keywords: ["своими руками", "diy", "handmade"]
+    - id: diy_crafts
+      description: "поделки, мастер-классы по изготовлению, хобби-проекты"
+      vision_blocked: false
+      fallback_keywords: ["поделка", "мастер-класс", "хобби", "крафт"]
+    - id: game_review
+      description: "обзор или прохождение компьютерной игры, гейминг"
+      vision_blocked: false
+      fallback_keywords: ["обзор игры", "геймплей", "прохождение", "киберспорт", "летсплей"]
+    - id: travel_vlog
+      description: "тревел-влог, путешествия, жизнь за границей"
+      vision_blocked: false
+      fallback_keywords: ["путешеств", "тревел", "отпуск", "переезд", "зимовка"]
+    - id: entertainment
+      description: "развлечения: кино, сериалы, шоу, обзор фильма"
+      vision_blocked: false
+      fallback_keywords: ["фильм", "кино", "сериал", "кинообзор"]
     - id: true_crime
       description: "криминал, детектив, расследование"
       vision_blocked: true

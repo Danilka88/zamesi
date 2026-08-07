@@ -41,7 +41,12 @@ PASS1_TEXT_SYSTEM = """Ты — AI-аналитик видеоконтента �
 - EVENT_TICKET: если трек/исполнитель ассоциируется с концертами/событиями
 - CELEBRITY_APPEARANCE: если в сцене участвует известная личность (из поля "Известные личности")
 - Если действие полностью понятно из текста → requires_vision: false
-- Если есть неопределённые местоимения ("эта штука", "сюда", "такой") → requires_vision: true"""
+- Если есть неопределённые местоимения ("эта штука", "сюда", "такой") → requires_vision: true
+- Жанр видео указан в поле {genre}. Используй его как подсказку контекста:
+  - travel_vlog / путешествия: ищи авиабилеты, отели, туры, экскурсии, трансферы (event_ticket / ecom_item)
+  - game_review / игры: ищи саму игру, DLC, игровые аксессуары, мерч (ecom_item / artist_merch)
+  - tech_review / техника: ищи гаджеты, аксессуары, сравнения цен (ecom_item / ad_slot)
+  - food / кулинария: ищи продукты, кухонную технику, рестораны (ecom_item / ad_slot)"""
 
 PASS1_TEXT_USER = """Жанр видео: {genre}
 Сегмент ASR: "{asr_text}"
@@ -64,7 +69,7 @@ FRONTMATTER_SYSTEM = """Ты — SEO-специалист видеоплатфо
 
 Поля:
 {
-  "domain_type": "how_to_repair | product_review | true_crime | education | podcast | tech_review | diy | unknown",
+  "domain_type": "tech_review | product_review | review | how_to | how_to_repair | diy | diy_crafts | game_review | travel_vlog | entertainment | movie_review | true_crime | education | podcast | lecture | stream | unknown",
   "brand_safety_score": 0-100,
   "seo_title": "заголовок для поиска (до 100 символов)",
   "seo_tags": ["тег1", "тег2", "тег3", "тег4", "тег5"],
@@ -72,10 +77,19 @@ FRONTMATTER_SYSTEM = """Ты — SEO-специалист видеоплатфо
   "target_audience": ["категория1", "категория2"],
   "auto_playlists": [{"id": "pl_...", "order_index": N, "reason": "почему"}],
   "ad_targeting_keywords": ["ключ1", "ключ2"]
-}"""
+}
+
+Правила:
+- domain_type выбери сам по содержанию видео — это твоё решение, а не подсказка извне.
+- Для game_review: seo_title должен содержать название игры (расширение извлекает его из заголовка).
+- Для travel_vlog: seo_title должен содержать страну/город (расширение извлекает направление из заголовка),
+  а ad_targeting_keywords — авиабилеты, отели, туры, экскурсии, трансфер.
+- ad_targeting_keywords заполняй максимально полно: конкретные товары, бренды, услуги, связанные с контентом."""
 
 FRONTMATTER_USER = """Полный транскрипт видео:
 {full_transcript}
+
+Жанр видео (подсказка, не ограничение): {genre}
 
 Сгенерируй SEO-метаданные в JSON."""
 # END_BLOCK: M-SEMANTIC/PROMPTS/CONSTANTS

@@ -16,7 +16,7 @@
     <type name="TrackMetadata">Метаданные трека: artist, track_name, afisha_urls, merch_urls, events</type>
     <type name="ClipCandidate">Кандидат на нарезку: hook, time_range, virality_potential</type>
     <type name="OCRResult">Результат OCR: text, confidence, bbox, timestamp</type>
-    <type name="Passport">Финальный .md паспорт с фронтмэттером и таймлайном</type>
+    <type name="Passport">Финальный паспорт: frontmatter, timeline, raw_timeline_segments, audio_matches, celebrity_voice</type>
     <type name="PassportFrontmatter">YAML-фронтмэттер: video_id, domain_type, brand_safety_score, seo_title</type>
     <type name="JobMetrics">Метрики пайплайна: total_segments, vlm_calls, vlm_percent, duration_sec</type>
     <type name="JobResult">Результат job: job_id, status, passport, metrics, timestamps</type>

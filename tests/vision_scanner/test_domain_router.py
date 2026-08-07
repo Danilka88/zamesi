@@ -28,3 +28,19 @@ def test_is_vision_blocked_howto():
 
 def test_is_vision_blocked_unknown():
     assert is_vision_blocked(VideoGenre.unknown) is False
+
+
+def test_is_vision_blocked_game_review():
+    assert is_vision_blocked(VideoGenre.game_review) is False
+
+
+def test_is_vision_blocked_travel_vlog():
+    assert is_vision_blocked(VideoGenre.travel_vlog) is False
+
+
+def test_is_vision_blocked_entertainment():
+    assert is_vision_blocked(VideoGenre.entertainment) is False
+
+
+def test_is_vision_blocked_diy_crafts():
+    assert is_vision_blocked(VideoGenre.diy_crafts) is False

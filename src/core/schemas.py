@@ -13,9 +13,37 @@ class VideoGenre(str, Enum):
     stream = "stream"
     tech_review = "tech_review"
     diy = "diy"
+    diy_crafts = "diy_crafts"
+    game_review = "game_review"
+    travel_vlog = "travel_vlog"
+    entertainment = "entertainment"
     true_crime = "true_crime"
     education = "education"
     unknown = "unknown"
+
+
+# Канонический словарь доменов, которые LLM может вернуть в frontmatter.
+# Используется только как документация/справочник для промптов — домен
+# определяет исключительно LLM, жёсткой валидации по enum нет.
+DOMAIN_TYPES = (
+    "tech_review",
+    "product_review",
+    "review",
+    "how_to",
+    "how_to_repair",
+    "diy",
+    "diy_crafts",
+    "game_review",
+    "travel_vlog",
+    "entertainment",
+    "movie_review",
+    "true_crime",
+    "education",
+    "podcast",
+    "lecture",
+    "stream",
+    "unknown",
+)
 
 
 class JobStatus(str, Enum):
@@ -119,6 +147,8 @@ class SceneAnalysisResult(BaseModel):
     clip_candidate: ClipCandidate | None = None
     fallback_used: str | None = None
     processing_time_sec: float = 0.0
+    start_sec: float | None = None
+    end_sec: float | None = None
 
     @staticmethod
     def build_monetization(parsed: dict) -> list[MonetizationItem]:
@@ -143,6 +173,8 @@ class Passport(BaseModel):
     frontmatter: PassportFrontmatter
     timeline: list[SceneAnalysisResult]
     raw_timeline_segments: list[TimelineSegment] = []
+    audio_matches: list[MusicMatch] = []
+    celebrity_voice: CelebrityVoice | None = None
 
 
 class JobMetrics(BaseModel):

@@ -46,13 +46,23 @@ moderation:
 # Таймлайн и монетизация
 
 {timeline_md}
+
+# Музыка
+
+{music_md}
+
+# Знаменитость
+
+{celebrity_md}
 """
 
 
 def _scene_to_md(i: int, scene: SceneAnalysisResult, seg: TimelineSegment | None) -> str:
     lines = []
-    start_str = f"{int(seg.start_sec // 60):02d}:{int(seg.start_sec % 60):02d}" if seg else f"scene_{i}"
-    end_str = f"{int(seg.end_sec // 60):02d}:{int(seg.end_sec % 60):02d}" if seg else ""
+    start_sec = scene.start_sec if scene.start_sec is not None else (seg.start_sec if seg else None)
+    end_sec = scene.end_sec if scene.end_sec is not None else (seg.end_sec if seg else None)
+    start_str = f"{int(start_sec // 60):02d}:{int(start_sec % 60):02d}" if start_sec is not None else f"scene_{i}"
+    end_str = f"{int(end_sec // 60):02d}:{int(end_sec % 60):02d}" if end_sec is not None else ""
     header = f"## [{start_str} - {end_str}] {scene.scene_summary}" if end_str else f"## {scene.scene_summary}"
     lines.append(header)
 
@@ -114,7 +124,15 @@ async def build_passport(
     log = log or get_logger()
     full_transcript = "\n".join(s.text for s in timeline_segments if s.text)
 
-    frontmatter = await build_frontmatter(video_id, full_transcript, log=log)
+    frontmatter = await build_frontmatter(video_id, full_transcript, genre=genre, log=log)
+
+    for i, scene in enumerate(scene_results):
+        if i < len(timeline_segments):
+            seg = timeline_segments[i]
+            if scene.start_sec is None:
+                scene.start_sec = seg.start_sec
+            if scene.end_sec is None:
+                scene.end_sec = seg.end_sec
 
     scene_summaries = "\n".join(
         f"[{i}] {s.scene_summary}" for i, s in enumerate(scene_results)
@@ -135,6 +153,8 @@ async def build_passport(
         frontmatter=frontmatter,
         timeline=scene_results,
         raw_timeline_segments=timeline_segments,
+        audio_matches=music_matches or [],
+        celebrity_voice=celebrity_voice,
     )
 
     errors = validate(passport, log=log)
@@ -152,6 +172,31 @@ async def build_passport(
 
     return passport
 # END_BLOCK: M-PASSPORT/BUILDER/BUILD_PASSPORT
+
+
+def _music_to_md(matches: list[MusicMatch]) -> str:
+    if not matches:
+        return "_Треки не найдены_"
+    lines = []
+    for m in matches:
+        meta = " · ".join(
+            x for x in [m.genre or "", m.album or "", str(m.year) if m.year else ""] if x
+        )
+        line = f"* **{m.artist} — {m.track_name}** (уверенность: {m.confidence:.0%})"
+        if meta:
+            line += f" — {meta}"
+        lines.append(line)
+    return "\n".join(lines)
+
+
+def _celebrity_to_md(voice: CelebrityVoice | None) -> str:
+    if not voice:
+        return "_Знаменитость не распознана_"
+    line = f"* **{voice.name}**"
+    if voice.profession:
+        line += f" — {voice.profession}"
+    line += f" (уверенность: {voice.confidence:.0%})"
+    return line
 
 
 # START_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
@@ -178,6 +223,8 @@ def passport_to_markdown(passport: Passport) -> str:
         moderation_flags_count=len(mod.flags) if mod else 0,
         moderation_summary=_escape_yaml_value(mod.summary) if mod else "",
         timeline_md=timeline_md,
+        music_md=_music_to_md(passport.audio_matches),
+        celebrity_md=_celebrity_to_md(passport.celebrity_voice),
     )
 # END_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
 

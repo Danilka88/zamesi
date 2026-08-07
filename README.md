@@ -338,6 +338,10 @@ MP4
 
 Оба файла записываются в `passport.output_dir` (по умолчанию `./output/`).
 
+`.md` также содержит секции **«Музыка»** (треки из `audio_matches`: артист — трек, жанр/альбом/год, уверенность) и **«Знаменитость»** (`celebrity_voice`); тайминги сцен берутся из `scene.start_sec/end_sec` (заполняются из `raw_timeline_segments`).
+
+**Demo-артефакты:** `python scripts/generate_demo_outputs.py` сериализует 7 паспортов из `chrome-extension/src/data/passports/` через канонический контракт `Passport` в `output/{video_id}.json` + `.md` — как если бы их реализовала сама система (audio_matches/celebrity_voice сохраняются).
+
 ---
 
 ### Семантический поиск (VideoRAG)

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module-graph id="M-VISION" name="Vision Scanner" type="PROCESSOR" status="built">
-  <Purpose>OCR (RapidOCR v4), GenreClassifier (LLM-driven), DomainRouter (жанровая блокировка VLM)</Purpose>
+  <Purpose>OCR (RapidOCR v4), жанровая классификация (LLM classify + keyword fallback), DomainRouter (жанровая блокировка VLM). classify/_keyword_fallback объединены в domain_router.py (ранее genre_classifier.py)</Purpose>
   <Source path="src/vision_scanner/"/>
   <Test path="tests/vision_scanner/"/>
   <Exports>
     <function name="detect_genre">Классификация жанра через LLM (qwen3.5:0.8b) с keyword fallback</function>
     <function name="is_vision_blocked">Проверка: блокировать ли VLM для данного жанра</function>
     <function name="process_frames">RapidOCR v4: распознавание текста на I-frame</function>
-    <function name="classify">LLM-driven классификация жанра с keyword fallback</function>
+    <function name="classify">LLM-driven классификация жанра (domain_router.py) с keyword fallback</function>
+    <function name="_keyword_fallback">Детерминированный fallback по fallback_keywords из config.genres</function>
   </Exports>
   <Classes>
     <class name="OCRBuffer">Буфер OCR-результатов с окном ±5с для дедупликации</class>

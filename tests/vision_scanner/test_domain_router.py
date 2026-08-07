@@ -1,6 +1,5 @@
 from src.core.schemas import VideoGenre
-from src.vision_scanner.domain_router import is_vision_blocked
-from src.vision_scanner.genre_classifier import _keyword_fallback
+from src.vision_scanner.domain_router import _keyword_fallback, is_vision_blocked
 
 
 def test_keyword_fallback_podcast():

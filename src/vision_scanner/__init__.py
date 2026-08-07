@@ -5,8 +5,7 @@
 # DEPENDS: M-CORE
 # LINKS: .grace/graph/index.xml | .grace/context/requirements.xml | .grace/verification/index.xml
 # START_BLOCK: M-VISION/INIT
-from src.vision_scanner.domain_router import detect_genre, is_vision_blocked
-from src.vision_scanner.genre_classifier import classify
+from src.vision_scanner.domain_router import classify, detect_genre, is_vision_blocked
 from src.vision_scanner.ocr_buffer import OCRBuffer
 from src.vision_scanner.rapid_ocr import process_frames
 

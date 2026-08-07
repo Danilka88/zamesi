@@ -10,17 +10,22 @@
     <function name="resolveBinding">Подбор паспорта: ручной выбор + автоподбор по keywords/video_id</function>
     <function name="mountHost">Монтаж Shadow DOM-хоста с изоляцией стилей (CSS-изоляция NFR-6)</function>
     <function name="renderMarkers">Маркеры монетизаций на прогресс-баре, клик=seek</function>
+    <function name="renderMarkerTimeline">Таймлайн-маркеры сцен и меток (расширенный вид)</function>
+    <function name="renderViewer">Рендер режима viewer: базовые оверлеи</function>
     <function name="renderSceneOverlay">Плавающая панель текущей сцены</function>
     <function name="renderCta">Демо-CTA: товар/билет/афиша/мерч</function>
     <function name="renderAnalyst">Сайдбар аналитика: монетизации/модерация/аудио/метрики</function>
     <function name="renderSimulation">Анимированный разбор ASR→сцены→метки</function>
     <function name="ModesController">Оркестрация 3 режимов (viewer/analyst/simulation)</function>
     <function name="DataProvider">Контракт данных: Demo/Real(stub)</function>
-    <function name="mountGameOffer">Игровой оффер: карточка «купить/играть в облаке» после meta-row для game_review</function>
+    <function name="mountGameOfferCard">Игровой оффер: карточка «купить/играть в облаке» после meta-row для game_review</function>
     <function name="detectGameContext">Детект игрового видео + извлечение названия игры (passport/category/hashtags)</function>
-    <function name="mountTravelOffer">Тревел-оффер: карточка «билеты из Краснодара» после meta-row для travel_vlog</function>
+    <function name="extractGameName">Извлечение названия игры из паспорта/category/hashtags</function>
+    <function name="unmountGameOfferCard">Удаление игрового оффера при смене контекста</function>
+    <function name="mountTravelOfferCard">Тревел-оффер: карточка «билеты из Краснодара» после meta-row для travel_vlog</function>
     <function name="detectTravelContext">Детект тревел-видео + извлечение направления из заголовка</function>
     <function name="extractTravelDestination">Извлечение города/страны из заголовка («…в Нячанге» → «Нячанг»)</function>
+    <function name="unmountTravelOfferCard">Удаление тревел-оффера при смене контекста</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

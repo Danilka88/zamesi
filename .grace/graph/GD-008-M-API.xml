@@ -4,13 +4,13 @@
   <Source path="src/api/"/>
   <Test path="tests/api/"/>
   <Exports>
-    <function name="post_analyze">POST /analyze — загрузка видео, старт пайплайна</function>
+    <function name="analyze">POST /analyze — загрузка видео, старт пайплайна</function>
     <function name="get_result">GET /analyze/{job_id} — результат</function>
     <function name="get_status">GET /analyze/{job_id}/status — статус обработки</function>
     <function name="get_markdown">GET /analyze/{job_id}/markdown — готовый .md паспорт</function>
-    <function name="get_search">GET /search — семантический поиск (SearchResult[])</function>
-    <function name="post_search_reindex">POST /search/reindex — переиндексация</function>
-    <function name="post_mix">POST /mix — создание микса</function>
+    <function name="search">GET /search — семантический поиск (SearchResult[])</function>
+    <function name="reindex">POST /search/reindex — переиндексация</function>
+    <function name="create_mix">POST /mix — создание микса</function>
     <function name="get_mix">GET /mix/{id} — результат микса</function>
     <function name="get_mix_markdown">GET /mix/{id}/markdown — Markdown микса</function>
     <function name="get_health">GET /health — healthcheck</function>

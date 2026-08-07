@@ -48,11 +48,10 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/audio_engine/timeline_merger.py` — ASR + diarization merge
 - `src/audio_engine/audio_fingerprinter.py` — Music fingerprinting (librosa) + celebrity voice recognition (ECAPA embeddings)
 - `src/vision_scanner/rapid_ocr.py` — OCR on I-frames
-- `src/vision_scanner/domain_router.py` — Genre classification, VLM gate
+- `src/vision_scanner/domain_router.py` — Genre classification (LLM classify + keyword fallback), VLM gate
 - `src/vision_scanner/ocr_buffer.py` — OCR dedup buffer ±5s
 - `src/semantic_analyzer/llm_client.py` — Ollama API calls
 - `src/semantic_analyzer/prompt_templates.py` — All LLM prompts
-- `src/vision_scanner/genre_classifier.py` — LLM-driven genre classification
 - `src/semantic_analyzer/scene_analyzer.py` — Pass 1 + Pass 2, VLM Gatekeeper
 - `src/passport_builder/frontmatter_generator.py` — YAML frontmatter
 - `src/passport_builder/validator.py` — .md structure validation

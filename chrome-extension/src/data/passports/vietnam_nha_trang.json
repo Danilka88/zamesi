@@ -1,0 +1,501 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_vietnam_nha_trang_001",
+    "domain_type": "travel_vlog",
+    "brand_safety_score": 91,
+    "target_audience": [
+      "планирующие жизнь за границей",
+      "релоцированные в Азию",
+      "путешественники во Вьетнам",
+      "семьи с детьми, зимующие за рубежом",
+      "цифровые кочевники"
+    ],
+    "seo_title": "Вьетнам: сколько стоит жить в Нячанге? Честные цены 2026 — аренда, продукты, экскурсии",
+    "seo_tags": [
+      "Нячанг",
+      "Вьетнам жизнь",
+      "стоимость жизни Вьетнам",
+      "цены в Нячанге",
+      "аренда квартиры Вьетнам",
+      "переезд в Азию",
+      "вьетнам донги",
+      "экскурсии Нячанг",
+      "зимовка во Вьетнаме"
+    ],
+    "trending_cluster": "travel/expat/life-in-vietnam",
+    "auto_playlists": [
+      {
+        "id": "life_in_vietnam_2026",
+        "order_index": 0,
+        "reason": "честный разбор бюджета жизни в Нячанге востребован аудиторией, планирующей релокацию"
+      },
+      {
+        "id": "expat_guides_asia",
+        "order_index": 1,
+        "reason": "подробное видео с ценами, перелетом и экскурсиями подойдёт переезжающим"
+      },
+      {
+        "id": "travel_excursions_2026",
+        "order_index": 2,
+        "reason": "блок с обзорами экскурсий (туры, пляжи, озёрная рыбалка) для досуга туристов"
+      }
+    ],
+    "ad_targeting_keywords": [
+      "вьетнам",
+      "нячанг",
+      "переезд за границу",
+      "жизнь в азии",
+      "цены продукты",
+      "аренда квартиры",
+      "авиабилеты вьетнам",
+      "экскурсии нячанг",
+      "туры во вьетнам",
+      "зимовка",
+      "валюта донг",
+      "отель нячанг"
+    ],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 91,
+      "summary": "Безопасный контент: тревел-влог о стоимости жизни в Нячанге. Нет спорных тем, насилия или возрастных ограничений."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: жилой комплекс «Океанус» на севере Нячанга, семья Артур/Настя/сын Леон после переезда",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": "жизнь во вьетнаме блог",
+          "reason": "Автоматическое определение: тревел-влог жизнь во вьетнаме",
+          "confidence": 0.82
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.4
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Стоимость аренды трёхкомнатной квартиры в Нячанге — около 650 долларов плюс обслуживание дома",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "аренда квартиры нячанг",
+          "reason": "Автоматическое определение: аренда квартиры нячанг",
+          "confidence": 0.78
+        },
+        {
+          "type": "ad_slot",
+          "search_query": "переезд во вьетнам",
+          "reason": "Автоматическое определение: переезд во вьетнам",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.1
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Платежи: электричество с двумя кондиционерами около 650 в месяц, обслуживание дома, интернет",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.6
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Продуктовые цены: курица около 4 долларов, молоко 2 доллара, яйца, тропические фрукты дешевле",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "продукты вьетнам маркет цена",
+          "reason": "Автоматическое определение: продукты вьетнам маркет",
+          "confidence": 0.78
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Сколько стоит корзина продуктов в месяц в Нячанге?",
+        "time_range_start": 170,
+        "time_range_end": 230,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.2
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Семейная шашлычная: порция на 2-3 человек за 25 долларов, атмосфера ужина",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "где поесть в нячанге вкусно",
+          "reason": "Автоматическое определение: где поесть в нячанге",
+          "confidence": 0.66
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Месячный бюджет на еду для семьи — около 800 долларов при готовке дома, разбор цен",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": "бюджет на еду вьетнам",
+          "reason": "Автоматическое определение: бюджет на еду вьетнам",
+          "confidence": 0.74
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Полный счёт за месяц еды на семью: укладывается ли в 800 долларов?",
+        "time_range_start": 360,
+        "time_range_end": 420,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.0
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Детские расходы: подгузники, детская комната, педиатрия и УЗИ около 15 долларов",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "детские подгузники вьетнам цена",
+          "reason": "Автоматическое определение: детские подгузники вьетнам",
+          "confidence": 0.62
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Интервью с Артёмом: аренда студии, цена около 300 тысяч донг в месяц, включая интернет и коммунальные",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Разговор о курсе вьетнамского донга и обмене валют для жизни в цифровой формате",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": "курс вьетнамский донг рубль",
+          "reason": "Автоматическое определение: курс донг рубль",
+          "confidence": 0.8
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Семья Вика и партнёр: двухкомнатная квартира около 80 квадратов за 15.5 миллиона донг с коммунальными",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "двухкомнатная квартира нячанг аренда",
+          "reason": "Автоматическое определение: двухкомнатная квартира нячанг",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Прогулка по рынку: овощи, фрукты, сравнение цен с российскими",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "рынок нячанг продукты овощи",
+          "reason": "Автоматическое определение: рынок нячанг",
+          "confidence": 0.75
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Экскурсия от ВТУР и iТУР: маяк, скалы, дикий пляж Баймонг, купание у подножья скал",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "экскурсия нячанг тур вьетнам",
+          "reason": "Автоматическое определение: экскурсия нячанг тур",
+          "confidence": 0.88
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Честная экскурсия: где мы искупались и что посмотрели?",
+        "time_range_start": 1000,
+        "time_range_end": 1050,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.4
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Отзывы туристов об экскурсии: положительные эмоции, дикий пляж, запущенный дрон",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.5
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ссылка на iтур и озёрная рыбалка: ведущий ничего не поймал, но рекомендует выбор экскурсий",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "рыбалка нячанг озёрная тур",
+          "reason": "Автоматическое определение: рыбалка нячанг тур",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.6
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Камео с Арсеном: 72 отеля в списке, больше 130 за 3 года в разных странах, мотивация",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": "обзоры отелей вьетнам",
+          "reason": "Автоматическое определение: обзоры отелей вьетнам",
+          "confidence": 0.6
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": true,
+      "scene_summary": "Обзор отелей Нячанга по уровням: Весна, Квин Нячанг, Шilla-Нячанг, Чамтраж, Deember, Wimperial Bch",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "отель нячанг забронировать",
+          "reason": "Автоматическое определение: отели нячанг забронировать",
+          "confidence": 0.85
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.5
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Аутро: «Vietnam life everyday», итог и призыв подписаться",
+      "monetization": [],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.4
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "Ведущая (тревел-блог)",
+      "start_sec": 0,
+      "end_sec": 8,
+      "text": "Мы так и живём в новой квартире в жилом комплексе «Океанус» на севере Нячанга.",
+      "word_timestamps": [
+        { "word": "Мы", "start_sec": 0, "end_sec": 0.5 },
+        { "word": "живём", "start_sec": 0.5, "end_sec": 1.2 },
+        { "word": "в", "start_sec": 1.2, "end_sec": 1.6 },
+        { "word": "квартире", "start_sec": 1.6, "end_sec": 2.4 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 55,
+      "end_sec": 70,
+      "text": "Квартира в три комнаты с детьми, аренда шестьсот пятьдесят долларов в месяц плюс обслуживание дома.",
+      "word_timestamps": [
+        { "word": "Квартира", "start_sec": 55, "end_sec": 55.8 },
+        { "word": "в", "start_sec": 55.8, "end_sec": 56.4 },
+        { "word": "три", "start_sec": 56.4, "end_sec": 57.2 },
+        { "word": "комнаты", "start_sec": 57.2, "end_sec": 59 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 126,
+      "end_sec": 140,
+      "text": "Электричество ключевая строка, платим при двух кондиционерах около шестисот пятидесяти в месяц.",
+      "word_timestamps": [
+        { "word": "Электричество", "start_sec": 126, "end_sec": 126.8 },
+        { "word": "ключевая", "start_sec": 126.8, "end_sec": 127 },
+        { "word": "позиция", "start_sec": 127, "end_sec": 129 },
+        { "word": "платим", "start_sec": 129, "end_sec": 130 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 200,
+      "end_sec": 230,
+      "text": "Покупаем домашние продукты, так дешевле чем в России: куриное филе около четырёх долларов, литр молока за два.",
+      "word_timestamps": [
+        { "word": "Куриное", "start_sec": 200, "end_sec": 201 },
+        { "word": "филе", "start_sec": 201, "end_sec": 202 },
+        { "word": "около", "start_sec": 202, "end_sec": 202.6 },
+        { "word": "четырёх", "start_sec": 202.6, "end_sec": 204 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 360,
+      "end_sec": 385,
+      "text": "Еда всей семьи в месяц около восьмисот долларов дома, если готовим сами.",
+      "word_timestamps": [
+        { "word": "Еда", "start_sec": 360, "end_sec": 360.8 },
+        { "word": "для", "start_sec": 360.8, "end_sec": 361.6 },
+        { "word": "семьи", "start_sec": 361.6, "end_sec": 363 },
+        { "word": "около", "start_sec": 363, "end_sec": 364 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 470,
+      "end_sec": 500,
+      "text": "Детские вещи стоят недорого: подгузники, педиатрия и УЗИ около пятнадцати долларов.",
+      "word_timestamps": [
+        { "word": "Детские", "start_sec": 470, "end_sec": 471 },
+        { "word": "вещи", "start_sec": 471, "end_sec": 472.2 },
+        { "word": "стоят", "start_sec": 472.2, "end_sec": 473.5 }
+      ]
+    },
+    {
+      "speaker": "Артём",
+      "start_sec": 620,
+      "end_sec": 660,
+      "text": "Я снимаю студию в Нячанге. Ориентировочно триста в месяц: квартира, интернет, коммунальные.",
+      "word_timestamps": [
+        { "word": "Я", "start_sec": 620, "end_sec": 620.5 },
+        { "word": "снимаю", "start_sec": 620.5, "end_sec": 622 },
+        { "word": "студию", "start_sec": 622, "end_sec": 624 }
+      ]
+    },
+    {
+      "speaker": "Диктор (телеграм-курс)",
+      "start_sec": 830,
+      "end_sec": 860,
+      "text": "Деньги можно менять через онлайн-обменник, рубли на донги по хорошему курсу.",
+      "word_timestamps": [
+        { "word": "Деньги", "start_sec": 830, "end_sec": 831 },
+        { "word": "менять", "start_sec": 831, "end_sec": 832 }
+      ]
+    },
+    {
+      "speaker": "Девушка Вика",
+      "start_sec": 900,
+      "end_sec": 940,
+      "text": "Мы с партнёром живём в двухкомнатной около восьмидесяти метров, выходит порядка пятнадцати и полмиллиона донг с коммунальными.",
+      "word_timestamps": [
+        { "word": "Мы", "start_sec": 900, "end_sec": 901 },
+        { "word": "с", "start_sec": 901, "end_sec": 901.6 },
+        { "word": "партнёром", "start_sec": 901.6, "end_sec": 903 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 1030,
+      "end_sec": 1070,
+      "text": "Экскурсия от ВТУР и iтур: морская прогулка, дикий пляж Баймонг, маяк и завершение с купанием.",
+      "word_timestamps": [
+        { "word": "Экскурсия", "start_sec": 1030, "end_sec": 1031 },
+        { "word": "от", "start_sec": 1031, "end_sec": 1031.6 }
+      ]
+    },
+    {
+      "speaker": "Турист (репортаж)",
+      "start_sec": 1220,
+      "end_sec": 1260,
+      "text": "Очень много локаций, все интересные, а в конце ещё искупались. Вкусно покушали, отличное завершение экскурсии.",
+      "word_timestamps": [
+        { "word": "Очень", "start_sec": 1220, "end_sec": 1220.8 },
+        { "word": "много", "start_sec": 1220.8, "end_sec": 1222 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (озёрная рыбалка)",
+      "start_sec": 1280,
+      "end_sec": 1320,
+      "text": "Ещё от них же съездил на озёрную рыбалку. Если вы рыбак, советую, а ссылку на iтур оставляю под роликом.",
+      "word_timestamps": [
+        { "word": "Ещё", "start_sec": 1280, "end_sec": 1280.6 },
+        { "word": "съездил", "start_sec": 1280.6, "end_sec": 1282 }
+      ]
+    },
+    {
+      "speaker": "Второй ведущий",
+      "start_sec": 1360,
+      "end_sec": 1400,
+      "text": "Это Арсен, знакомы ещё с Мексики. Он снимает большие обзоры отелей, в списке больше ста тридцати.",
+      "word_timestamps": [
+        { "word": "Это", "start_sec": 1360, "end_sec": 1360.6 },
+        { "word": "Арсен", "start_sec": 1360.6, "end_sec": 1362 }
+      ]
+    },
+    {
+      "speaker": "Арсен",
+      "start_sec": 1480,
+      "end_sec": 1560,
+      "text": "Моя идея — показать отель как человек: чистота, уют, инфраструктура, от бюджетного до премиум городского.",
+      "word_timestamps": [
+        { "word": "Я", "start_sec": 1480, "end_sec": 1480.5 },
+        { "word": "показываю", "start_sec": 1480.5, "end_sec": 1482 },
+        { "word": "отель", "start_sec": 1482, "end_sec": 1484 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (тревел-блог)",
+      "start_sec": 1620,
+      "end_sec": 1640,
+      "text": "Как-то так и живём. Вот такая она, Vietnam life every night. Я живу и меня это манит.",
+      "word_timestamps": [
+        { "word": "Как-то", "start_sec": 1620, "end_sec": 1620.7 },
+        { "word": "так", "start_sec": 1620.7, "end_sec": 1621.4 }
+      ]
+    }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

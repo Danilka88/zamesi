@@ -16,6 +16,11 @@
     <function name="renderSimulation">Анимированный разбор ASR→сцены→метки</function>
     <function name="ModesController">Оркестрация 3 режимов (viewer/analyst/simulation)</function>
     <function name="DataProvider">Контракт данных: Demo/Real(stub)</function>
+    <function name="mountGameOffer">Игровой оффер: карточка «купить/играть в облаке» после meta-row для game_review</function>
+    <function name="detectGameContext">Детект игрового видео + извлечение названия игры (passport/category/hashtags)</function>
+    <function name="mountTravelOffer">Тревел-оффер: карточка «билеты из Краснодара» после meta-row для travel_vlog</function>
+    <function name="detectTravelContext">Детект тревел-видео + извлечение направления из заголовка</function>
+    <function name="extractTravelDestination">Извлечение города/страны из заголовка («…в Нячанге» → «Нячанг»)</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

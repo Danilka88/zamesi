@@ -11,6 +11,7 @@ import { mountHost, type ExtensionHost } from "./shadow";
 import { waitForPlayer, waitForSidebar, type PlayerHandle } from "./rutube";
 import { ModesController } from "./modes";
 import { mountGameOffer } from "./gameOffer";
+import { mountTravelOffer } from "./travelOffer";
 
 export function parseVideoId(url: string): string | null {
   const m = url.match(/rutube\.ru\/video\/([a-f0-9]+)\/?/);
@@ -65,6 +66,10 @@ async function main(): Promise<void> {
   // встраивается сразу после section[aria-label="информация о видео"].
   void mountGameOffer(passport, title);
 
+  // Тревел-оффер-блок: если видео о путешествии — карточка «билеты из
+  // Краснодара в направление» встраивается там же (взаимоисключающе с игровым).
+  void mountTravelOffer(passport, title);
+
   // :: Метаданные хоста для E2E/смоук
   hostRef.host.dataset.rzVideoId = videoId;
   hostRef.host.dataset.rzBinding = binding.method;
@@ -77,10 +82,11 @@ chrome.runtime.onMessage?.addListener((msg: unknown) => {
   if (m.type === "rz-set-binding" && m.id) {
     const passport = getPassportById(m.id);
     if (passport && controller && hostRef) {
+      console.log("[M-EXTENSION] binding: manual", m.id);
       controller = new ModesController(hostRef, playerRef!, {
         passport,
         metrics: computeMetrics(passport),
-      });
+      }, controller.current);
       controller.render();
       hostRef.host.dataset.rzPassport = passport.frontmatter.domain_type ?? "unknown";
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graph-index project="RUTUBE Video Analyzer" version="0.1.0">
-  <description>Knowledge graph — 10 modules, cross-links, exported types and functions</description>
+  <description>Knowledge graph — 11 modules, cross-links, exported types and functions</description>
   <Modules>
     <Module id="M-CORE" routed="GD-001-M-CORE.xml" name="Core Types &amp; Contracts" type="LIBRARY" status="built">
       <Purpose>Pydantic-модели, конфигурация, исключения, TimeoutManager, MemoryStore, метрики — общие для всех модулей</Purpose>
@@ -32,8 +32,11 @@
     <Module id="M-EXTENSION" routed="GD-010-M-EXTENSION.xml" name="Chrome Extension (Замеси)" type="INTERFACE" status="built">
       <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE. Vanilla TS + Vite.</Purpose>
     </Module>
+    <Module id="M-UI" routed="GD-011-M-UI.xml" name="React Dashboard (UI)" type="INTERFACE" status="built">
+      <Purpose>React SPA: дашборд job queue, поиск сцен, просмотр паспорта, миксы. Demo/Real API-клиенты.</Purpose>
+    </Module>
   </Modules>
-  <CrossLinks summary="19 cross-module dependencies">
+  <CrossLinks summary="24 cross-module dependencies">
     <Link from="M-CORE" to="M-AUDIO" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-VISION" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-SEMANTIC" relation="defines-types-for"/>
@@ -53,6 +56,11 @@
     <Link from="M-MODERATOR" to="M-PASSPORT" relation="feeds-into"/>
     <Link from="M-EXTENSION" to="M-CORE" relation="uses-types"/>
     <Link from="M-EXTENSION" to="M-PASSPORT" relation="renders-output-of"/>
+    <Link from="M-UI" to="M-CORE" relation="uses-types"/>
+    <Link from="M-UI" to="M-API" relation="consumes"/>
+    <Link from="M-UI" to="M-PASSPORT" relation="renders-output-of"/>
+    <Link from="M-UI" to="M-SEARCH" relation="consumes"/>
+    <Link from="M-UI" to="M-MIXER" relation="consumes"/>
   </CrossLinks>
   <DataFlows>
     <Flow id="DF-001" name="Audio-First Pipeline">

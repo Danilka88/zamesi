@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-UI" name="React Dashboard (UI)" type="INTERFACE" status="built">
+  <Purpose>React SPA (Vite + Tailwind + i18n): дашборд job queue, семантический поиск сцен, просмотр .md паспорта, создание и просмотр миксов. Режимы Demo (DemoApiClient, офлайн) и Real (RealApiClient → FastAPI).</Purpose>
+  <Source path="ui/src/"/>
+  <Exports>
+    <function name="api">Единый API-клиент (Proxy): auto-switch demo/real, setDemoMode/isDemoMode</function>
+    <function name="RealApiClient">HTTP-клиент к FastAPI (analyze/result/status/search/mix)</function>
+    <function name="DemoApiClient">Офлайн-клиент с демо-данными (7 паспортов)</function>
+    <function name="DashboardPage">Страница jobs: загрузка видео, статусы, метрики</function>
+    <function name="SearchPage">Семантический поиск по сценам</function>
+    <function name="PassportPage">Просмотр .md паспорта с точками монетизации</function>
+    <function name="MixPage">Создание и просмотр миксов</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-API" relation="consumes"/>
+    <Link target="M-PASSPORT" relation="renders-output-of"/>
+    <Link target="M-SEARCH" relation="consumes"/>
+    <Link target="M-MIXER" relation="consumes"/>
+  </CrossLinks>
+</module-graph>

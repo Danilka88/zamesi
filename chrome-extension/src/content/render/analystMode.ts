@@ -143,15 +143,15 @@ export function renderAnalyst(container: HTMLElement, data: ModeData): () => voi
     const total = [...counts.values()].reduce((a, b) => a + b, 0);
     const grid = document.createElement("div");
     grid.style.cssText = "display:flex;align-items:center;gap:12px;";
-    const share = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][1];
-    const don = donut((total ? share / total : 0) * 100, 88, "топ-тип", `${[...counts.entries()][0][0]}×${share}`);
+    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    const [topType, topCount] = sorted[0];
+    const don = donut((total ? topCount / total : 0) * 100, 88, "топ-тип", `${topType}×${topCount}`);
     grid.append(don);
     const list = document.createElement("div");
     list.style.cssText = "flex:1;";
-    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
     for (const [t, n] of sorted) {
       const l = MONETIZATION_LABELS[t];
-      list.append(bar(`${l.icon} ${l.short}`, n, share, l.color, `×${n}`));
+      list.append(bar(`${l.icon} ${l.short}`, n, topCount, l.color, `×${n}`));
     }
     grid.append(list);
     mon.append(grid);

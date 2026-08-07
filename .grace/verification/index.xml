@@ -37,7 +37,7 @@
     <Entry id="V-M-MODERATOR" routed="VD-M-MODERATOR.xml" module="M-MODERATOR" priority="medium" scenarios="4">
       <description>LLM-as-Judge модерация: парсинг ответа, fallback при ошибке LLM, интеграция в паспорт</description>
     </Entry>
-    <Entry id="V-M-EXTENSION" routed="VD-M-EXTENSION.xml" module="M-EXTENSION" priority="high" scenarios="6">
+    <Entry id="V-M-EXTENSION" routed="VD-M-EXTENSION.xml" module="M-EXTENSION" priority="high" scenarios="7">
       <description>Chrome extension MV3: валидация 4 демо-паспортов, binding, DataProvider (Demo/Real-stub), маркеры+seek, режимы, Shadow DOM-хост</description>
     </Entry>
   </Entries>

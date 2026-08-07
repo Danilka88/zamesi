@@ -64,6 +64,17 @@
         <assert>vite build даёт dist/{content,popup,background}.js + manifest.json; сузейс-тесты бэкенда зелёные без изменений</assert>
       </evidence>
     </Scenario>
+    <Scenario id="S-M-EXT-7" type="success">
+      <description>Рефакторинг: единый waitFor poller + guard currentScene на пустом timeline</description>
+      <commands>
+        <command>npx vitest run tests/rutube.test.ts tests/scene-overlay.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][WAITFOR][POLL]</marker>
+        <marker required="true">[M-EXTENSION][SCENE][EMPTY_GUARD]</marker>
+        <assert>waitFor резолвится при появлении значения и возвращает null по таймауту; currentScene на пустом timeline возвращает безопасный fallback без crash</assert>
+      </evidence>
+    </Scenario>
   </Scenarios>
   <RequiredMarkers>
     <marker>[M-EXTENSION][*][*]</marker>

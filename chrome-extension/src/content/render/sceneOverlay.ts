@@ -16,6 +16,22 @@ export function currentScene(
     steps = sceneStarts(passport).map((s, i) => ({ ...s, index: i }));
     cache.set(passport, steps);
   }
+  // Пустой timeline — возвращаем безопасный fallback вместо undefined (crash).
+  if (steps.length === 0) {
+    return {
+      scene: {
+        action_is_clear: false,
+        requires_vision: false,
+        scene_summary: "",
+        monetization: [],
+        clip_candidate: null,
+        fallback_used: null,
+        processing_time_sec: 0,
+      },
+      startSec: 0,
+      index: 0,
+    };
+  }
   let cur = steps[0];
   for (const s of steps) if (s.startSec <= t) cur = s;
   return cur;

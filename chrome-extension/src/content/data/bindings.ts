@@ -4,11 +4,9 @@ import { PASSPORT_REGISTRY, type PassportRegistryEntry } from "../../data/regist
 
 const normalize = (s: string): string => s.toLowerCase().replace(/\s+/g, " ").trim();
 
-/** Прямая привязка по реальному video_id RUTUBE. */
+/** Прямая привязка по реальному video_id RUTUBE (легаси-сигнатура для popup). */
 export function resolveBinding(videoId: string, title: string): PassportRegistryEntry | undefined {
-  const byId = matchByVideoId(videoId);
-  if (byId) return byId;
-  return matchByTitle(title);
+  return resolveBindingDetailed(videoId, title).entry;
 }
 
 export function matchByVideoId(videoId: string): PassportRegistryEntry | undefined {
@@ -32,10 +30,8 @@ export function matchByTitle(title: string): PassportRegistryEntry | undefined {
       best = entry;
     }
   }
-  return (bestScore > 0 ? best : undefined) ?? undefined;
+  return bestScore > 0 ? best : undefined;
 }
-
-export type Binding = { entry: PassportRegistryEntry; method: "video_id" | "keywords" };
 
 export function resolveBindingDetailed(
   videoId: string,

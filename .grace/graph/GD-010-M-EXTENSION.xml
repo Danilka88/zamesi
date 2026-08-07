@@ -6,6 +6,7 @@
   <Exports>
     <function name="parseVideoId">Извлечение video_id из URL rutube.ru/video/*</function>
     <function name="isVideoPage">Детект видео-страницы rutube.ru/video/*</function>
+    <function name="waitFor">Универсальный poller: опрос probe до появления значения или таймаута (единый код-путь для waitForPlayer/MetaRow/Sidebar)</function>
     <function name="resolveBinding">Подбор паспорта: ручной выбор + автоподбор по keywords/video_id</function>
     <function name="mountHost">Монтаж Shadow DOM-хоста с изоляцией стилей (CSS-изоляция NFR-6)</function>
     <function name="renderMarkers">Маркеры монетизаций на прогресс-баре, клик=seek</function>

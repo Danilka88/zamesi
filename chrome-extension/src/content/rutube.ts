@@ -72,40 +72,53 @@ export function capturePlayer(): PlayerHandle {
   };
 }
 
-/** Ждать появления видео-элемента (SPA может монтировать плеер с задержкой). */
-export function waitForPlayer(timeoutMs = 8000): Promise<PlayerHandle> {
-  const probe = capturePlayer();
-  if (probe.video) return Promise.resolve(probe);
+/**
+ * Универсальный poller: опрашивает probe каждые intervalMs до появления
+ * не-null значения или до истечения timeoutMs. Возвращает null по таймауту.
+ * Единая точка для всех waitFor* — один тестируемый код-путь.
+ */
+export function waitFor<T>(
+  probe: () => T | null,
+  timeoutMs: number,
+  intervalMs = 300,
+): Promise<T | null> {
+  const immediate = probe();
+  if (immediate !== null) return Promise.resolve(immediate);
   return new Promise((resolve) => {
     const started = performance.now();
     const timer = window.setInterval(() => {
-      const p = capturePlayer();
-      if (p.video || performance.now() - started > timeoutMs) {
+      const value = probe();
+      if (value !== null || performance.now() - started > timeoutMs) {
         clearInterval(timer);
-        resolve(capturePlayer());
+        resolve(value);
       }
-    }, 300);
+    }, intervalMs);
   });
 }
+
+/** Ждать появления видео-элемента (SPA может монтировать плеер с задержкой). */
+export function waitForPlayer(timeoutMs = 8000): Promise<PlayerHandle> {
+  return waitFor(() => {
+    const p = capturePlayer();
+    return p.video ? p : null;
+  }, timeoutMs).then((p) => p ?? capturePlayer());
+}
+
+// Строка мета-данных («информация о видео») — якорь для игрового оффер-блока.
+export const META_ROW_SELECTOR = 'section[aria-label="информация о видео"]';
 
 /** Найти правый сайдбар под панель расширения (или null). */
 export function findSidebar(): HTMLElement | null {
   return first(SIDEBAR_SELECTORS);
 }
 
+/** Ждать появления meta-row (React SPA монтирует его клиентски). Возвращает null по таймауту. */
+export function waitForMetaRow(timeoutMs = 8000): Promise<HTMLElement | null> {
+  return waitFor(() => document.querySelector<HTMLElement>(META_ROW_SELECTOR), timeoutMs);
+}
+
 /** Ждать появления сайдбара (SPA монтирует его клиентски). Возвращает null по таймауту. */
 export function waitForSidebar(timeoutMs = 8000): Promise<HTMLElement | null> {
-  const probe = findSidebar();
-  if (probe) return Promise.resolve(probe);
-  return new Promise((resolve) => {
-    const started = performance.now();
-    const timer = window.setInterval(() => {
-      const el = findSidebar();
-      if (el || performance.now() - started > timeoutMs) {
-        clearInterval(timer);
-        resolve(findSidebar());
-      }
-    }, 300);
-  });
+  return waitFor(() => findSidebar(), timeoutMs);
 }
 // = [M-EXTENSION][RUTUBE][END_BLOCK]

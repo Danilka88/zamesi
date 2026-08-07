@@ -42,6 +42,7 @@ const CSS = `
     padding: 7px 12px; cursor: pointer; font-weight: 700;
   }
   .rz-btn:hover { filter: brightness(1.08); }
+  .rz-btn:active { transform: scale(.98); }
   .rz-toggle {
     display: inline-flex; gap: 4px; margin-bottom: 10px;
   }
@@ -52,6 +53,10 @@ const CSS = `
   .rz-toggle button.active { background: #fb5f93; color: #fff; border-color: #fb5f93; }
   .rz-toggle.wide button { padding: 7px 14px; font-size: 13px; }
   .rz-expand:hover, .rz-modal-close:hover { filter: brightness(1.15); }
+  :focus-visible {
+    outline: 2px solid #fb5f93;
+    outline-offset: 2px;
+  }
 `;
 
 /**

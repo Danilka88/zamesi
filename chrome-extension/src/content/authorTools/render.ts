@@ -58,6 +58,7 @@ function copyButton(text: string, show: ShowToast): HTMLElement {
   btn.type = "button";
   btn.textContent = "⧉";
   btn.title = "Скопировать";
+  btn.setAttribute("aria-label", "Скопировать");
   btn.style.cssText = `border:1px solid ${GRID};background:#12151f;color:#e7e9f0;border-radius:8px;` +
     "width:28px;height:28px;cursor:pointer;font-size:13px;flex:none;";
   btn.addEventListener("click", () => {
@@ -70,6 +71,8 @@ function copyButton(text: string, show: ShowToast): HTMLElement {
 function makeToast(root: HTMLElement): { toast: HTMLElement; show: ShowToast; clear: () => void } {
   const toast = document.createElement("div");
   toast.classList.add("rz-toast");
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
   toast.style.cssText = `position:fixed;bottom:18px;left:50%;transform:translateX(-50%);` +
     `background:#0e0f16;color:#e7e9f0;border:1px solid ${ACCENT};border-radius:999px;` +
     "padding:6px 14px;font-size:12px;opacity:0;transition:opacity .25s;z-index:99999;pointer-events:none;";
@@ -87,21 +90,29 @@ function makeToast(root: HTMLElement): { toast: HTMLElement; show: ShowToast; cl
   return { toast, show, clear };
 }
 
-/** Метрики-чипы для карточки варианта. */
-function metricsChips(m: VariantMetrics, best: boolean): HTMLElement {
+/** Метрики-чипы для карточки варианта (CTR / просмотры / вовлечённость). */
+function metricsChips(m: VariantMetrics): HTMLElement {
   const chips = document.createElement("div");
-  chips.style.cssText = "display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;align-items:center;";
-  const mk = (text: string, color = MUTED, bg = "#151a28"): void => {
+  chips.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;align-items:center;";
+  const mk = (text: string): void => {
     const s = document.createElement("span");
     s.textContent = text;
-    s.style.cssText = `font-size:10px;color:${color};background:${bg};border-radius:999px;padding:1px 7px;`;
+    s.style.cssText = `font-size:11px;color:${MUTED};background:#151a28;border-radius:999px;padding:2px 8px;`;
     chips.append(s);
   };
   mk(`CTR ~${m.ctr}%`);
   mk(`👁 ${fmtViews(m.views)}`);
   mk(`вовлеч. ${m.engagement}`);
-  if (best) mk("🏆 лидер прогноза", ACCENT, "#2a2030");
   return chips;
+}
+
+/** Акцентный бейдж «лидер прогноза» — вне потока метрик. */
+function leaderBadge(): HTMLElement {
+  const b = document.createElement("span");
+  b.className = "rz-chip";
+  b.textContent = "🏆 лидер прогноза";
+  b.style.cssText = `font-size:10px;font-weight:700;color:#fff;background:${ACCENT};border-radius:999px;padding:2px 9px;flex:none;`;
+  return b;
 }
 
 /** Подзаголовок секции внутри блока сравнения. */
@@ -155,8 +166,9 @@ function titleCard(
 ): HTMLElement {
   const card = document.createElement("div");
   card.classList.add("rz-ab-card");
-  card.style.cssText = `padding:8px 10px;border:1px solid ${selected ? ACCENT : GRID};border-radius:10px;` +
-    `background:${CARD};cursor:pointer;`;
+  card.style.cssText = `padding:9px 10px;border:1px solid ${selected ? ACCENT : GRID};border-radius:10px;` +
+    `background:${best ? "#241c26" : CARD};cursor:pointer;` +
+    (best ? `border-left:3px solid ${ACCENT};` : "");
   const top = document.createElement("div");
   top.style.cssText = "display:flex;align-items:flex-start;gap:8px;";
   const radio = document.createElement("input");
@@ -165,15 +177,19 @@ function titleCard(
   radio.checked = selected;
   radio.style.cssText = "margin-top:2px;accent-color:" + ACCENT + ";";
   const body = document.createElement("div");
-  body.style.cssText = "flex:1;";
+  body.style.cssText = "flex:1;min-width:0;";
   const t = document.createElement("div");
   t.style.cssText = "font-size:13px;line-height:1.35;color:#e7e9f0;";
   t.textContent = v.text;
   const meta = document.createElement("div");
-  meta.className = "rz-muted";
-  meta.style.cssText = "font-size:10px;margin-top:2px;";
-  meta.textContent = v.source === "native" ? "родной заголовок" : `AI · ${v.note ?? ""}`;
-  body.append(t, meta, metricsChips(metrics, best));
+  meta.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:3px;";
+  const src = document.createElement("span");
+  src.className = "rz-muted";
+  src.style.cssText = "font-size:10px;";
+  src.textContent = v.source === "native" ? "родной заголовок" : `AI-вариант · ${v.note ?? ""}`;
+  meta.append(src);
+  if (best) meta.append(leaderBadge());
+  body.append(t, meta, metricsChips(metrics));
   top.append(radio, body, copyButton(v.text, show));
   card.append(top);
   card.addEventListener("click", (e) => {
@@ -183,27 +199,32 @@ function titleCard(
   return card;
 }
 
-function descCard(v: DescriptionVariant, metrics: VariantMetrics, best: boolean, show: ShowToast): HTMLElement {
+function descCard(v: DescriptionVariant, metrics: VariantMetrics, best: boolean, idx: number, show: ShowToast): HTMLElement {
   const card = document.createElement("div");
-  card.style.cssText = `padding:8px 10px;border:1px solid ${GRID};border-radius:10px;background:${CARD};`;
+  card.style.cssText = `padding:9px 10px;border:1px solid ${best ? ACCENT : GRID};border-radius:10px;background:${best ? "#241c26" : CARD};`;
   const head = document.createElement("div");
   head.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:6px;";
   const badge = document.createElement("span");
-  badge.textContent = `вариант ${v.chars} зн.`;
-  badge.style.cssText = `font-size:10px;color:${MUTED};border:1px solid ${GRID};border-radius:999px;padding:1px 7px;`;
+  badge.textContent = `вариант ${idx + 1} · ${v.chars} зн.`;
+  badge.style.cssText = `font-size:10px;font-weight:600;color:${MUTED};border:1px solid ${GRID};border-radius:999px;padding:2px 8px;flex:none;`;
   const feats = document.createElement("div");
-  feats.style.cssText = "display:flex;gap:4px;flex-wrap:wrap;flex:1;";
+  feats.style.cssText = "display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0;";
   for (const f of v.features) {
+    if (/^вариант \d+$/i.test(f)) continue;
     const chip = document.createElement("span");
     chip.textContent = f;
-    chip.style.cssText = `font-size:10px;color:${ACCENT};background:#2a2030;border-radius:999px;padding:1px 7px;`;
+    chip.style.cssText = `font-size:10px;color:${ACCENT};background:#2a2030;border-radius:999px;padding:2px 8px;`;
     feats.append(chip);
   }
   head.append(badge, feats, copyButton(v.text, show));
+  const metricsRow = document.createElement("div");
+  metricsRow.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:8px;";
+  metricsRow.append(metricsChips(metrics));
+  if (best) metricsRow.append(leaderBadge());
   const body = document.createElement("div");
-  body.style.cssText = "font-size:12px;line-height:1.45;color:#cfd3e0;white-space:pre-wrap;";
+  body.style.cssText = "font-size:12px;line-height:1.45;color:#cfd3e0;white-space:pre-wrap;margin-top:6px;";
   body.textContent = v.text;
-  card.append(head, metricsChips(metrics, best), body);
+  card.append(head, metricsRow, body);
   return card;
 }
 
@@ -259,7 +280,7 @@ export function renderAuthorBody(data: AuthorToolsData, opts?: AuthorToolsRender
     dWrap.style.cssText = wide
       ? "display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:6px;"
       : "display:flex;flex-direction:column;gap:6px;";
-    for (const { d, m } of descMetrics) dWrap.append(descCard(d, m, d.id === bestDesc, toastCtl.show));
+    for (const [i, { d, m }] of descMetrics.entries()) dWrap.append(descCard(d, m, d.id === bestDesc, i, toastCtl.show));
     dBlock.append(dWrap);
     root.append(dBlock);
   }

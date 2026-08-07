@@ -40,16 +40,22 @@ export function renderCta(container: HTMLElement, scene: SceneAnalysisResult): v
     card.className = "rz-row";
     card.style.cssText =
       "display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1b2030;border:1px solid #2b3144;border-radius:8px;padding:7px 9px;";
-    card.innerHTML = `
-      <div>
-        <div style="font-weight:700">${v.title}</div>
-        <div class="rz-muted">${v.subtitle}</div>
-      </div>
-      <button class="rz-btn" type="button" data-cta>${v.ctaText}</button>
-    `;
-    card.querySelector<HTMLElement>("[data-cta]")!.addEventListener("click", () => {
-      card.querySelector<HTMLElement>("[data-cta]")!.textContent = "Открыть (демо)";
+    const text = document.createElement("div");
+    const t = document.createElement("div");
+    t.style.fontWeight = "700";
+    t.textContent = v.title;
+    const sub = document.createElement("div");
+    sub.className = "rz-muted";
+    sub.textContent = v.subtitle;
+    text.append(t, sub);
+    const btn = document.createElement("button");
+    btn.className = "rz-btn";
+    btn.type = "button";
+    btn.textContent = v.ctaText;
+    btn.addEventListener("click", () => {
+      btn.textContent = "Открыть (демо)";
     });
+    card.append(text, btn);
     wrap.append(card);
   }
   container.append(wrap);

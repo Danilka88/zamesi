@@ -144,7 +144,7 @@ export function aiTitleVariants(passport: Passport, nativeTitle: string, videoId
     id: `ai-title-${key ?? "fb"}-${i}`,
     text,
     source: "ai" as const,
-    note: key ? `вариант для «${key}»` : "из полей паспорта",
+    note: key ? "курирован по паспорту" : "из полей паспорта",
   }));
 }
 

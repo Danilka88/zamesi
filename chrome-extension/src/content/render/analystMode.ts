@@ -150,7 +150,8 @@ export function renderAnalyst(
     grid.style.cssText = "display:flex;align-items:center;gap:12px;";
     const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
     const [topType, topCount] = sorted[0];
-    const don = donut((total ? topCount / total : 0) * 100, 88, "топ-тип", `${topType}×${topCount}`);
+    const topLabel = monetizationLabel(topType).short;
+    const don = donut((total ? topCount / total : 0) * 100, 88, "топ-тип", `${topLabel} ×${topCount}`);
     grid.append(don);
     const list = document.createElement("div");
     list.style.cssText = "flex:1;";
@@ -189,7 +190,7 @@ export function renderAnalyst(
   blist.style.cssText = "flex:1;";
   const verdict = mr ? VERDICT_LABELS[mr.verdict] : undefined;
   if (verdict) blist.append(row(`Вердикт: <b>${verdict.icon} ${verdict.label}</b>`));
-  blist.append(bar("Возраст", mr ? 12 : 0, 18, "#8B5CF6", mr ? mr.age_rating : "—"));
+  blist.append(row(`Возрастной рейтинг: <b>${mr?.age_rating ?? "—"}</b>`));
   for (const f of mr?.flags ?? []) {
     const s = SEVERITY_LABELS[f.severity] ?? { label: f.severity };
     const when = f.timestamp_sec != null ? ` @${fmtDur(f.timestamp_sec)}` : "";

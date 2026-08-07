@@ -38,6 +38,7 @@ export class ModesController {
   #modalBody: HTMLElement | null = null;
   #modalCleanup: Cleanup = noop;
   #modalKey: ((e: KeyboardEvent) => void) | null = null;
+  #expandBtn: HTMLElement | null = null;
 
   constructor(
     private host: ExtensionHost,
@@ -81,11 +82,13 @@ export class ModesController {
     expand.className = "rz-expand";
     expand.textContent = "⛶";
     expand.title = "Развернуть на весь экран";
+    expand.setAttribute("aria-label", "Развернуть на весь экран");
     expand.style.cssText =
       "margin-left:auto;background:#232838;color:#cfd4e3;border:1px solid #384058;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;";
     expand.addEventListener("click", () => this.expand());
     toolbar.append(tabs, expand);
     panel.append(toolbar);
+    this.#expandBtn = expand;
 
     const content = document.createElement("div");
     panel.append(content);
@@ -101,6 +104,9 @@ export class ModesController {
 
     const overlay = document.createElement("div");
     overlay.className = "rz-modal-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", "Инструменты RUTUBE — полный экран");
     overlay.style.cssText =
       "position:fixed;inset:0;z-index:2147483647;background:rgba(8,10,16,0.82);" +
       "display:flex;align-items:center;justify-content:center;padding:16px;";
@@ -143,6 +149,7 @@ export class ModesController {
       if (e.target === overlay) this.closeModal();
     });
     window.addEventListener("keydown", this.#modalKey);
+    close.focus();
   }
 
   closeModal(): void {
@@ -155,6 +162,7 @@ export class ModesController {
     this.#modal = null;
     this.#modalBody = null;
     this.render(); // восстановить сайдбар
+    this.#expandBtn?.focus();
   }
 
   destroy(): void {
@@ -211,10 +219,15 @@ export class ModesController {
   #buildTabs(className: string, onChange: (m: ViewerMode) => void, activeMode: ViewerMode): HTMLElement {
     const bar = document.createElement("div");
     bar.className = className;
+    bar.setAttribute("role", "tablist");
+    bar.setAttribute("aria-label", "Режимы панели");
     for (const it of TABS) {
       const b = document.createElement("button");
       b.type = "button";
       b.textContent = it.label;
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", String(it.id === activeMode));
+      b.title = it.label.replace(/^\S+\s*/, "");
       if (it.id === activeMode) b.classList.add("active");
       b.addEventListener("click", () => onChange(it.id));
       bar.append(b);

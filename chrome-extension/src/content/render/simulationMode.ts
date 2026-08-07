@@ -106,7 +106,6 @@ export function renderSimulation(
         if (p < 1) {
           timers.push(window.setTimeout(frame, 60));
         } else {
-          spin.style.display = "none";
           spin.textContent = "✓";
           spin.style.color = "#22c55e";
           status.textContent = "✓";

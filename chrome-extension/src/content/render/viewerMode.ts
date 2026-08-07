@@ -17,8 +17,10 @@ export function renderViewer(
   title.textContent = `👁 Зритель · ${data.passport.frontmatter.seo_title || "Демо-видео"}`;
   container.append(title);
 
-  // Часто используемые типы — чипы-«атомы» для быстрой перемотки
+  // Теги-чипы монетизаций: клик перематывает видео на соответствующий отрывок.
   renderMarkers(container, player, data.passport);
+
+  // Визуальный таймлайн: точки-метки по шкале (клик = seek) + легенда типов.
   const cleanupTimeline = renderMarkerTimeline(container, player, data.passport);
   const cleanupOverlay = renderSceneOverlay(container, player, data.passport);
 

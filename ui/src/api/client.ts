@@ -1,3 +1,4 @@
+// [M-UI][API-INTERFACE][START_BLOCK]
 import type {
   JobSummary, Passport, JobMetrics, ModerationReport,
   AudioData, FlatMonetizationItem, Mix, SearchResult
@@ -15,3 +16,4 @@ export interface IApiClient {
   uploadVideo(file: File): Promise<{ job_id: string }>
   subscribe(path: string, cb: (data: unknown) => void): () => void
 }
+// = [M-UI][API-INTERFACE][END_BLOCK]

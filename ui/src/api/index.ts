@@ -1,3 +1,4 @@
+// [M-UI][API-PROXY][START_BLOCK]
 import type { IApiClient } from './client'
 import { RealApiClient } from './RealApiClient'
 import { DemoApiClient } from './DemoApiClient'
@@ -38,3 +39,4 @@ export function setDemoMode(enabled: boolean): void {
 export function isDemoMode(): boolean {
   return _currentClient instanceof DemoApiClient
 }
+// = [M-UI][API-PROXY][END_BLOCK]

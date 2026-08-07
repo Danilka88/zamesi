@@ -1,3 +1,4 @@
+// [M-UI][API-REAL][START_BLOCK]
 import type { IApiClient } from './client'
 import type {
   JobSummary, Passport, JobMetrics, ModerationReport,
@@ -76,3 +77,4 @@ export class RealApiClient implements IApiClient {
     return () => es.close()
   }
 }
+// = [M-UI][API-REAL][END_BLOCK]

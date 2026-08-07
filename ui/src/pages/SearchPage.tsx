@@ -1,3 +1,4 @@
+// [M-UI][PAGE-SEARCH][START_BLOCK]
 import { useState } from 'react'
 import type { SearchResult } from '../types'
 import { useApi } from '../hooks/useApi'
@@ -64,3 +65,4 @@ export default function SearchPage() {
     </div>
   )
 }
+// = [M-UI][PAGE-SEARCH][END_BLOCK]

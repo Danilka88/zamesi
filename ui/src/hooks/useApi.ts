@@ -1,3 +1,4 @@
+// [M-UI][HOOK-USE-API][START_BLOCK]
 import { useState, useEffect, useCallback } from 'react'
 import { api } from '../api'
 
@@ -26,3 +27,4 @@ export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
 
   return { data, loading, error, reload: load }
 }
+// = [M-UI][HOOK-USE-API][END_BLOCK]

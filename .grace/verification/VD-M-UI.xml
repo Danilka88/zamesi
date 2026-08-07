@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-UI" module="M-UI" priority="high">
+  <description>React SPA (Vite): единый API-Proxy (demo/real auto-switch), DemoApiClient (офлайн, NFR-7), демо-данные (7 паспортов), страницы (Dashboard/Search/Passport/Mix), i18n. Офлайн-клиент детерминирован и проверяется без сети; сборка — детерминированный gate.</description>
+  <Cwd>ui</Cwd>
+  <Scenarios>
+    <Scenario id="S-M-UI-1" type="success">
+      <description>Демо-клиент (NFR-7, офлайн): все разделы UI получают данные — jobs, passport, mix, search, monetization, metrics, audio, moderation; понятные ошибки на неизвестных id</description>
+      <commands>
+        <command>npx vitest run tests/api.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-UI][API-DEMO][START_BLOCK]</marker>
+        <marker required="true">[M-UI][TEST-API][START_BLOCK]</marker>
+        <assert>DemoApiClient.getJobs → список job_id/status; getPassport('tech_review') → timeline&gt;0; getPassport('nope') бросает /not found/; getMix('mix_headphones') → mix_id; search('картон') → diy_frame, регистронезависимо; getMonetization → плоские items со scene_index/type/timestamp_sec; getMetrics → total_scenes = timeline.length; getAudio → music_matches+celebrity; getModeration → verdict</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-UI-2" type="success">
+      <description>API-Proxy: демо-режим по умолчанию, setDemoMode/isDemoMode переключают demo/real и персистятся в localStorage, делегирование вызовов</description>
+      <commands>
+        <command>npx vitest run tests/proxy.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-UI][API-PROXY][START_BLOCK]</marker>
+        <marker required="true">[M-UI][TEST-API-PROXY][START_BLOCK]</marker>
+        <assert>isDemoMode()===true по умолчанию (офлайн NFR-7); setDemoMode(false) → isDemoMode()===false и localStorage='false'; setDemoMode(true) возвращает demo и пишет 'true'; повторный setDemoMode идемпотентен; api.getJobs делегирует актуальному клиенту</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-UI-3" type="success">
+      <description>Демо-данные: 7 паспортов загружаются из JSON без ошибок (реестр DemoApiClient)</description>
+      <commands>
+        <command>npx vitest run tests/api.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-UI][DEMO][START_BLOCK]</marker>
+        <assert>demoPassports содержит diy_frame, tech_review, movie_review, cooking_dinner, iphone_50k_wylsacom, atomic_heart_review, vietnam_nha_trang; каждый getPassport(id) резолвится (покрыто S-M-UI-1/проходом по реестру)</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-UI-4" type="success">
+      <description>Сборка UI: type-check (tsc -b) + vite build проходят — страницы/компоненты компилируются и бандлятся</description>
+      <commands>
+        <command>npm run build</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-UI][ROUTING][START_BLOCK]</marker>
+        <marker required="true">[M-UI][PAGE-DASHBOARD][START_BLOCK]</marker>
+        <marker required="true">[M-UI][PAGE-SEARCH][START_BLOCK]</marker>
+        <marker required="true">[M-UI][PAGE-PASSPORT][START_BLOCK]</marker>
+        <marker required="true">[M-UI][PAGE-MIX][START_BLOCK]</marker>
+        <marker required="true">[M-UI][MAIN][START_BLOCK]</marker>
+        <assert>tsc -b без ошибок типов; vite build создаёт dist/ без ошибок; маршруты /, /passport/:jobId(/:tab), /mix/:mixId, /search объявлены в App.tsx</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-UI-5" type="success">
+      <description>Семантические маркеры [M-UI][*][*] присутствуют и сбалансированы в ui/src (парность START/END_BLOCK)</description>
+      <commands>
+        <command>rg -o '\[M-UI\]\[[A-Z0-9-]+\]\[(START|END)_BLOCK\]' src/ | wc -l</command>
+        <command>rg -c '\[M-UI\]\[[A-Z0-9-]+\]\[START_BLOCK\]' src/ | awk -F: '{s+=$2} END {print s}'</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-UI][HOOK-USE-API][START_BLOCK]</marker>
+        <marker required="true">[M-UI][DEMO-MODE][START_BLOCK]</marker>
+        <marker required="true">[M-UI][I18N][START_BLOCK]</marker>
+        <assert>количество START_BLOCK равно количеству END_BLOCK; маркеры покрывают API (PROXY/DEMO/REAL/INTERFACE), демо-данные, демо-режим, хук useApi, i18n, маршрутизацию и 4 страницы</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-UI][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

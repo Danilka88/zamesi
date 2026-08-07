@@ -1,3 +1,4 @@
+// [M-UI][DEMO][START_BLOCK]
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import diyFrame from './passports/diy_frame.json'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,3 +23,4 @@ export const demoPassports: Record<string, unknown> = {
   atomic_heart_review: atomicHeartReview,
   vietnam_nha_trang: vietnamNhaTrang,
 }
+// = [M-UI][DEMO][END_BLOCK]

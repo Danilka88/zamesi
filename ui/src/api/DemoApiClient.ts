@@ -1,3 +1,4 @@
+// [M-UI][API-DEMO][START_BLOCK]
 import type { IApiClient } from './client'
 import type {
   JobSummary, Passport, JobMetrics, ModerationReport,
@@ -122,3 +123,4 @@ export class DemoApiClient implements IApiClient {
     return () => {}
   }
 }
+// = [M-UI][API-DEMO][END_BLOCK]

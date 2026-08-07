@@ -1,3 +1,4 @@
+// [M-UI][PAGE-DASHBOARD][START_BLOCK]
 import { useNavigate } from 'react-router-dom'
 import UploadForm from '../components/Dashboard/UploadForm'
 import JobCard from '../components/Dashboard/JobCard'
@@ -63,3 +64,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+// = [M-UI][PAGE-DASHBOARD][END_BLOCK]

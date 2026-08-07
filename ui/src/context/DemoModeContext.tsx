@@ -1,3 +1,4 @@
+// [M-UI][DEMO-MODE][START_BLOCK]
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import { setDemoMode, isDemoMode } from '../api'
 
@@ -39,3 +40,4 @@ export function DemoModeProvider({ children }: { children: ReactNode }) {
 export function useDemoMode(): DemoModeState {
   return useContext(DemoModeContext)
 }
+// = [M-UI][DEMO-MODE][END_BLOCK]

@@ -40,12 +40,17 @@
     <Entry id="V-M-EXTENSION" routed="VD-M-EXTENSION.xml" module="M-EXTENSION" priority="high" scenarios="8">
       <description>Chrome extension MV3: валидация 4 демо-паспортов, binding, DataProvider (Demo/Real-stub), маркеры+seek, режимы, Shadow DOM-хост, инструменты автора (A/B + графики)</description>
     </Entry>
+    <Entry id="V-M-UI" routed="VD-M-UI.xml" module="M-UI" priority="high" scenarios="5">
+      <description>React SPA: API-Proxy (demo/real), DemoApiClient (офлайн NFR-7), демо-данные, страницы Dashboard/Search/Passport/Mix, i18n, семантические маркеры [M-UI]. Тесты: vitest в ui/</description>
+    </Entry>
   </Entries>
   <Gates>
     <Gate level="module">
       <check>lint: ruff check src/ tests/</check>
       <check>type-check: mypy src/</check>
       <check>unit-tests: pytest tests/ --timeout=30 -x -q</check>
+      <check>ui-tests: (cd ui &amp;&amp; npx vitest run)</check>
+      <check>ext-tests: (cd chrome-extension &amp;&amp; npx vitest run)</check>
     </Gate>
     <Gate level="phase">
       <check>integration-tests: pytest tests/test_integration.py --timeout=3600 -v</check>

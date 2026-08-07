@@ -1,3 +1,4 @@
+// [M-UI][PAGE-PASSPORT][START_BLOCK]
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import type { Passport, FlatMonetizationItem, AudioData, JobMetrics } from '../types'
 import { useApi } from '../hooks/useApi'
@@ -143,3 +144,4 @@ export default function PassportPage() {
     </div>
   )
 }
+// = [M-UI][PAGE-PASSPORT][END_BLOCK]

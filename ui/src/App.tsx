@@ -1,3 +1,4 @@
+// [M-UI][ROUTING][START_BLOCK]
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
 import DashboardPage from './pages/DashboardPage'
@@ -18,3 +19,4 @@ export default function App() {
     </Layout>
   )
 }
+// = [M-UI][ROUTING][END_BLOCK]

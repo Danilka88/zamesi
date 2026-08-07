@@ -1,3 +1,4 @@
+// [M-UI][PAGE-MIX][START_BLOCK]
 import { useParams, Link } from 'react-router-dom'
 import type { Mix } from '../types'
 import { useApi } from '../hooks/useApi'
@@ -41,3 +42,4 @@ export default function MixPage() {
     </div>
   )
 }
+// = [M-UI][PAGE-MIX][END_BLOCK]

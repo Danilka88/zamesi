@@ -42,6 +42,8 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `src/core/exceptions.py` — 13 custom exception types
 - `src/core/logging_config.py` — structlog config with correlation_id
 - `src/core/config.py` — YAML config loader
+- `src/core/llm_router.py` — LLMRouter: multi-provider fallback chain (ollama/yandex/cloudru/openrouter), per-provider circuit breaker, per-role routing
+- `src/core/embedding.py` — Embedding helpers (integration with search indexer)
 - `src/audio_engine/pyav_reader.py` — Audio + I-frame extraction
 - `src/audio_engine/whisper_asr.py` — Whisper.cpp ASR
 - `src/audio_engine/diarization_speechbrain.py` — Speaker diarization (SpeechBrain ECAPA)

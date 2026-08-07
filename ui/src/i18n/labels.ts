@@ -1,3 +1,4 @@
+// [M-UI][I18N][START_BLOCK]
 export const MONETIZATION_LABELS: Record<string, {
   label: string
   icon: string
@@ -96,3 +97,4 @@ export const NAV_ITEMS = [
   { path: '/', label: 'Панель управления', icon: '🔬' },
   { path: '/search', label: 'Поиск сцен', icon: '🔍' },
 ]
+// = [M-UI][I18N][END_BLOCK]

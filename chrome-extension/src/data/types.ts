@@ -137,5 +137,5 @@ export interface Passport {
   celebrity_voice: CelebrityVoice | null;
 }
 
-export type ViewerMode = "viewer" | "analyst" | "simulation";
+export type ViewerMode = "viewer" | "analyst" | "simulation" | "author";
 // = [M-EXTENSION][TYPES][END_BLOCK]

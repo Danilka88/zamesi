@@ -1,16 +1,21 @@
 // [M-EXTENSION][MODES][START_BLOCK]
-// Оркестратор режимов: Зритель / Аналитик / Симуляция. Переключение сохраняет
-// данные (паспорт, метрики) и текущий выбор (A-C003-05).
+// Оркестратор режимов: Зритель / Аналитик / Симуляция / Автор. Переключение
+// сохраняет данные (паспорт, метрики, заголовок, video_id) и текущий выбор (A-C003-05).
 import type { ViewerMode } from "../data/types";
 import type { ExtensionHost } from "./shadow";
 import type { PlayerHandle } from "./rutube";
 import { renderViewer } from "./render/viewerMode";
 import { renderAnalyst } from "./render/analystMode";
 import { renderSimulation } from "./render/simulationMode";
+import { mountAuthorTools } from "./authorTools";
 
 export interface ModeData {
   passport: import("../data/types").Passport;
   metrics: import("../data/types").JobMetrics;
+  /** Родной заголовок страницы — для A/B-вариантов (вкладка «Автор»). */
+  title?: string;
+  /** Реальный video_id RUTUBE — детерминированный seed генерации. */
+  videoId?: string;
 }
 
 type Cleanup = () => void;
@@ -57,6 +62,13 @@ export class ModesController {
       case "simulation":
         this.cleanup = renderSimulation(content, () => this.setMode("analyst"));
         break;
+      case "author":
+        this.cleanup = mountAuthorTools(content, {
+          passport: this.data.passport,
+          title: this.data.title ?? "",
+          videoId: this.data.videoId ?? "",
+        });
+        break;
     }
   }
 
@@ -72,6 +84,7 @@ export class ModesController {
       { id: "simulation", label: "⚙️ Симуляция" },
       { id: "analyst", label: "📊 Аналитик" },
       { id: "viewer", label: "👁 Зритель" },
+      { id: "author", label: "✍️ Автор" },
     ];
     for (const it of items) {
       const b = document.createElement("button");

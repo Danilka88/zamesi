@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   console.log("[M-EXTENSION] player:", playerRef.video ? "found" : "null");
 
   const metrics = res.metrics ?? computeMetrics(passport);
-  controller = new ModesController(hostRef, playerRef, { passport, metrics });
+  controller = new ModesController(hostRef, playerRef, { passport, metrics, title, videoId });
   controller.render();
 
   // Игровой оффер-блок: если видео об игре — карточка «купить/играть в облаке»
@@ -86,6 +86,8 @@ chrome.runtime.onMessage?.addListener((msg: unknown) => {
       controller = new ModesController(hostRef, playerRef!, {
         passport,
         metrics: computeMetrics(passport),
+        title: pageTitle(),
+        videoId: parseVideoId(location.href) ?? "",
       }, controller.current);
       controller.render();
       hostRef.host.dataset.rzPassport = passport.frontmatter.domain_type ?? "unknown";

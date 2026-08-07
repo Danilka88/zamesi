@@ -81,6 +81,22 @@
         <assert>waitFor резолвится при появлении значения и возвращает null по таймауту; currentScene на пустом timeline возвращает безопасный fallback без crash</assert>
       </evidence>
     </Scenario>
+    <Scenario id="S-M-EXT-8" type="success">
+      <description>Инструменты автора (NFR-7): A/B-варианты заголовка/описания, детерминизм, демо-графики, рендер панели + копирование</description>
+      <commands>
+        <command>npx vitest run tests/author-tools-generate.test.ts tests/author-tools-charts.test.ts tests/author-tools-render.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][AUTHOR-TOOLS][GENERATE][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][AUTHOR-TOOLS][CHARTS][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][AUTHOR-TOOLS][RENDER][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][AUTHOR-TOOLS][INDEX][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-GENERATE][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-CHARTS][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-RENDER][START_BLOCK]</marker>
+        <assert>buildTitleVariants отдаёт native первым + 3 AI (курируемые по паспорту, дедупликация native); fallback строится из полей; buildDescriptionVariants возвращает 2 варианта; генерация детерминирована (NFR-7); projectVariantMetrics стабилен для варианта и различен между вариантами, в границах (CTR 2.5–7%, вовлечённость 40–95); retentionSeries/hours stable для seed; render монтирует заголовки/описания с метриками + блок «A/B прогноз эффективности» с CTR-барами и лидером прогноза + копирование в clipboard + toast; cleanup удаляет toast</assert>
+      </evidence>
+    </Scenario>
   </Scenarios>
   <RequiredMarkers>
     <marker>[M-EXTENSION][*][*]</marker>

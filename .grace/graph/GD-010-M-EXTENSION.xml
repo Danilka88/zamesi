@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module-graph id="M-EXTENSION" name="Chrome Extension (Замеси)" type="INTERFACE" status="built">
-  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики) на страницу видео RUTUBE rutube.ru/video/*. 3 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
+  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики, инструменты автора) на страницу видео RUTUBE rutube.ru/video/*. 4 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
   <Source path="chrome-extension/src/"/>
   <Test path="chrome-extension/tests/"/>
   <Exports>
@@ -26,6 +26,17 @@
     <function name="detectTravelContext">Детект тревел-видео + извлечение направления из заголовка</function>
     <function name="extractTravelDestination">Извлечение города/страны из заголовка («…в Нячанге» → «Нячанг»)</function>
     <function name="unmountTravelOfferCard">Удаление тревел-оффера при смене контекста</function>
+    <function name="mountAuthorTools">Инструменты автора: панель A/B-вариантов заголовка/описания + демо-графики (вкладка «✍️ Автор»)</function>
+    <function name="buildTitleVariants">Варианты заголовка для A/B: native первым, затем AI (курируемые/fallback из полей паспорта)</function>
+    <function name="buildDescriptionVariants">Варианты описания (два: полный и короткий) с фичами и длиной</function>
+    <function name="projectVariantMetrics">Прогноз эффективности варианта (CTR/охват/вовлечённость) — детерминированный сид video_id+текст (NFR-7)</function>
+    <function name="fmtViews">Компактный формат охвата: 18400 → «18.4K»</function>
+    <function name="resolvePassportKey">Резолв ключа паспорта: boundVideoId → frontmatter.video_id → domain_type</function>
+    <function name="retentionSeries">Демо-кривая удержания из плотности сцен (детерминированно, NFR-7)</function>
+    <function name="monetizationStack">Стек распределения типов монетизации из timeline (в %)</function>
+    <function name="hourlyBars">Почасовая гистограмма просмотров (сидированный PRNG, 24 ч)</function>
+    <function name="sparklineSvg">SVG-спарклайн из точек [0..100]</function>
+    <function name="barChartSvg">SVG-гистограмма из баров</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

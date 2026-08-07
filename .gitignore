@@ -16,3 +16,4 @@ build/
 *.db
 /data/
 output/
+node_modules/

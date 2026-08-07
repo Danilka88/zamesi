@@ -42,7 +42,7 @@ async def run_pipeline(
 ) -> None:
     from src.audio_engine.diarization_speechbrain import diarize
     from src.audio_engine.pyav_reader import extract_audio, extract_iframes
-    from src.audio_engine.timeline_merger import merge
+    from src.audio_engine.timeline_merger import merge_timeline
     from src.audio_engine.whisper_asr import transcribe
     from src.passport_builder.passport_builder import build_passport, save_passport_to_disk
     from src.semantic_analyzer.scene_analyzer import analyze_scenes
@@ -66,7 +66,7 @@ async def run_pipeline(
 
         asr_segments = await transcribe(audio_path, log=log)
         speaker_segments = await diarize(audio_path, log=log)
-        timeline = merge(asr_segments, speaker_segments, log=log)
+        timeline = merge_timeline(asr_segments, speaker_segments, log=log)
 
         music_matches, celebrity_voice = await fp_task
         fingerprint_count = len(music_matches) + (1 if celebrity_voice else 0)

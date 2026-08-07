@@ -2,8 +2,8 @@ from src.core.logging_config import get_logger
 from src.core.schemas import SpeakerSegment, TimelineSegment
 
 
-# START_BLOCK: M-AUDIO/MERGER/MERGE
-def merge(
+# START_BLOCK: M-AUDIO/MERGER/MERGE_TIMELINE
+def merge_timeline(
     transcript_segments: list[TimelineSegment],
     speaker_segments: list[SpeakerSegment],
     log=None,
@@ -31,4 +31,4 @@ def merge(
 
     log.info("[M-AUDIO][MERGER][DONE]", segments=len(merged))
     return merged
-# END_BLOCK: M-AUDIO/MERGER/MERGE
+# END_BLOCK: M-AUDIO/MERGER/MERGE_TIMELINE

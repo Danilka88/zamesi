@@ -19,6 +19,7 @@
 - **3 режима работы** — «Зритель» (маркеры + сцена + CTA), «Аналитик» (4 блока: монетизации, модерация, аудио, метрики), «Симуляция» (анимированный разбор ASR → сцены → метки).
 - **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по ключевым словам заголовка («Какой iPhone выбрать за 50 000 рублей?» → `tech_review`) + регистрация по `video_id` в реестре; если ни одна привязка не сработала — автоматически применяется паспорт по умолчанию `iphone_50k_wylsacom` через `getDefaultPassport()` (демо-сценарий из коробки на любом видео).
 - **Shadow DOM-изоляция** — стили панелей не конфликтуют с CSS RUTUBE, ноль layout-shift (NFR-6).
+- **Игровой оффер-блок** — на видео о компьютерных играх (детект по `ya:ovs:category=Видеоигры`, хэштегам `#шутеры/#игра/#геймплей` или паспорту `game_review`) сразу после `section[aria-label="информация о видео"]` встраивается карточка с обложкой игры и кнопками «купить в VK Play / играть в облаке VK Play Cloud и Yandex Play» (демо-заглушки, NFR-7).
 - **Privacy by design** — демо-данные хранятся локально, ноль внешних запросов в демо-режимах (NFR-7).
 - **Готов к реальному провайдеру** — контракт `DataProvider` реализован заглушкой `RealDataProvider` (возвращает `not_implemented`), интерфейс готов под FastAPI `/analyze`.
 
@@ -56,7 +57,7 @@ mountHost() → Shadow DOM → ModesController
 cd chrome-extension
 npm install
 npm run build        # dist/{content,popup,background}.js + manifest.json + иконки
-npm test             # vitest: 24 теста
+npm test             # vitest: 41 тест
 ```
 
 **Load unpacked (ручной smoke):**
@@ -73,7 +74,8 @@ src/
 ├── content/
 │   ├── index.ts            entry: детект, binding, монтаж, обработка сообщений popup
 │   ├── shadow.ts           mountHost/unmountHost — Shadow DOM-хост
-│   ├── rutube.ts           PlayerHandle, селекторы плеера + фолбэки, waitForPlayer
+│   ├── rutube.ts           PlayerHandle, селекторы плеера + фолбэки, waitForPlayer/waitForMetaRow
+│   ├── gameOffer/          игровой оффер-блок: detect / render / mount (NFR-7)
 │   ├── modes.ts            ModesController (viewer/analyst/simulation)
 │   ├── data/
 │   │   ├── provider.ts     interface DataProvider { isAvailable(); load(id) }
@@ -107,6 +109,7 @@ src/
 | `movie_review` | кинообзор | keywords |
 | `diy_frame` | DIY/мастер-класс | keywords |
 | `cooking_dinner` | кулинария | keywords |
+| `atomic_heart_review` | обзор игры Atomic Heart (StopGame, ~25:43) | video_id `aceaa503bdb8c200278f94dd3deaf7f5` + keywords |
 
 ## Тестирование
 
@@ -118,8 +121,10 @@ src/
 | `layout.test.ts` | sceneStarts (монотонность), fmtTime/fmtDur |
 | `markers.test.ts` | рендер `.rz-chip`, клик → `seekTo(startSec)` |
 | `modes.test.ts` | Shadow-хост (идемпотентность), переключение режимов |
+| `game-offer-detect.test.ts` | детект игровых видео + извлечение названия игры из заголовка |
+| `game-offer.test.ts` | карточка оффера: вставка после meta-row, идемпотентность, демо-заглушки |
 
-Проверка: `npm run typecheck && npm test` (24 теста, зелёные).
+Проверка: `npm run typecheck && npm test` (41 тест, зелёные).
 
 ## Подключение реального анализатора (FastAPI)
 
@@ -129,6 +134,7 @@ src/
 
 - ✅ A1–A3: spec/plan C-003, requirements (UC-7, NFR-6/7), graph (GD-010), technology
 - ✅ P0–P8: скаффолд, порт данных, data-layer, инъекция, режимы, popup
-- ✅ P9: vitest suite (24), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
+- ✅ P9: vitest suite (41), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
+- ✅ Игровой оффер-блок: детект + демо-карточка после meta-row (NFR-7)
 - ⏳ Real-провайдер: коннект к FastAPI `/analyze`
 - ⏳ Больше паспортов и keywords в реестре

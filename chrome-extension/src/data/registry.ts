@@ -9,6 +9,7 @@ import techReview from "./passports/tech_review.json" with { type: "json" };
 import movieReview from "./passports/movie_review.json" with { type: "json" };
 import cookingDinner from "./passports/cooking_dinner.json" with { type: "json" };
 import iphone50kWylsacom from "./passports/iphone_50k_wylsacom.json" with { type: "json" };
+import atomicHeartReview from "./passports/atomic_heart_review.json" with { type: "json" };
 
 export interface PassportRegistryEntry {
   id: string;
@@ -26,6 +27,7 @@ const passports: Record<string, Passport> = {
   movie_review: movieReview as unknown as Passport,
   cooking_dinner: cookingDinner as unknown as Passport,
   iphone_50k_wylsacom: iphone50kWylsacom as unknown as Passport,
+  atomic_heart_review: atomicHeartReview as unknown as Passport,
 };
 
 export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
@@ -65,6 +67,24 @@ export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
     domainType: "cooking_dinner",
     keywords: ["рецепт", "приготовить", "ужин", "кухня", "блюдо", "готовим"],
     passport: passports.cooking_dinner,
+  },
+  {
+    id: "atomic_heart_review",
+    title: "Обзор Atomic Heart (StopGame)",
+    domainType: "game_review",
+    keywords: [
+      "atomic heart",
+      "атомное сердце",
+      "обзор игры",
+      "манфиш",
+      "мандафиш",
+      "stopgame",
+      "стопгейм",
+      "шутер",
+      "багратуньо",
+    ],
+    boundVideoId: "aceaa503bdb8c200278f94dd3deaf7f5",
+    passport: passports.atomic_heart_review,
   },
 ];
 

@@ -1,0 +1,986 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_atomic_heart_review_001",
+    "domain_type": "game_review",
+    "brand_safety_score": 62,
+    "target_audience": [
+      "игроки",
+      "фанаты шутеров",
+      "покупатели Atomic Heart",
+      "подписчики StopGame",
+      "читатели обзоров игр",
+      "поклонники ретрофутуризма"
+    ],
+    "seo_title": "Обзор Atomic Heart — стоит ли играть: экшн, мир, музыка и баги (StopGame)",
+    "seo_tags": [
+      "Atomic Heart обзор",
+      "атомное сердце",
+      "стоит ли играть",
+      "обзор игры",
+      "StopGame",
+      "Mundfish",
+      "экшн",
+      "сюжет Atomic Heart",
+      "саундтрек Atomic Heart",
+      "Мик Гордон"
+    ],
+    "trending_cluster": "gaming/reviews/action",
+    "auto_playlists": [
+      {
+        "id": "atomic_heart_2026",
+        "order_index": 0,
+        "reason": "актуальный обзор громкой игры Atomic Heart от Mundfish"
+      },
+      {
+        "id": "best_of_game_reviews",
+        "order_index": 1,
+        "reason": "подробный разбор экшена, мира и технического состояния"
+      },
+      {
+        "id": "soviet_retro_games",
+        "order_index": 2,
+        "reason": "уникальный ретрофутуристический сеттинг альтернативного СССР"
+      }
+    ],
+    "ad_targeting_keywords": [
+      "Atomic Heart купить",
+      "Atomic Heart PS5",
+      "Atomic Heart Game Pass",
+      "VK Play Atomic Heart",
+      "игра Atomic Heart",
+      "атомное сердце цена",
+      "обзоры игр",
+      "лучшие шутеры 2026",
+      "Мик Гордон саундтрек",
+      "игры про СССР",
+      "ретрофутуризм"
+    ],
+    "moderation": {
+      "age_rating": "18+",
+      "verdict": "flagged",
+      "categories_flagged": [
+        "language",
+        "nsfw"
+      ],
+      "flags": [
+        {
+          "category": "language",
+          "severity": "high",
+          "timestamp_sec": 1470,
+          "evidence": "обзорщик прямо отмечает, что 'из уст главного героя матершина так и льётся', и сам не стесняется в выражениях"
+        },
+        {
+          "category": "language",
+          "severity": "medium",
+          "timestamp_sec": 227,
+          "evidence": "нецензурное выражение 'я тут подумал хуй' при обсуждении сценария игр жанра"
+        },
+        {
+          "category": "language",
+          "severity": "medium",
+          "timestamp_sec": 807,
+          "evidence": "грубое выражение 'устроить ему взлом жопы' в описании стелса"
+        },
+        {
+          "category": "nsfw",
+          "severity": "medium",
+          "timestamp_sec": 637,
+          "evidence": "упоминание 'похотливого робота-шкафа Элеоноры' с игривой двусмысленностью ('просто дай мне защиту от лаза')"
+        },
+        {
+          "category": "nsfw",
+          "severity": "medium",
+          "timestamp_sec": 1334,
+          "evidence": "шутка 'где мои 6 часов секса' и сетование, что близняшек-балерин нельзя потрогать"
+        }
+      ],
+      "brand_safety_score": 62,
+      "summary": "Видео допущено к рекламе с ограничением 18+. Это игровой обзор с обильной нецензурной лексикой (подчёркивается автором как элемент натуралистичности игры) и сексуальным юмором ('похотливая' Элеонора, шутка про 6 часов). Критикуется эксклюзивность VK Play для СНГ. Контент не содержит политики, алкоголя и запрещённой тематики; реклама уместна только на аудиторию 18+."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: путь Atomic Heart от любви до ненависти — от самой ожидаемой игры до погрязшей в хейте; разработчики из Mundfish нагнали пафоса и интриги; hook с роботизированными близняшками-балеринами и майором Нечаевым",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart от любви до ненависти",
+          "reason": "hook с драматической аркой игры и обещанием разбора",
+          "confidence": 0.9
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "pre-roll в самом начале ролика",
+          "confidence": 0.85
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Atomic Heart — от самой ожидаемой игры до погрязшей в хейте",
+        "time_range_start": 0,
+        "time_range_end": 55,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 0,
+      "end_sec": 55
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Первое впечатление: мир утопии альтернативного СССР — победа в ВОВ, коричневая чума, Дмитрий Сеченов открывает полимер, прорыв в робототехнике и летающие города",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart мир СССР утопия",
+          "reason": "красивое погружение в уникальный сеттинг ретрофутуризма",
+          "confidence": 0.82
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза между сценами на атмосферных кадрах города",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Летающие города и роботы-помощники: мир Atomic Heart",
+        "time_range_start": 55,
+        "time_range_end": 126,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.6,
+      "start_sec": 55,
+      "end_sec": 126
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Сюжетная завязка: сбой в сети 'Коллектив', роботы убивают работников комплекса 3826; Сеченов отправляет агента майора Сергея Нечаева арестовать Виктора Петрова",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart сюжет 3826",
+          "reason": "экспозиция сюжета с тайной комплекса",
+          "confidence": 0.76
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на сюжетной экспозиции",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.4,
+      "start_sec": 126,
+      "end_sec": 177
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Крушение и орда механических убийц: Нечаев с топором и говорящей перчаткой прокладывает путь; затем критика сюжета — предсказуемый, концовки невменяемые, персонажи слиты, но отношения героя с перчаткой поданы хорошо",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart сюжет разочарование",
+          "reason": "честная критика сюжета с конкретными претензиями",
+          "confidence": 0.83
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Сюжет не зацепил: ружья не стреляют, концовки невменяемые",
+        "time_range_start": 177,
+        "time_range_end": 238,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.7,
+      "start_sec": 177,
+      "end_sec": 238
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Экшн — главное: истинный кайф от боя топором и дробовиком, качественный импакт каждого удара, напряжённые динамичные схватки с постоянным выгадыванием момента для удара",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart экшн боевка",
+          "reason": "восторженный разбор боевой системы",
+          "confidence": 0.85
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза после впечатлений от геймплея",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.5,
+      "start_sec": 238,
+      "end_sec": 327
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Прогрессия сложности: первый чёрный Вовчик страшен, к середине игры их вырезаешь пачками; в релизе враги не губки (в отличие от старых билдов); стандартный усач требует 5-6 ударов только в начале",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart чёрный вовчик",
+          "reason": "сравнение 'страшно в начале, пачками в конце' — виральный контраст",
+          "confidence": 0.8
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Чёрный Вовчик пугал только поначалу — потом режешь пачками",
+        "time_range_start": 327,
+        "time_range_end": 424,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.6,
+      "start_sec": 327,
+      "end_sec": 424
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Разнообразие врагов на полигонах 3826: усатые вовчики, плотоядные растения-мутанты, роботы-косильщики с серпами, генно-модифицированные плющи и Наташа",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart враги мутанты",
+          "reason": "перечисление колоритных противников",
+          "confidence": 0.78
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 424,
+      "end_sec": 450
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Оружие и арсенал: тесак из подручных средств, булава 'Звездочка', модифицированная двустволка, импульсная пушка 'Доминатор'; базука имбалансна и упрощает половину боссфайтов; модули (точность, урон, обойма) и материалы в 8 вариациях",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "Atomic Heart купить",
+          "reason": "видео посвящено игре — прямой повод для оффера на покупку",
+          "confidence": 0.91
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "Atomic Heart PS5 купить",
+          "reason": "упоминание PS5-версии и оптимизации",
+          "confidence": 0.74
+        },
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart базука имба",
+          "reason": "забавный разбор имбалансной ракетницы",
+          "confidence": 0.72
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстный блок на обзоре арсенала",
+          "confidence": 0.75
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.1,
+      "start_sec": 450,
+      "end_sec": 559
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Перчатка: режим пылесоса для сбора ресурсов одной кнопкой, сканирование окружения с подсветкой интерактивных объектов и слабых мест врагов, телекинез, обливка сверхпроводящим полимером, криоген и защитная оболочка",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart перчатка пылесос",
+          "reason": "фича 'вакуумная перчатка' — наглядный лайфхак, который хочется повторить",
+          "confidence": 0.84
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза на демонстрации способностей перчатки",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.7,
+      "start_sec": 559,
+      "end_sec": 624
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Элеонора: крафт, прокачка и хранилище; скиллы через нейрополимер (аналог Адама из BioShock); все очки можно без потерь вернуть и перевложить в другой навык — свободный респек",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart прокачка респек",
+          "reason": "выделяется удобная система сброса очков скиллов",
+          "confidence": 0.79
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на разборе прокачки",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.6,
+      "start_sec": 624,
+      "end_sec": 700
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Система замков: щелчок пальцем под таймер робота-зайца, вращение цветных индикаторов, отмычка на манер Скайрима и поиск рисунков с кодами; бумажки с кодами не подсвечиваются — автор прошляпил две комнаты",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart взлом замки",
+          "reason": "разнообразие мини-игр взлома и душная система кодов",
+          "confidence": 0.77
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза на разборе системы взлома",
+          "confidence": 0.66
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.5,
+      "start_sec": 700,
+      "end_sec": 765
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Открытый мир: данжи линейны, а на поверхности можно экспериментировать; стелс минимален; камеры и ульи с робо-пчёлами поднимают тревогу и воскрешают врагов; связующий узел — дрон Гриф, но вырубить его сложно",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart открытый мир камеры",
+          "reason": "разбор механик тревоги, ульев и грифа",
+          "confidence": 0.81
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на обзоре открытого мира",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.8,
+      "start_sec": 765,
+      "end_sec": 899
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Езда: можно сбежать на Запорожце, закатывая роботов в асфальт; при неосторожном вождении тачка загорается и взрывается; осторожная езда — особый вид медитации",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart Запорожец езда",
+          "reason": "колоритный эпизод про езду на Запорожце",
+          "confidence": 0.76
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 899,
+      "end_sec": 963
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Музыка и атмосфера: радио с 'Звёздным летом' Комарова, 'Ты замуж за него не выходи', 'И Ленин такой молодой'; эмбиент лабораторий; из обещанных треков Мика Гордона застал только один — музыкально игру шатает из стороны в сторону, но разнообразие радует",
+      "monetization": [
+        {
+          "type": "music_track",
+          "search_query": "Звёздное лето Комарова",
+          "reason": "внутриигровая радио-композиция, названная в ролике",
+          "confidence": 0.82
+        },
+        {
+          "type": "music_track",
+          "search_query": "Mick Gordon Atomic Heart саундтрек",
+          "reason": "упоминание саундтрека Мика Гордона",
+          "confidence": 0.75
+        },
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart музыка радио",
+          "reason": "разбор музыкального сопровождения с конкретными композициями",
+          "confidence": 0.8
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на музыкальном разборе",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 2.0,
+      "start_sec": 963,
+      "end_sec": 1143
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Баги: плашки о подобранных ресурсах не испаряются и мешают в кат-сценах; глючная карта работает только на поверхности и отказывается функционировать после лифта; лечится перезагрузкой сейва",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart баги карта",
+          "reason": "конкретные раздражающие баги с воспроизведением",
+          "confidence": 0.79
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза на разборе технических проблем",
+          "confidence": 0.65
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.5,
+      "start_sec": 1143,
+      "end_sec": 1226
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Оптимизация: на ПК ни одного вылета, PS5 и ПК-версии хорошо оптимизированы; предупреждение — если купили игру у 'зелёного посредника' за ноль рублей, не ждите стабильности (дибаг-версия датируется ноябрём)",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart пиратка предупреждение",
+          "reason": "важное предупреждение про пиратские сборки",
+          "confidence": 0.83
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на обсуждении версий и оптимизации",
+          "confidence": 0.7
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.4,
+      "start_sec": 1226,
+      "end_sec": 1263
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Критика: эксклюзивность VK Play для СНГ — отвратительное решение руководства Mundfish по отношению к аудитории; нельзя потрогать близняшек-балерин; шутка 'где мои 6 часов секса'",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart VK Play эксклюзив",
+          "reason": "резкая критика эксклюзивности с высоким вовлечением в комментариях",
+          "confidence": 0.9
+        },
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart где мои 6 часов",
+          "reason": "вирусная шутка про близняшек-балерин",
+          "confidence": 0.86
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на критике площадок",
+          "confidence": 0.68
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Где мои 6 часов секса? Близняшек нельзя потрогать",
+        "time_range_start": 1292,
+        "time_range_end": 1348,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.8,
+      "start_sec": 1263,
+      "end_sec": 1348
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Уникальность: ничего нового в геймплее — вобрала многое от BioShock и ещё полудюжины игр (перемещение по стенам как в Dying Light, говорящая перчатка); но это вовсе не делает игру плохой — экшн реализован как надо",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart похожа на BioShock",
+          "reason": "обсуждение заимствований у культовых игр",
+          "confidence": 0.78
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "пауза на сравнении с BioShock и Dying Light",
+          "confidence": 0.67
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.6,
+      "start_sec": 1348,
+      "end_sec": 1419
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вердикт по экшну и миру: яростный экшон с разнообразными врагами и потными боссами — как надо; антураж ретрофутуристической страны уникален, хочется возвращаться; специфический юмор с сексуальным подтекстом не для всех; отсылки — 'Лесник' Короля и Шута, Андрей Миронов, 'Ну погоди'",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart ретрофутуризм уникальность",
+          "reason": "главный позитивный тезис — уникальный мир и антураж",
+          "confidence": 0.84
+        },
+        {
+          "type": "music_track",
+          "search_query": "Король и Шут Лесник",
+          "reason": "отсылка к песне 'Лесник' в прозаическом пересказе",
+          "confidence": 0.7
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "контекстная пауза на финальном вердикте",
+          "confidence": 0.72
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.9,
+      "start_sec": 1419,
+      "end_sec": 1505
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Итог и аутро: хотелось бы более проработанного сюжета и персонажей, но удовольствие от прохождения огромное — Atomic Heart заслуживает похвалы; 'вкуснейших вам пирогов и до встречи на просторах stopgame.ru'",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": "Atomic Heart итог заслуживает похвалы",
+          "reason": "финальный вердикт с оценкой игры",
+          "confidence": 0.82
+        },
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "outro с призывом к подписке на канал",
+          "confidence": 0.8
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.3,
+      "start_sec": 1505,
+      "end_sec": 1543
+    }
+  ],
+  "raw_timeline_segments": [
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 0,
+      "end_sec": 11,
+      "text": "За всё время, прошедшее с момента анонса, Atomic Heart успела пройти путь от любви до ненависти — от самой ожидаемой игры до погрязшей в хейте.",
+      "word_timestamps": [
+        { "word": "За", "start_sec": 0, "end_sec": 0.5 },
+        { "word": "всё", "start_sec": 0.5, "end_sec": 1.2 },
+        { "word": "время,", "start_sec": 1.2, "end_sec": 2 },
+        { "word": "прошедшее", "start_sec": 2, "end_sec": 3 },
+        { "word": "с", "start_sec": 3, "end_sec": 3.3 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 55,
+      "end_sec": 63,
+      "text": "Ох, красота-то какая, ляпота. Таким было моё первое впечатление, когда я оказался в шкуре майора Нечаева.",
+      "word_timestamps": [
+        { "word": "Ох,", "start_sec": 55, "end_sec": 55.8 },
+        { "word": "красота-то", "start_sec": 55.8, "end_sec": 57.4 },
+        { "word": "какая,", "start_sec": 57.4, "end_sec": 58.4 },
+        { "word": "ляпота.", "start_sec": 58.4, "end_sec": 60 },
+        { "word": "Таким", "start_sec": 60, "end_sec": 60.8 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 126,
+      "end_sec": 139,
+      "text": "В сети происходит сбой, роботы начинают сходить с ума и убивать работников секретного исследовательского комплекса 3826.",
+      "word_timestamps": [
+        { "word": "В", "start_sec": 126, "end_sec": 126.5 },
+        { "word": "сети", "start_sec": 126.5, "end_sec": 127.6 },
+        { "word": "происходит", "start_sec": 127.6, "end_sec": 129 },
+        { "word": "сбой,", "start_sec": 129, "end_sec": 130.2 },
+        { "word": "роботы", "start_sec": 130.2, "end_sec": 131.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 177,
+      "end_sec": 190,
+      "text": "Нечаев терпит крушение и остаётся один на один с ордой механических убийц. Но наш майор не лыком шит — он схватил попавшийся под руку топор.",
+      "word_timestamps": [
+        { "word": "Нечаев", "start_sec": 177, "end_sec": 178.6 },
+        { "word": "терпит", "start_sec": 178.6, "end_sec": 180 },
+        { "word": "крушение", "start_sec": 180, "end_sec": 182 },
+        { "word": "и", "start_sec": 182, "end_sec": 182.4 },
+        { "word": "остаётся", "start_sec": 182.4, "end_sec": 184 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 190,
+      "end_sec": 204,
+      "text": "Откровенно говоря, сюжет меня не зацепил: начинается всё интересно — и вот и всё. Ждёшь невидимого поворота, но история получилась предсказуемой.",
+      "word_timestamps": [
+        { "word": "Откровенно", "start_sec": 190, "end_sec": 191.4 },
+        { "word": "говоря,", "start_sec": 191.4, "end_sec": 193 },
+        { "word": "сюжет", "start_sec": 193, "end_sec": 194.6 },
+        { "word": "меня", "start_sec": 194.6, "end_sec": 195.6 },
+        { "word": "не", "start_sec": 195.6, "end_sec": 196 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 227,
+      "end_sec": 238,
+      "text": "Я тут подумал — хуй вообще, редко когда игры этого жанра могут похвастать необычным захватывающим сценарием. А главное здесь — экшон.",
+      "word_timestamps": [
+        { "word": "Я", "start_sec": 227, "end_sec": 227.6 },
+        { "word": "тут", "start_sec": 227.6, "end_sec": 228.4 },
+        { "word": "подумал", "start_sec": 228.4, "end_sec": 230 },
+        { "word": "хуй", "start_sec": 230, "end_sec": 231 },
+        { "word": "вообще,", "start_sec": 231, "end_sec": 232.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 238,
+      "end_sec": 252,
+      "text": "Я испытал истинный кайф, скрывая ходячие консервные банки топором, разрывая местных боди-хоррор-позитивщиков из дробовика — чувствуешь и смакуешь каждый удар.",
+      "word_timestamps": [
+        { "word": "Я", "start_sec": 238, "end_sec": 238.6 },
+        { "word": "испытал", "start_sec": 238.6, "end_sec": 240.2 },
+        { "word": "истинный", "start_sec": 240.2, "end_sec": 242 },
+        { "word": "кайф,", "start_sec": 242, "end_sec": 243.6 },
+        { "word": "скрывая", "start_sec": 243.6, "end_sec": 245.2 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 327,
+      "end_sec": 338,
+      "text": "К середине игры ты будешь с недоумением вспоминать, как сжималось твоё очко при первой встрече с чёрным Вовчиком, а ближе к концу вырезаешь их пачками и хохочешь.",
+      "word_timestamps": [
+        { "word": "К", "start_sec": 327, "end_sec": 327.5 },
+        { "word": "середине", "start_sec": 327.5, "end_sec": 329 },
+        { "word": "игры", "start_sec": 329, "end_sec": 330.4 },
+        { "word": "ты", "start_sec": 330.4, "end_sec": 331 },
+        { "word": "будешь", "start_sec": 331, "end_sec": 332.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 424,
+      "end_sec": 450,
+      "text": "Его населяют самые разнообразные творения альтернативных советских учёных: от человекоподобных усатых вовчиков до плотоядных растений-мутантов и роботов-косильщиков.",
+      "word_timestamps": [
+        { "word": "Его", "start_sec": 424, "end_sec": 424.6 },
+        { "word": "населяют", "start_sec": 424.6, "end_sec": 426.2 },
+        { "word": "самые", "start_sec": 426.2, "end_sec": 427.4 },
+        { "word": "разнообразные", "start_sec": 427.4, "end_sec": 429.6 },
+        { "word": "творения", "start_sec": 429.6, "end_sec": 431.4 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 450,
+      "end_sec": 470,
+      "text": "Понадобится что-то покруче обычной палки: собранный из подручных средств здоровенный тесак, мощная булава 'Звездочка' или модифицированная двустволка.",
+      "word_timestamps": [
+        { "word": "Понадобится", "start_sec": 450, "end_sec": 451.8 },
+        { "word": "что-то", "start_sec": 451.8, "end_sec": 453 },
+        { "word": "покруче", "start_sec": 453, "end_sec": 455 },
+        { "word": "обычной", "start_sec": 455, "end_sec": 456.6 },
+        { "word": "палки:", "start_sec": 456.6, "end_sec": 458 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 559,
+      "end_sec": 575,
+      "text": "Перчатка даёт Нечаеву возможность сканировать окружение: каждый интерактивный объект отмечается своим цветом, а у врагов узнаёшь слабые стороны.",
+      "word_timestamps": [
+        { "word": "Перчатка", "start_sec": 559, "end_sec": 560.6 },
+        { "word": "даёт", "start_sec": 560.6, "end_sec": 561.8 },
+        { "word": "Нечаеву", "start_sec": 561.8, "end_sec": 563.6 },
+        { "word": "возможность", "start_sec": 563.6, "end_sec": 566 },
+        { "word": "сканировать", "start_sec": 566, "end_sec": 568 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 624,
+      "end_sec": 637,
+      "text": "Скиллы доступны после первой же встречи с похотливым роботом-шкафом Элеонорой — она отвечает и за крафт, и за прокачку, и за хранение.",
+      "word_timestamps": [
+        { "word": "Скиллы", "start_sec": 624, "end_sec": 625.6 },
+        { "word": "доступны", "start_sec": 625.6, "end_sec": 627.4 },
+        { "word": "после", "start_sec": 627.4, "end_sec": 628.4 },
+        { "word": "первой", "start_sec": 628.4, "end_sec": 629.8 },
+        { "word": "встречи", "start_sec": 629.8, "end_sec": 631.4 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 700,
+      "end_sec": 720,
+      "text": "Система взлома порадовала разнообразием: то щёлкаешь пальцем под таймер робота-зайца, то крутишь цветные индикаторы, то ковыряешь отмычкой на манер Скайрима.",
+      "word_timestamps": [
+        { "word": "Система", "start_sec": 700, "end_sec": 701.4 },
+        { "word": "взлома", "start_sec": 701.4, "end_sec": 703 },
+        { "word": "порадовала", "start_sec": 703, "end_sec": 705 },
+        { "word": "разнообразием:", "start_sec": 705, "end_sec": 707.4 },
+        { "word": "то", "start_sec": 707.4, "end_sec": 708 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 807,
+      "end_sec": 820,
+      "text": "Максимум, что можно сделать в стелсе, — незаметно подкрасться на картонах к одиночному противнику и устроить ему взлом жопы.",
+      "word_timestamps": [
+        { "word": "Максимум,", "start_sec": 807, "end_sec": 808.6 },
+        { "word": "что", "start_sec": 808.6, "end_sec": 809.4 },
+        { "word": "можно", "start_sec": 809.4, "end_sec": 810.6 },
+        { "word": "сделать", "start_sec": 810.6, "end_sec": 812.4 },
+        { "word": "в", "start_sec": 812.4, "end_sec": 813 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 899,
+      "end_sec": 915,
+      "text": "Можно садиться в Запорожец и проезжать мимо, закатывая этих чертей в асфальт. Правда, если раздавить слишком много роботов — тачка загорится и взорвётся.",
+      "word_timestamps": [
+        { "word": "Можно", "start_sec": 899, "end_sec": 900 },
+        { "word": "садиться", "start_sec": 900, "end_sec": 901.8 },
+        { "word": "в", "start_sec": 901.8, "end_sec": 902.4 },
+        { "word": "Запорожец", "start_sec": 902.4, "end_sec": 904.6 },
+        { "word": "и", "start_sec": 904.6, "end_sec": 905 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 963,
+      "end_sec": 980,
+      "text": "По лору одно из открытий учёных позволило слушать по радио музыку будущего. Звёздное лето Комарова — и ты ловишь просто дикие вайбы.",
+      "word_timestamps": [
+        { "word": "По", "start_sec": 963, "end_sec": 963.5 },
+        { "word": "лору", "start_sec": 963.5, "end_sec": 964.8 },
+        { "word": "одно", "start_sec": 964.8, "end_sec": 966 },
+        { "word": "из", "start_sec": 966, "end_sec": 966.5 },
+        { "word": "открытий", "start_sec": 966.5, "end_sec": 968.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1143,
+      "end_sec": 1165,
+      "text": "Ломающих игровой процесс багов я не встретил. Но выпадающие плашки о ресурсах не хотят испаряться, а карта отказывается работать после лифта — лечится перезагрузкой сейва.",
+      "word_timestamps": [
+        { "word": "Ломающих", "start_sec": 1143, "end_sec": 1145 },
+        { "word": "игровой", "start_sec": 1145, "end_sec": 1146.6 },
+        { "word": "процесс", "start_sec": 1146.6, "end_sec": 1148.4 },
+        { "word": "багов", "start_sec": 1148.4, "end_sec": 1150 },
+        { "word": "я", "start_sec": 1150, "end_sec": 1150.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1226,
+      "end_sec": 1244,
+      "text": "Я проходила Atomic Heart на ПК и не встретила ни одного вылета. И PlayStation 5, и ПК-версия на удивление хорошо оптимизированы.",
+      "word_timestamps": [
+        { "word": "Я", "start_sec": 1226, "end_sec": 1226.6 },
+        { "word": "проходила", "start_sec": 1226.6, "end_sec": 1228.6 },
+        { "word": "Atomic", "start_sec": 1228.6, "end_sec": 1230 },
+        { "word": "Heart", "start_sec": 1230, "end_sec": 1231.4 },
+        { "word": "на", "start_sec": 1231.4, "end_sec": 1232 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1244,
+      "end_sec": 1263,
+      "text": "А ежели вы приобрели игру у зелёного посредника за ноль рублей — не ждите от неё стабильности и качества: дибаг-версия датируется аж ноябрём прошлого года.",
+      "word_timestamps": [
+        { "word": "А", "start_sec": 1244, "end_sec": 1244.5 },
+        { "word": "ежели", "start_sec": 1244.5, "end_sec": 1246 },
+        { "word": "вы", "start_sec": 1246, "end_sec": 1246.6 },
+        { "word": "приобрели", "start_sec": 1246.6, "end_sec": 1249 },
+        { "word": "игру", "start_sec": 1249, "end_sec": 1250.4 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1292,
+      "end_sec": 1334,
+      "text": "Эксклюзивность для игроков из СНГ — руководство Mundfish поступило отвратительно по отношению к аудитории. И тебя так и дёргает перед соблазнительными близняшками-балеринами, а потрогать их нельзя. Где мои 6 часов секса?",
+      "word_timestamps": [
+        { "word": "Эксклюзивность", "start_sec": 1292, "end_sec": 1294.6 },
+        { "word": "для", "start_sec": 1294.6, "end_sec": 1295.4 },
+        { "word": "игроков", "start_sec": 1295.4, "end_sec": 1297.4 },
+        { "word": "из", "start_sec": 1297.4, "end_sec": 1298 },
+        { "word": "СНГ", "start_sec": 1298, "end_sec": 1299.6 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1348,
+      "end_sec": 1368,
+      "text": "В плане игрового процесса ничего уникального я в Atomic Heart не обнаружил: оно вобрало очень многое от BioShock вплоть до сюжетных моментов и ещё от полудюжины игр.",
+      "word_timestamps": [
+        { "word": "В", "start_sec": 1348, "end_sec": 1348.5 },
+        { "word": "плане", "start_sec": 1348.5, "end_sec": 1350 },
+        { "word": "игрового", "start_sec": 1350, "end_sec": 1352 },
+        { "word": "процесса", "start_sec": 1352, "end_sec": 1354 },
+        { "word": "ничего", "start_sec": 1354, "end_sec": 1356 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1419,
+      "end_sec": 1443,
+      "text": "Яростный экшон с разнообразными врагами, потными боссами и множеством способов расправы реализован как надо и дарит исключительно положительные эмоции.",
+      "word_timestamps": [
+        { "word": "Яростный", "start_sec": 1419, "end_sec": 1421 },
+        { "word": "экшон", "start_sec": 1421, "end_sec": 1423 },
+        { "word": "с", "start_sec": 1423, "end_sec": 1423.5 },
+        { "word": "разнообразными", "start_sec": 1423.5, "end_sec": 1426 },
+        { "word": "врагами,", "start_sec": 1426, "end_sec": 1428 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1470,
+      "end_sec": 1490,
+      "text": "Из уст главного героя матершина так и льётся, да и другие персонажи не прочь вставить крепкое словцо. Для кого-то кринж, а по мне — элемент натуралистичности.",
+      "word_timestamps": [
+        { "word": "Из", "start_sec": 1470, "end_sec": 1470.6 },
+        { "word": "уст", "start_sec": 1470.6, "end_sec": 1471.6 },
+        { "word": "главного", "start_sec": 1471.6, "end_sec": 1473.4 },
+        { "word": "героя", "start_sec": 1473.4, "end_sec": 1475.2 },
+        { "word": "матершина", "start_sec": 1475.2, "end_sec": 1477.8 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1505,
+      "end_sec": 1526,
+      "text": "Хотелось бы более проработанного сюжета и персонажей, но я получил огромное удовольствие от прохождения и считаю, что Atomic Heart заслужила свою похвалу.",
+      "word_timestamps": [
+        { "word": "Хотелось", "start_sec": 1505, "end_sec": 1506.6 },
+        { "word": "бы", "start_sec": 1506.6, "end_sec": 1507.4 },
+        { "word": "более", "start_sec": 1507.4, "end_sec": 1509 },
+        { "word": "проработанного", "start_sec": 1509, "end_sec": 1511.8 },
+        { "word": "сюжета", "start_sec": 1511.8, "end_sec": 1513.8 }
+      ]
+    },
+    {
+      "speaker": "Ведущий (StopGame)",
+      "start_sec": 1526,
+      "end_sec": 1543,
+      "text": "А на этом у меня всё: вкуснейших вам пирогов и до встречи на просторах stopgame.ru.",
+      "word_timestamps": [
+        { "word": "А", "start_sec": 1526, "end_sec": 1526.5 },
+        { "word": "на", "start_sec": 1526.5, "end_sec": 1527.4 },
+        { "word": "этом", "start_sec": 1527.4, "end_sec": 1528.8 },
+        { "word": "у", "start_sec": 1528.8, "end_sec": 1529.4 },
+        { "word": "меня", "start_sec": 1529.4, "end_sec": 1530.8 }
+      ]
+    }
+  ],
+  "audio_matches": [
+    {
+      "track_name": "Звёздное лето",
+      "artist": "Валерий Комаров",
+      "confidence": 0.82,
+      "genre": "Советская эстрада",
+      "album": null,
+      "year": null
+    },
+    {
+      "track_name": "Ты замуж за него не выходи",
+      "artist": "ВИА / советская эстрада",
+      "confidence": 0.6,
+      "genre": "Советская эстрада",
+      "album": null,
+      "year": null
+    },
+    {
+      "track_name": "Atomic Heart OST",
+      "artist": "Mick Gordon",
+      "confidence": 0.75,
+      "genre": "Industrial / Electro",
+      "album": "Atomic Heart (Original Game Soundtrack)",
+      "year": 2023
+    },
+    {
+      "track_name": "Лесник",
+      "artist": "Король и Шут",
+      "confidence": 0.7,
+      "genre": "Punk / Rock",
+      "album": null,
+      "year": null
+    }
+  ],
+  "celebrity_voice": {
+    "name": "Багратуньо (Максим Зацепин)",
+    "profession": "игровой обозреватель StopGame",
+    "confidence": 0.92
+  }
+}

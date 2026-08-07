@@ -10,6 +10,7 @@ import type { Passport } from "../data/types";
 import { mountHost, type ExtensionHost } from "./shadow";
 import { waitForPlayer, waitForSidebar, type PlayerHandle } from "./rutube";
 import { ModesController } from "./modes";
+import { mountGameOffer } from "./gameOffer";
 
 export function parseVideoId(url: string): string | null {
   const m = url.match(/rutube\.ru\/video\/([a-f0-9]+)\/?/);
@@ -59,6 +60,10 @@ async function main(): Promise<void> {
   const metrics = res.metrics ?? computeMetrics(passport);
   controller = new ModesController(hostRef, playerRef, { passport, metrics });
   controller.render();
+
+  // Игровой оффер-блок: если видео об игре — карточка «купить/играть в облаке»
+  // встраивается сразу после section[aria-label="информация о видео"].
+  void mountGameOffer(passport, title);
 
   // :: Метаданные хоста для E2E/смоук
   hostRef.host.dataset.rzVideoId = videoId;

@@ -37,6 +37,13 @@ export const demoJobs: JobSummary[] = [
     updated_at: '2026-07-28T10:25:00Z',
   },
   {
+    job_id: 'atomic_heart_review',
+    video_id: 'atomic_heart_review',
+    status: 'done',
+    created_at: '2026-07-29T11:00:00Z',
+    updated_at: '2026-07-29T11:28:00Z',
+  },
+  {
     job_id: 'podcast_ai',
     video_id: 'podcast_ai',
     status: 'processing',

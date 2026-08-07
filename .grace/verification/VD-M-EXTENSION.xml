@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <verification-entry id="V-M-EXTENSION" module="M-EXTENSION" priority="high">
-  <description>Chrome extension MV3: валидация 4 демо-паспортов под TS-схему Passport, binding (ручной+автоподбор), DataProvider (Demo/Real-stub), маркеры монетизаций+seek, режимы, Shadow DOM-хост</description>
+  <description>Chrome extension MV3: валидация 7 демо-паспортов под TS-схему Passport, binding (ручной+автоподбор), DataProvider (Demo/Real-stub), маркеры монетизаций+seek, режимы, Shadow DOM-хост</description>
   <Scenarios>
     <Scenario id="S-M-EXT-1" type="success">
-      <description>A-C003-03: 4 демо-паспорта валидны под TS Passport; реестр с привязкой tech_review↔video_id</description>
+      <description>A-C003-03: 7 демо-паспортов валидны под TS Passport; реестр с привязкой tech_review↔video_id</description>
       <commands>
         <command>npx vitest run tests/registry.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][DATA][PASSPORTS_VALID]</marker>
-        <assert>diy_frame, tech_review, movie_review, cooking_dinner проходят валидацию; реестр мапит tech_review → 2013f4eba6ade7b01582fb411f9e901a</assert>
+        <marker required="true">[M-EXTENSION][REGISTRY][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-REGISTRY][START_BLOCK]</marker>
+        <assert>diy_frame, tech_review, movie_review, cooking_dinner, iphone_50k_wylsacom, atomic_heart_review, vietnam_nha_trang проходят валидацию; реестр мапит tech_review → 2013f4eba6ade7b01582fb411f9e901a и vietnam_nha_trang → 7130901c1c9147f239190def16eb741c</assert>
       </evidence>
     </Scenario>
     <Scenario id="S-M-EXT-2" type="success">
@@ -18,8 +19,9 @@
         <command>npx vitest run tests/bindings.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][BINDING][AUTO_MATCH]</marker>
-        <assert>«Какой iPhone выбрать за 50 000 рублей?» автоподбирает tech_review по keywords; resolveBindingDetailed method=auto</assert>
+        <marker required="true">[M-EXTENSION][BINDING][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-BINDING][START_BLOCK]</marker>
+        <assert>«Какой iPhone выбрать за 50 000 рублей?» автоподбирает iphone_50k_wylsacom по keywords; resolveBindingDetailed method=auto; кулинарный рецепт → cooking_dinner</assert>
       </evidence>
     </Scenario>
     <Scenario id="S-M-EXT-3" type="success">
@@ -28,8 +30,9 @@
         <command>npx vitest run tests/data.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][DATA][DEMO_OK]</marker>
-        <marker required="true">[M-EXTENSION][DATA][REAL_STUB]</marker>
+        <marker required="true">[M-EXTENSION][DEMO][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][REAL-STUB][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-DATA][START_BLOCK]</marker>
         <assert>DemoDataProvider.load возвращает passport+metrics; RealDataProvider возвращает not_implemented без исключений; computeMetrics агрегаты</assert>
       </evidence>
     </Scenario>
@@ -39,7 +42,8 @@
         <command>npx vitest run tests/markers.test.ts tests/layout.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][MARKERS][SEEK]</marker>
+        <marker required="true">[M-EXTENSION][MARKERS][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-MARKERS][START_BLOCK]</marker>
         <assert>sceneStarts монотонно растут; collectMarkers sorted; клик по .rz-chip вызывает player.seekTo(startSec)</assert>
       </evidence>
     </Scenario>
@@ -49,8 +53,9 @@
         <command>npx vitest run tests/modes.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][SHADOW][HOST]</marker>
-        <marker required="true">[M-EXTENSION][MODES][SWITCH]</marker>
+        <marker required="true">[M-EXTENSION][SHADOW][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][MODES][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-MODES][START_BLOCK]</marker>
         <assert>mountHost создаёт shadowRoot с панелью, идемпотентен; ModesController переключает viewer/analyst/simulation без сбоев</assert>
       </evidence>
     </Scenario>
@@ -60,7 +65,7 @@
         <command>npm run build &amp;&amp; pytest tests/ --timeout=60 -q</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][BUILD][OK]</marker>
+        <marker required="true">[M-EXTENSION][BACKGROUND][START_BLOCK]</marker>
         <assert>vite build даёт dist/{content,popup,background}.js + manifest.json; сузейс-тесты бэкенда зелёные без изменений</assert>
       </evidence>
     </Scenario>
@@ -70,8 +75,9 @@
         <command>npx vitest run tests/rutube.test.ts tests/scene-overlay.test.ts</command>
       </commands>
       <evidence>
-        <marker required="true">[M-EXTENSION][WAITFOR][POLL]</marker>
-        <marker required="true">[M-EXTENSION][SCENE][EMPTY_GUARD]</marker>
+        <marker required="true">[M-EXTENSION][RUTUBE][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][SCENE-OVERLAY][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-RUTUBE][START_BLOCK]</marker>
         <assert>waitFor резолвится при появлении значения и возвращает null по таймауту; currentScene на пустом timeline возвращает безопасный fallback без crash</assert>
       </evidence>
     </Scenario>

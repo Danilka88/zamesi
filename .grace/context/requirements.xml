@@ -99,8 +99,8 @@
       </steps>
       <postcondition>Зритель видит интерактивные панели монетизаций/модерации/аудио/метрики и демо-CTA на странице видео без изменения бэкенда</postcondition>
       <evidence>
-        <marker required="true">[M-EXTENSION][HOST][MOUNTED]</marker>
-        <marker required="true">[M-EXTENSION][BINDING][RESOLVED]</marker>
+        <marker required="true">[M-EXTENSION][SHADOW][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][BINDING][START_BLOCK]</marker>
       </evidence>
     </UseCase>
   </UseCases>

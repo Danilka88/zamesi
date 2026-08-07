@@ -43,11 +43,11 @@ class Config:
 
     @property
     def ollama_temperature(self) -> float:
-        return float(self._get("models", "ollama", "default_params", "temperature", default=0.1))
+        return float(self._get("models", "default_params", "temperature", default=0.1))
 
     @property
     def ollama_max_tokens(self) -> int:
-        return int(self._get("models", "ollama", "default_params", "max_tokens", default=2048))
+        return int(self._get("models", "default_params", "max_tokens", default=2048))
 
     @property
     def classifier_max_tokens(self) -> int:

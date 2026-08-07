@@ -23,7 +23,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 193 pytest + 75 vitest с изоляцией внешних вызовов (monkeypatch, AsyncMock). 10 независимых модулей (9 Python + Chrome-расширение M-EXTENSION), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. 205 pytest + 75 vitest с изоляцией внешних вызовов (monkeypatch, AsyncMock). 11 независимых модулей (9 Python + Chrome-расширение M-EXTENSION + Web UI M-UI), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs, timeouts, fallbacks), structlog с 56 log-маркерами и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -41,7 +41,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:17`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Более того, каждая роль задаётся **списком провайдеров с приоритетом** — при отказе первого LLMRouter автоматически переключается на следующий (per-provider Circuit Breaker + отслеживание latency), так что локальный Ollama работает как primary, а облачные API — как автоматический fallback при недоступности. Каждая из 6 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне.
 
-- **GRACE 4 — формальная верификация** (`.grace/`, 30 артефактов) — проект управляется через GRACE 4: 10 MODULE_CONTRACT (9 Python-модулей + M-EXTENSION — Chrome-расширение), 72 пары семантических блоков `START_BLOCK`/`END_BLOCK`, 52 verification-сценария с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
+- **GRACE 4 — формальная верификация** (`.grace/`, 31 артефакт) — проект управляется через GRACE 4: 11 MODULE_CONTRACT (9 Python-модулей + M-EXTENSION — Chrome-расширение + M-UI — React-дашборд), 72 пары семантических блоков `START_BLOCK`/`END_BLOCK`, 54 verification-сценария с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
 
 - **VLM Ratio Gate — CI-проверка** (`scripts/check_vlm_ratio.py`) — скрипт, анализирующий JSON-логи пайплайна и проверяющий, что VLM-вызовы ≤6% (exit code 0/1). Может использоваться как gate в CI/CD: `python scripts/check_vlm_ratio.py < pipeline.log`. Без этого automation утверждение «≤6% VLM» остаётся на совести разработчика.
 
@@ -134,7 +134,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 |---|---|---|
 | Влияние на метрики монетизации | Типы меток, схема работы, Search + Mixer |
 | Юнит-экономика | Экономическая эффективность |
-| Воспроизводимость | Тестирование (193 теста) |
+| Воспроизводимость | Тестирование (205 тестов) |
 | Чувствительные данные | Приватность и безопасность |
 | Production-готовность | Отказоустойчивость, мониторинг |
 | UC-5: Семантический поиск (VideoRAG) | Семантический поиск, API: `GET /search`, Быстрый старт |
@@ -262,7 +262,7 @@ MP4
 
 #### Genre Classifier (Qwen3.5:0.8b)
 
-- **Почему:** минимальная модель Ollama (0,8B параметров). Распознаёт 10 жанров: podcast, lecture, stream, how_to, review, tech_review, diy, true_crime, education, unknown. Необходима для DomainRouter — жанровой блокировки VLM.
+- **Почему:** минимальная модель Ollama (0,8B параметров). Распознаёт 14 жанров (задаются в `config.yaml → genres.labels`): podcast, lecture, stream, how_to, review, tech_review, diy, diy_crafts, game_review, travel_vlog, entertainment, true_crime, education, unknown. Необходима для DomainRouter — жанровой блокировки VLM.
 - **Параметры:** `max_tokens=8192` — перекрывает thinking-токены Qwen3.5. При 4096 thinking обрезал JSON-ответ. Keyword fallback при недоступности Ollama.
 - **Время:** ~30 с на классификацию.
 
@@ -467,7 +467,7 @@ models:
 
 ## Архитектура (GRACE)
 
-Девять изолированных модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
+Девять изолированных Python-модулей (ниже на схеме) плюс M-EXTENSION (Chrome-расширение) и M-UI (React-дашборд) — всего 11 GRACE-модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -478,7 +478,7 @@ models:
 ┌──▼───────────┐ ┌─────────────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
 │ M-PASSPORT   │ │  M-MODERATOR    │ │ M-SEARCH        │  │  M-MIXER             │
 │ 4 файла      │ │  3 файла        │ │ 3 файла         │  │  4 файла             │
-│ 16 тестов    │ │  4 теста        │ │ 8 тестов        │  │  8 тестов            │
+│ 23 теста     │ │  4 теста        │ │ 8 тестов        │  │  8 тестов            │
 │ build→moder. │ │  LLM-as-Judge   │ │ index→search    │  │  plan→compose→render │
 │ validate     │ │  age_rating     │ │ ChromaDB        │  │  LLM-матчинг         │
 └──┬──────┬────┘ └─────────────────┘ └──┬──────────────┘  └──────┬───────────────┘
@@ -494,7 +494,7 @@ models:
 ┌──────▼────┐ ┌────▼──────────┐
 │ M-AUDIO   │ │ M-VISION      │
 │ 6 файлов  │ │ 5 файлов      │
-│ 60 тестов │ │ 23 теста      │
+│ 60 тестов │ │ 28 тестов     │
 │ Whisper   │ │ OCR, Genre,   │
 │ SpeechBrain│ │ DomainRouter  │
 │ ffmpeg    │ │ OCRBuffer     │
@@ -509,7 +509,7 @@ models:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 50 source-файлов, 42 test-файла, 92 файла Python, 30 .grace артефактов, ~25 UI-файлов (React + TypeScript), Chrome-расширение (MV3): 26 TS source + 12 test-файлов.
+Всего: 49 source-файлов, 41 test-файл, 90 файлов Python, 31 .grace артефакт, 45 UI-файлов (React + TypeScript), Chrome-расширение (MV3): 26 TS source + 12 test-файлов.
 
 ---
 
@@ -579,7 +579,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 193 pytest + 75 vitest, 0 failures
+### Test suite: 205 pytest + 75 vitest, 0 failures
 
 Покрытие тестов по модулям:
 
@@ -589,7 +589,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-AUDIO | 60 | `test_pyav_reader.py`, `test_whisper_asr.py`, `test_diarization_speechbrain.py`, `test_timeline_merger.py`, `test_audio_fingerprinter.py` |
 | M-VISION | 28 | `test_domain_router.py`, `test_rapid_ocr.py`, `test_ocr_buffer.py` |
 | M-SEMANTIC | 12 | `test_llm_client.py`, `test_scene_analyzer.py` |
-| M-PASSPORT | 16 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
+| M-PASSPORT | 23 | `test_frontmatter_generator.py`, `test_passport_builder.py`, `test_validator.py` |
 | M-SEARCH | 8 | `test_indexer.py` (4), `test_searcher.py` (4) |
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
@@ -606,7 +606,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ### GRACE Verification
 
-52 verification scenarios, 3 gate levels:
+54 verification scenarios, 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
@@ -692,13 +692,13 @@ Endpoints:
 
 ### GRACE Semantic Markup
 
-72 пары `START_BLOCK`/`END_BLOCK` в 50 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
+72 пары `START_BLOCK`/`END_BLOCK` в 49 source-файлах. Каждый блок именован по модулю: `M-AUDIO/PYAV/EXTRACT_AUDIO`, `M-SEMANTIC/QWEN/ANALYZE_TEXT` и т. д. Используется для навигации LLM по коду без чтения всего файла.
 
 ---
 
 ## Веб-интерфейс (UI)
 
-Полнофункциональный frontend на React 18 + TypeScript + Vite + TailwindCSS для визуализации всех возможностей пайплайна. Работает в двух режимах: **Real** (с бэкендом) и **Demo** (offline, с предзагруженными данными).
+Полнофункциональный frontend на React 18 + TypeScript + Vite + TailwindCSS для визуализации всех возможностей пайплайна. Работает в двух режимах: **Real** (с бэкендом) и **Demo** (offline, с предзагруженными данными). Отдельный GRACE-модуль **M-UI** (`GD-011-M-UI.xml`) с собственным MODULE_CONTRACT в графе знаний.
 
 ### Страницы
 
@@ -837,14 +837,26 @@ pip install -e ".[dev]"
 
 ```yaml
 models:
-  ollama:
-    text_model: "gemma4:e4b"
-    vision_model: "qwen3.5:9b"
-    classifier_model: "qwen3.5:0.8b"
-    classifier_max_tokens: 8192
-    vision_max_image_bytes: 2097152  # 2 MB
-    vision_max_tokens: 8192  # Qwen3.5:9b тратит на thinking
+  default_params:          # temperature 0.1, top_p 0.9, max_tokens 4096
+    temperature: 0.1
+    max_tokens: 4096
+  providers:               # ollama (локально) + облачные OpenAI-совместимые
+    ollama:
+      type: ollama
+      endpoint: "http://localhost:11434"
+    yandex:                # type: openai → YandexGPT (YANDEX_API_KEY)
+    cloudru:               # Cloud.ru (CLOUDRU_API_KEY)
+    openrouter:            # OpenRouter (OPENROUTER_API_KEY)
+  routing:                 # каждая роль = список провайдеров с приоритетом
+    text_model:       [{ provider: ollama,   model: gemma4:e4b }, { provider: yandex, model: yandexgpt }]
+    vision_model:     [{ provider: ollama,   model: qwen3.5:9b }, { provider: openrouter, model: openai/gpt-4o-mini }]
+    classifier_model: [{ provider: ollama,   model: qwen3.5:0.8b }]
+    mixer_model:      [{ provider: ollama,   model: gemma4:e4b }]
+    moderation_model: [{ provider: ollama,   model: gemma4:e4b }]
+    embedding_model:  [{ provider: ollama,   model: qwen3-embedding:0.6b }]
 ```
+
+> Виртуальные параметры VLM (`vision_max_tokens: 8192`, `vision_max_image_bytes: 2097152`, `classifier_max_tokens: 8192`) считываются из `models.ollama.*` и имеют разумные дефолты в `src/core/config.py`, если блок не задан явно.
 
 ---
 
@@ -1283,7 +1295,7 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 3. ✅ **Audio Fingerprinting** — музыкaльные треки + celebrity recognition (реализовано)
 4. ✅ **LLM-as-Judge модерация** — 9 категорий флагов, age rating 0+–18+ (реализовано)
 5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter (реализовано)
-6. ✅ **193 pytest + 75 vitest**, 52 verification scenarios, GRACE-верификация (реализовано)
+6. ✅ **205 pytest + 75 vitest**, 54 verification scenarios, GRACE-верификация (реализовано)
 7. ✅ **Web UI (React + Vite + TailwindCSS)** — панель управления, паспорт, поиск, миксы (реализовано)
 8. ✅ **Demo Mode** — полная offline-демонстрация без бэкенда (реализовано)
 9. ✅ **SSE / EventSource** — live-уведомления об изменении статуса (реализовано)
@@ -1307,4 +1319,4 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 
 ---
 
-*GRACE 4-governed project: 30 `.grace` артефактов, 10 MODULE_CONTRACT, 72 semantic block pairs, 52 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `chrome-extension/` (M-EXTENSION). GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+*GRACE 4-governed project: 31 `.grace` артефакт, 11 MODULE_CONTRACT, 72 semantic block pairs, 54 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `chrome-extension/` (M-EXTENSION), `ui/` (M-UI). GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*

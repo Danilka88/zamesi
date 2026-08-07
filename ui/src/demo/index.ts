@@ -10,6 +10,8 @@ import cookingDinner from './passports/cooking_dinner.json'
 import iphone50kWylsacom from './passports/iphone_50k_wylsacom.json'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import atomicHeartReview from './passports/atomic_heart_review.json'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import vietnamNhaTrang from './passports/vietnam_nha_trang.json'
 
 export const demoPassports: Record<string, unknown> = {
   diy_frame: diyFrame,
@@ -18,4 +20,5 @@ export const demoPassports: Record<string, unknown> = {
   cooking_dinner: cookingDinner,
   iphone_50k_wylsacom: iphone50kWylsacom,
   atomic_heart_review: atomicHeartReview,
+  vietnam_nha_trang: vietnamNhaTrang,
 }

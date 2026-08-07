@@ -16,6 +16,7 @@ export default function JobCard({ job, onSelect }: Props) {
     review: 'Обзор',
     education: 'Образование',
     entertainment: 'Развлечения',
+    travel: 'Путешествия',
   }
 
   const genre = job.video_id.includes('diy') ? 'diy'
@@ -23,12 +24,12 @@ export default function JobCard({ job, onSelect }: Props) {
     : job.video_id.includes('cooking') ? 'how_to'
     : job.video_id.includes('interview') ? 'podcast'
     : job.video_id.includes('podcast') ? 'podcast'
-    : job.video_id.includes('vlog') ? 'entertainment'
+    : job.video_id.includes('vietnam') || job.video_id.includes('travel') || job.video_id.includes('vlog') ? 'travel'
     : 'unknown'
 
   const iconMap: Record<string, string> = {
     diy: '🛠️', tech_review: '🎧', how_to: '🍳',
-    podcast: '🎙️', unknown: '📹', entertainment: '🌍',
+    podcast: '🎙️', unknown: '📹', entertainment: '🌍', travel: '🌍',
   }
 
   return (

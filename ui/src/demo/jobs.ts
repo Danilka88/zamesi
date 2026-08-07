@@ -44,6 +44,13 @@ export const demoJobs: JobSummary[] = [
     updated_at: '2026-07-29T11:28:00Z',
   },
   {
+    job_id: 'vietnam_nha_trang',
+    video_id: 'vietnam_nha_trang',
+    status: 'done',
+    created_at: '2026-07-29T12:00:00Z',
+    updated_at: '2026-07-29T12:30:00Z',
+  },
+  {
     job_id: 'podcast_ai',
     video_id: 'podcast_ai',
     status: 'processing',

@@ -17,6 +17,7 @@
 - **Маркеры монетизаций на прогресс-баре** — точки AD_SLOT / ECOM_ITEM / CLIP_CANDIDATE из паспорта позиционируются по времени сцен; клик перематывает видео (`currentTime + play`).
 - **Панель текущей сцены** — по `timeupdate` показывает summary и монетизацию активной сцены, как субтитры поверх плеера.
 - **3 режима работы** — «Зритель» (маркеры + сцена + CTA), «Аналитик» (4 блока: монетизации, модерация, аудио, метрики), «Симуляция» (анимированный разбор ASR → сцены → метки).
+- **4-й режим «Автор»** — инструменты A/B-тестирования контента: генератор вариантов заголовков и описаний из паспорта (детерминированный PRNG + курируемая библиотека), прогнозные метрики эффективности, SVG-графики retention/монетизации/почасовой активности (NFR-7, без сети). Полноширинная модалка (`expand`) с таббаром всех 4 режимов.
 - **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по ключевым словам заголовка («Какой iPhone выбрать за 50 000 рублей?» → `tech_review`) + регистрация по `video_id` в реестре; если ни одна привязка не сработала — автоматически применяется паспорт по умолчанию `iphone_50k_wylsacom` через `getDefaultPassport()` (демо-сценарий из коробки на любом видео).
 - **Shadow DOM-изоляция** — стили панелей не конфликтуют с CSS RUTUBE, ноль layout-shift (NFR-6).
 - **Игровой оффер-блок** — на видео о компьютерных играх (детект по `ya:ovs:category=Видеоигры`, хэштегам `#шутеры/#игра/#геймплей` или паспорту `game_review`) сразу после `section[aria-label="информация о видео"]` встраивается карточка с обложкой игры и кнопками «купить в VK Play / играть в облаке VK Play Cloud и Yandex Play» (демо-заглушки, NFR-7).
@@ -38,7 +39,9 @@ DataProvider.load(videoId) ── DemoDataProvider (локальные пасп�
 mountHost() → Shadow DOM → ModesController
    ├─ viewer:     markers + sceneOverlay + CTA
    ├─ analyst:    sidebar (монетизации/модерация/аудио/метрики)
-   └─ simulation: анимированный разбор → переход в analyst
+   ├─ simulation: анимированный разбор → переход в analyst
+   ├─ author:     A/B-варианты заголовков + метрики + SVG-графики
+   └─ expand:     полноширинная модалка со всеми 4 режимами
 ```
 
 ## Технологический стек
@@ -57,7 +60,7 @@ mountHost() → Shadow DOM → ModesController
 cd chrome-extension
 npm install
 npm run build        # dist/{content,popup,background}.js + manifest.json + иконки
-npm test             # vitest: 53 теста
+npm test             # vitest: 110 тестов
 ```
 
 **Load unpacked (ручной smoke):**
@@ -98,7 +101,7 @@ src/
 │   ├── types.ts            Passport, SceneAnalysisResult, MonetizationItem …
 │   ├── labels.ts           метки монетизаций (цвет/иконка/тултип)
 │   ├── registry.ts         реестр + привязка tech_review ↔ video_id
-│   └── passports/          6 демо-паспортов (.json)
+│   └── passports/          7 демо-паспортов (.json)
 └── popup/                  выбор сценария + автоподбор (chrome.runtime messaging)
 ```
 
@@ -114,12 +117,13 @@ src/
 | `diy_frame` | DIY/мастер-класс | keywords |
 | `cooking_dinner` | кулинария | keywords |
 | `atomic_heart_review` | обзор игры Atomic Heart (StopGame, ~25:43) | video_id `aceaa503bdb8c200278f94dd3deaf7f5` + keywords |
+| `vietnam_nha_trang` | тревел-влог «Вьетнам: жизнь в Нячанге» | video_id `7130901c1c9147f239190def16eb741c` + keywords |
 
 ## Тестирование
 
 | Файл | Покрытие |
 |---|---|
-| `registry.test.ts` | валидация 6 паспортов под TS `Passport`, реестр, дефолтный паспорт |
+| `registry.test.ts` | валидация 7 паспортов под TS `Passport`, реестр, дефолтный паспорт |
 | `bindings.test.ts` | автоподбор по заголовку, method=auto/manual |
 | `data.test.ts` | DemoDataProvider / RealDataProvider-stub / computeMetrics |
 | `layout.test.ts` | sceneStarts (монотонность), fmtTime/fmtDur |
@@ -127,8 +131,11 @@ src/
 | `modes.test.ts` | Shadow-хост (идемпотентность), переключение режимов |
 | `game-offer-detect.test.ts` | детект игровых видео + извлечение названия игры из заголовка |
 | `game-offer.test.ts` | карточка оффера: вставка после meta-row, идемпотентность, демо-заглушки |
+| `author-tools-generate.test.ts` | генерация A/B-вариантов заголовков/описаний, resolvePassportKey, projectVariantMetrics |
+| `author-tools-render.test.ts` | рендер панели автора, чистка при unmount, wide-режим |
+| `author-tools-charts.test.ts` | SVG-графики: retention, стек монетизаций, почасовые бары (детерминизм) |
 
-Проверка: `npm run typecheck && npm test` (53 теста, зелёные).
+Проверка: `npm run typecheck && npm test` (110 тестов, зелёные).
 
 ## Подключение реального анализатора (FastAPI)
 
@@ -138,7 +145,9 @@ src/
 
 - ✅ A1–A3: spec/plan C-003, requirements (UC-7, NFR-6/7), graph (GD-010), technology
 - ✅ P0–P8: скаффолд, порт данных, data-layer, инъекция, режимы, popup
-- ✅ P9: vitest suite (41), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
+- ✅ P9: vitest suite (110), dev-мок `dev/mocks/rutube-video.html`, сборка `dist/`
 - ✅ Игровой оффер-блок: детект + демо-карточка после meta-row (NFR-7)
+- ✅ Тревел-оффер-блок: карточка билетов + `vietnam_nha_trang` паспорт (NFR-7)
+- ✅ Инструменты автора: A/B-варианты заголовков/описаний + метрики + SVG-графики, полноширинная модалка (NFR-7)
 - ⏳ Real-провайдер: коннект к FastAPI `/analyze`
 - ⏳ Больше паспортов и keywords в реестре

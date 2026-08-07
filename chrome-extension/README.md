@@ -57,7 +57,7 @@ mountHost() → Shadow DOM → ModesController
 cd chrome-extension
 npm install
 npm run build        # dist/{content,popup,background}.js + manifest.json + иконки
-npm test             # vitest: 41 тест
+npm test             # vitest: 53 теста
 ```
 
 **Load unpacked (ручной smoke):**
@@ -94,7 +94,7 @@ src/
 │   ├── types.ts            Passport, SceneAnalysisResult, MonetizationItem …
 │   ├── labels.ts           метки монетизаций (цвет/иконка/тултип)
 │   ├── registry.ts         реестр + привязка tech_review ↔ video_id
-│   └── passports/          5 демо-паспортов (.json)
+│   └── passports/          6 демо-паспортов (.json)
 └── popup/                  выбор сценария + автоподбор (chrome.runtime messaging)
 ```
 
@@ -115,7 +115,7 @@ src/
 
 | Файл | Покрытие |
 |---|---|
-| `registry.test.ts` | валидация 5 паспортов под TS `Passport`, реестр, дефолтный паспорт |
+| `registry.test.ts` | валидация 6 паспортов под TS `Passport`, реестр, дефолтный паспорт |
 | `bindings.test.ts` | автоподбор по заголовку, method=auto/manual |
 | `data.test.ts` | DemoDataProvider / RealDataProvider-stub / computeMetrics |
 | `layout.test.ts` | sceneStarts (монотонность), fmtTime/fmtDur |
@@ -124,7 +124,7 @@ src/
 | `game-offer-detect.test.ts` | детект игровых видео + извлечение названия игры из заголовка |
 | `game-offer.test.ts` | карточка оффера: вставка после meta-row, идемпотентность, демо-заглушки |
 
-Проверка: `npm run typecheck && npm test` (41 тест, зелёные).
+Проверка: `npm run typecheck && npm test` (53 теста, зелёные).
 
 ## Подключение реального анализатора (FastAPI)
 

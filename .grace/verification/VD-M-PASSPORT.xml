@@ -49,7 +49,7 @@
       </commands>
       <evidence>
         <marker required="true">[M-PASSPORT][FRONTMATTER][DONE]</marker>
-        <assert>Успешный вызов возвращает PassportFrontmatter с корректными полями; ошибка LLM → fallback domain_type=unknown; пустой транскрипт → domain_type=unknown; brand_safety_score клиппируется до 100</assert>
+        <assert>Успешный вызов возвращает PassportFrontmatter с корректными полями; ошибка LLM → fallback domain_type=unknown; пустой транскрипт → domain_type=unknown; brand_safety_score клиппируется до 100; genre пробрасывается в generate_frontmatter как подсказка; domain_type берётся из LLM, а не из genre</assert>
       </evidence>
     </Scenario>
     <Scenario id="S-M-PASSPORT-6" type="success">
@@ -59,7 +59,17 @@
       </commands>
       <evidence>
         <marker required="true">[M-PASSPORT][BUILDER][DONE]</marker>
-        <assert>build_passport создаёт Passport с frontmatter и timeline; пустая таймлайна → пустой список; passport_to_markdown содержит video_id, domain_type, ECOM_ITEM, AD_SLOT; YAML escaping корректно обрабатывает кавычки/табуляцию/переносы строк</assert>
+        <assert>build_passport создаёт Passport с frontmatter, timeline и audio_matches/celebrity_voice; пустая таймлайна → пустой список; сцены получают start_sec/end_sec из raw_timeline_segments; passport_to_markdown содержит video_id, domain_type, ECOM_ITEM, AD_SLOT, секции Музыка/Знаменитость; YAML escaping корректно обрабатывает кавычки/табуляцию/переносы строк</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-PASSPORT-7" type="success">
+      <description>Passport round-trip: audio_matches и celebrity_voice сохраняются в JSON (контракт UI/расширения)</description>
+      <commands>
+        <command>pytest tests/passport_builder/test_passport_builder.py -v -k "audio or celebrity or timing"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-PASSPORT][BUILDER][SAVED]</marker>
+        <assert>model_dump_json включает audio_matches + celebrity_voice; model_validate_json восстанавливает их; build_passport заполняет тайминги сцен из сегментов</assert>
       </evidence>
     </Scenario>
   </Scenarios>

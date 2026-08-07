@@ -174,6 +174,7 @@ async def build_passport(
 # END_BLOCK: M-PASSPORT/BUILDER/BUILD_PASSPORT
 
 
+# START_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
 def _music_to_md(matches: list[MusicMatch]) -> str:
     if not matches:
         return "_Треки не найдены_"
@@ -199,7 +200,6 @@ def _celebrity_to_md(voice: CelebrityVoice | None) -> str:
     return line
 
 
-# START_BLOCK: M-PASSPORT/BUILDER/PASSPORT_TO_MD
 def passport_to_markdown(passport: Passport) -> str:
     timeline_md = "\n".join(
         _scene_to_md(i, scene, passport.raw_timeline_segments[i] if i < len(passport.raw_timeline_segments) else None)

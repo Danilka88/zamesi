@@ -7,12 +7,12 @@
     <function name="analyze_scenes">SLM-анализ всех сегментов: pass1 text + VLM gate + pass2 vision</function>
     <function name="analyze_text_segment">Одиночный SLM-запрос к gemma4:e4b для текстового сегмента</function>
     <function name="analyze_vision_segment">Одиночный VLM-запрос к qwen3.5:9b с I-frame</function>
-    <function name="generate_frontmatter">Генерация YAML-фронтмэттера через LLM</function>
+    <function name="generate_frontmatter">Генерация YAML-фронтмэттера через LLM (genre — подсказка контекста)</function>
   </Exports>
   <Prompts>
-    <prompt name="PASS1_TEXT_SYSTEM/PASS1_TEXT_USER">SLM pass1: анализ текстового сегмента (gemma4:e4b)</prompt>
+    <prompt name="PASS1_TEXT_SYSTEM/PASS1_TEXT_USER">SLM pass1: анализ сегмента; жанровые подсказки монетизации (travel → авиабилеты/отели/туры, game → игра/DLC/мерч, tech → гаджеты)</prompt>
     <prompt name="PASS2_VISION_SYSTEM/PASS2_VISION_USER">VLM pass2: описание I-frame (qwen3.5:9b)</prompt>
-    <prompt name="FRONTMATTER_SYSTEM/FRONTMATTER_USER">SEO-метаданные через LLM</prompt>
+    <prompt name="FRONTMATTER_SYSTEM/FRONTMATTER_USER">SEO-метаданные через LLM; расширенный словарь domain_type (вкл. game_review, travel_vlog, entertainment, diy_crafts); для game_review/travel_vlog seo_title несёт название игры/направление</prompt>
   </Prompts>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

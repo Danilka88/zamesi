@@ -4,10 +4,13 @@
   <Source path="src/passport_builder/"/>
   <Test path="tests/passport_builder/"/>
   <Exports>
-    <function name="build_frontmatter">Генерация YAML-секции (метаданные, SEO) через LLM</function>
-    <function name="build_passport">Сборка Passport из scene_results + frontmatter</function>
-    <function name="passport_to_markdown">Преобразование Passport → .md файл</function>
-    <function name="validate">Валидация .md структуры (video_id, таймкоды, ecom search_query)</function>
+    <function name="build_frontmatter">Генерация YAML-секции (метаданные, SEO) через LLM; genre передаётся как подсказка, domain_type решает LLM</function>
+    <function name="build_passport">Сборка Passport: frontmatter + timeline + raw_timeline_segments + audio_matches + celebrity_voice; тайминги сцен из сегментов</function>
+    <function name="passport_to_markdown">Преобразование Passport → .md (таймлайн, монетизация, секции Музыка/Знаменитость)</function>
+    <function name="_music_to_md">Рендер секции «Музыка» из audio_matches (артист — трек, жанр/альбом/год, уверенность)</function>
+    <function name="_celebrity_to_md">Рендер секции «Знаменитость» из celebrity_voice (имя, профессия, уверенность)</function>
+    <function name="save_passport_to_disk">Запись output/{video_id}.json + .md (Pydantic-схема Passport с audio_matches/celebrity_voice)</function>
+    <function name="validate">Валидация паспорта (video_id, таймкоды, ecom search_query)</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

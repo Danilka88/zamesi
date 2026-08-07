@@ -4,12 +4,12 @@
   <Source path="src/core/"/>
   <Test path="tests/core/"/>
   <Exports>
-    <type name="VideoGenre">Enum жанров: how_to_repair, podcast, lecture, gameplay, interview, vlog, review, unboxing, cooking, travel, sports, news, tutorial, other</type>
+    <type name="VideoGenre">Enum жанров (VLM-гейт): how_to, review, podcast, lecture, stream, tech_review, diy, diy_crafts, game_review, travel_vlog, entertainment, true_crime, education, unknown</type>
     <type name="JobStatus">Статус обработки: pending, processing, done, error</type>
     <type name="TimelineSegment">Сегмент таймлайна: start_sec, end_sec, text, speaker</type>
     <type name="WordTimestamp">Слово с таймстампом: word, start_sec, end_sec, probability</type>
     <type name="SpeakerSegment">Сегмент спикера: speaker, start_sec, end_sec</type>
-    <type name="SceneAnalysisResult">Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[]</type>
+    <type name="SceneAnalysisResult">Результат анализа сцены: action_is_clear, requires_vision, scene_summary, monetization[], start_sec, end_sec</type>
     <type name="MonetizationItem">Точка монетизации: ad_slot, ecom_item, clip_candidate, music_track, artist_merch, event_ticket, celebrity_appearance</type>
     <type name="MusicMatch">Результат распознавания музыки: track_name, artist, confidence, genre</type>
     <type name="CelebrityVoice">Распознанный голос знаменитости: name, profession, confidence</type>
@@ -18,6 +18,7 @@
     <type name="OCRResult">Результат OCR: text, confidence, bbox, timestamp</type>
     <type name="Passport">Финальный паспорт: frontmatter, timeline, raw_timeline_segments, audio_matches, celebrity_voice</type>
     <type name="PassportFrontmatter">YAML-фронтмэттер: video_id, domain_type, brand_safety_score, seo_title</type>
+    <type name="DOMAIN_TYPES">Канонический словарь domain_type (LLM-first): tech_review, product_review, review, how_to, how_to_repair, diy, diy_crafts, game_review, travel_vlog, entertainment, movie_review, true_crime, education, podcast, lecture, stream, unknown</type>
     <type name="JobMetrics">Метрики пайплайна: total_segments, vlm_calls, vlm_percent, duration_sec</type>
     <type name="JobResult">Результат job: job_id, status, passport, metrics, timestamps</type>
     <type name="AnalyzeResponse">POST /analyze ответ: job_id, status</type>
@@ -50,15 +51,14 @@
     <exception name="ConfigError">Ошибка конфигурации</exception>
   </Exceptions>
   <Functions>
-    <function name="load_config">Загрузка конфигурации (src/core/config.py)</function>
-    <function name="timeout_manager">TimeoutManager: retry, circuit breaker, fallback chain</function>
+    <function name="load_config">Загрузка конфигурации (src/core/config.py, singleton config)</function>
+    <function name="timeout_manager">Синглтон TimeoutManager: retry, circuit breaker, fallback chain</function>
     <function name="extract_json">Извлечение JSON из markdown code fences</function>
     <function name="embed_text">qwen3-embedding через Ollama httpx</function>
     <function name="get_chroma_client">ChromaDB PersistentClient singleton</function>
     <function name="setup_logging">structlog JSON-конфигурация</function>
     <function name="get_logger">structlog.BoundLogger с correlation_id</function>
     <function name="fmt_sec">Форматирование секунд → MM:SS или H:MM:SS</function>
-    <function name="circuit_breaker">CircuitBreaker: изолирован в core/circuit_breaker.py</function>
   </Functions>
   <Classes>
     <class name="CircuitBreaker">Circuit breaker с 3 состояниями: closed/open/half-open</class>

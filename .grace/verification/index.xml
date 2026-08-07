@@ -22,8 +22,8 @@
     <Entry id="V-M-SEMANTIC" routed="VD-M-SEMANTIC.xml" module="M-SEMANTIC" priority="critical" scenarios="6">
       <description>SLM-анализ (gemma4:e4b), VLM Gatekeeper, analyze_scenes. Критично для TCO.</description>
     </Entry>
-    <Entry id="V-M-PASSPORT" routed="VD-M-PASSPORT.xml" module="M-PASSPORT" priority="high" scenarios="6">
-      <description>Генерация YAML-frontmatter, Markdown-таймлайн, валидация .md</description>
+    <Entry id="V-M-PASSPORT" routed="VD-M-PASSPORT.xml" module="M-PASSPORT" priority="high" scenarios="7">
+      <description>Генерация YAML-frontmatter, Markdown-таймлайн, валидация .md, Passport round-trip (audio_matches/celebrity_voice), тайминги сцен</description>
     </Entry>
     <Entry id="V-M-SEARCH" routed="VD-M-SEARCH.xml" module="M-SEARCH" priority="high" scenarios="5">
       <description>Embedding-индексация сцен и семантический поиск через ChromaDB</description>

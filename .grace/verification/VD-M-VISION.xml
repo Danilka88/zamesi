@@ -45,7 +45,7 @@
     <Scenario id="S-M-VISION-5" type="success">
       <description>Genre classifier: keyword fallback и LLM-классификация жанра</description>
       <commands>
-        <command>pytest tests/vision_scanner/test_genre_classifier.py -v</command>
+        <command>pytest tests/vision_scanner/test_domain_router.py -v</command>
       </commands>
       <evidence>
         <marker required="true">[M-VISION][ROUTER][GENRE_DETECTED]</marker>

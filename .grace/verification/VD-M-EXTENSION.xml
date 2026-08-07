@@ -57,7 +57,7 @@
     <Scenario id="S-M-EXT-6" type="backward">
       <description>A-C003-08: Python-бэкенд и ui/ не затронуты; сборка расширения успешна</description>
       <commands>
-        <command>npm run build && pytest tests/ --timeout=60 -q</command>
+        <command>npm run build &amp;&amp; pytest tests/ --timeout=60 -q</command>
       </commands>
       <evidence>
         <marker required="true">[M-EXTENSION][BUILD][OK]</marker>

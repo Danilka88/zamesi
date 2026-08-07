@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GraceChangePlan id="C-001" project="RUTUBE Video Analyzer" version="0.1.0">
   <title>GRACE 3 → 4 Migration</title>
-  <status="active"/>
+  <status value="active"/>
   <phases>
     <Phase-0 name="GRACE 4 Migration" status="done">
       <description>Конвертация docs/ → .grace/ структуры</description>

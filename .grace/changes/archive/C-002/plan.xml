@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GraceChangePlan id="C-002" project="RUTUBE Video Analyzer" version="0.1.0">
   <title>Multi-Provider LLM Fallback Chain</title>
-  <status="active"/>
+  <status value="active"/>
   <phases>
     <Phase-1 name="Config: routing as priority list" status="done">
       <description>config.yaml: routing → списки провайдеров по приоритету. config.py: routing property → dict[str, list[dict]].</description>

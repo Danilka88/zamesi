@@ -32,8 +32,8 @@ video-analysis, monetization, e-commerce, ASR, OCR, Russian-language, VLM-gateke
 - `.grace/graph/GD-*-M-*.xml` — Per-module exports, types, cross-links
 - `.grace/verification/index.xml` — Test scenarios, gates, TCO validation
 - `.grace/verification/VD-M-*.xml` — Per-entry scenarios with evidence markers
-- `.grace/changes/active/C-001/spec.xml` — GraceChangeSpec
-- `.grace/changes/active/C-001/plan.xml` — GraceChangePlan (Phase-0 migration + 8 dev phases)
+- `.grace/changes/active/` — Активные GraceChange* бандлы (C-*)
+- `.grace/changes/archive/C-001..C-003/` — Завершённые change bundles (spec + plan + report)
 
 ### @src
 - `src/core/schemas.py` — All Pydantic contracts (JobStatus, TimelineSegment, Passport, etc.)

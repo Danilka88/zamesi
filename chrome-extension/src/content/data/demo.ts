@@ -18,7 +18,7 @@ export function computeMetrics(passport: Passport): JobMetrics {
   let vlmCalls = 0;
   for (const scene of passport.timeline) {
     if (scene.requires_vision) vlmCalls += 1;
-    for (const m of scene.monetization) counters[m.type] += 1;
+    for (const m of scene.monetization) counters[m.type.toLowerCase() as MonetizationType] += 1;
   }
   const totalScenes = passport.timeline.length;
   const vlmPercent = totalScenes ? Math.round((vlmCalls / totalScenes) * 100) : 0;

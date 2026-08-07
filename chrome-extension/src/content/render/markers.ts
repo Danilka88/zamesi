@@ -2,7 +2,7 @@
 // Маркеры монетизаций на прогресс-баре (клик = перемотка, A-C003-02) +
 // визуальный таймлайн (цветные точки по времени видео).
 import type { Passport } from "../../data/types";
-import { MONETIZATION_LABELS } from "../../data/labels";
+import { monetizationLabel } from "../../data/labels";
 import type { PlayerHandle } from "../rutube";
 import { sceneStarts, videoDuration, fmtTime } from "./layout";
 
@@ -18,7 +18,7 @@ export function collectMarkers(passport: Passport): MarkerSpec[] {
   const out: MarkerSpec[] = [];
   for (const { scene, startSec } of sceneStarts(passport)) {
     for (const m of scene.monetization) {
-      const meta = MONETIZATION_LABELS[m.type];
+      const meta = monetizationLabel(m.type);
       out.push({
         startSec,
         type: m.type,
@@ -78,7 +78,7 @@ export function renderMarkerTimeline(
   const seen = new Map<string, string>();
   for (const mk of markers) if (!seen.has(mk.type)) seen.set(mk.type, mk.color);
   for (const [type, color] of seen) {
-    const l = MONETIZATION_LABELS[type as keyof typeof MONETIZATION_LABELS];
+    const l = monetizationLabel(type);
     const chip = document.createElement("span");
     chip.className = "rz-chip";
     chip.style.background = color;

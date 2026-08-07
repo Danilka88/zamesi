@@ -1,7 +1,7 @@
 // [M-EXTENSION][SCENE-OVERLAY][START_BLOCK]
 // Плавающая панель текущей сцены — подписка на timeupdate (A-C003-02).
 import type { Passport, SceneAnalysisResult } from "../../data/types";
-import { MONETIZATION_LABELS } from "../../data/labels";
+import { monetizationLabel } from "../../data/labels";
 import type { PlayerHandle } from "../rutube";
 import { fmtTime, sceneStarts, videoDuration } from "./layout";
 
@@ -95,7 +95,7 @@ export function renderSceneOverlay(
     summary.textContent = scene.scene_summary || "—";
     chipsRow.innerHTML = "";
     const chips = scene.monetization.map((m) => {
-      const l = MONETIZATION_LABELS[m.type];
+      const l = monetizationLabel(m.type);
       return `<span class="rz-chip" style="background:${l.color};color:#0b0e1a">${l.icon} ${l.short}</span>`;
     });
     chipsRow.innerHTML = chips.join("") || '<span class="rz-muted" style="font-size:11px">нет монетизации</span>';

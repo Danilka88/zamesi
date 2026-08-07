@@ -3,7 +3,7 @@
 // таймлайном монетизаций, модерацией, аудио и метриками (P6).
 import type { ModeData } from "../modes";
 import type { MonetizationType } from "../../data/types";
-import { MONETIZATION_LABELS, VERDICT_LABELS, SEVERITY_LABELS } from "../../data/labels";
+import { monetizationLabel, VERDICT_LABELS, SEVERITY_LABELS } from "../../data/labels";
 import { fmtDur, sceneStarts, videoDuration } from "./layout";
 
 const ACCENT = "#fb5f93";
@@ -86,7 +86,7 @@ function timeline(p: ModeData["passport"]): HTMLElement {
   const marks: { startSec: number; color: string; icon: string }[] = [];
   for (const { startSec, scene } of sceneStarts(p)) {
     for (const m of scene.monetization) {
-      const l = MONETIZATION_LABELS[m.type];
+      const l = monetizationLabel(m.type);
       marks.push({ startSec, color: l.color, icon: l.icon });
     }
   }
@@ -150,7 +150,7 @@ export function renderAnalyst(container: HTMLElement, data: ModeData): () => voi
     const list = document.createElement("div");
     list.style.cssText = "flex:1;";
     for (const [t, n] of sorted) {
-      const l = MONETIZATION_LABELS[t];
+      const l = monetizationLabel(t);
       list.append(bar(`${l.icon} ${l.short}`, n, topCount, l.color, `×${n}`));
     }
     grid.append(list);

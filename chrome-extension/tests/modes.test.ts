@@ -48,5 +48,16 @@ describe("ModesController", () => {
     ctrl.destroy();
     unmountHost();
   });
+
+  it("honors initial mode (keeps viewer on re-bind, A-C003-04)", () => {
+    const host = mountHost();
+    const tech = PASSPORT_REGISTRY.find((e) => e.id === "tech_review")!.passport;
+    const ctrl = new ModesController(host, makePlayer(), { passport: tech, metrics: computeMetrics(tech) }, "viewer");
+    expect(ctrl.current).toBe("viewer");
+    ctrl.setMode("analyst");
+    expect(ctrl.current).toBe("analyst");
+    ctrl.destroy();
+    unmountHost();
+  });
 });
 // = [M-EXTENSION][TEST-MODES][END_BLOCK]

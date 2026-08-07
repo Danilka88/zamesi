@@ -23,5 +23,6 @@
       "run_at": "document_idle"
     }
   ],
-  "permissions": ["storage"]
+  "permissions": ["storage"],
+  "host_permissions": ["https://rutube.ru/*", "http://rutube.ru/*"]
 }

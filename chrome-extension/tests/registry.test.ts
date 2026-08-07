@@ -1,5 +1,5 @@
 // [M-EXTENSION][TEST-REGISTRY][START_BLOCK]
-// A-C003-03: 4 демо-паспорта валидны под TS-схему Passport.
+// A-C003-03: 7 демо-паспортов валидны под TS-схему Passport.
 import { describe, it, expect } from "vitest";
 import { PASSPORT_REGISTRY } from "../src/data/registry";
 import type { Passport } from "../src/data/types";
@@ -25,7 +25,7 @@ function validatePassport(p: unknown): string[] {
 }
 
 describe("PASSPORT_REGISTRY", () => {
-  it("contains exactly the 6 demo passports", () => {
+  it("contains exactly the 7 demo passports", () => {
     expect(PASSPORT_REGISTRY.map((e) => e.id)).toEqual([
       "tech_review",
       "iphone_50k_wylsacom",
@@ -33,6 +33,7 @@ describe("PASSPORT_REGISTRY", () => {
       "movie_review",
       "cooking_dinner",
       "atomic_heart_review",
+      "vietnam_nha_trang",
     ]);
   });
 

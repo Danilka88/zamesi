@@ -1,7 +1,7 @@
 // [M-EXTENSION][CTA][START_BLOCK]
 // Демо-CTA: товар/билет/афиша/мерч по типу монетизации (A-C003-05).
 import type { SceneAnalysisResult } from "../../data/types";
-import { MONETIZATION_LABELS } from "../../data/labels";
+import { monetizationLabel } from "../../data/labels";
 
 export interface CtaView {
   title: string;
@@ -10,7 +10,7 @@ export interface CtaView {
 }
 
 function ctaFor(m: SceneAnalysisResult["monetization"][number]): CtaView {
-  const l = MONETIZATION_LABELS[m.type];
+  const l = monetizationLabel(m.type);
   switch (m.type) {
     case "ecom_item":
       return { title: "Купить товар", subtitle: m.search_query ?? l.label, ctaText: "🔥 Купить" };

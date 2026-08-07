@@ -24,7 +24,10 @@ export class ModesController {
     private host: ExtensionHost,
     private player: PlayerHandle,
     private data: ModeData,
-  ) {}
+    private initialMode: ViewerMode = "simulation",
+  ) {
+    this.mode = this.initialMode;
+  }
 
   get current(): ViewerMode {
     return this.mode;

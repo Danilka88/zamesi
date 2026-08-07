@@ -67,6 +67,19 @@ export const MONETIZATION_LABELS: Record<MonetizationType, MonetizationLabel> = 
   },
 };
 
+const UNKNOWN_LABEL: MonetizationLabel = {
+  label: "Неизвестный тип",
+  icon: "❓",
+  short: "?",
+  tooltip: "Тип монетизации не распознан.",
+  color: "#64748B",
+};
+
+/** Метка монетизации, устойчивая к регистру (AD_SLOT → ad_slot) и к неизвестным типам. */
+export function monetizationLabel(type: string): MonetizationLabel {
+  return MONETIZATION_LABELS[type.toLowerCase() as MonetizationType] ?? UNKNOWN_LABEL;
+}
+
 export const VERDICT_LABELS: Record<string, { label: string; icon: string }> = {
   approved: { label: "Одобрено", icon: "🟢" },
   flagged: { label: "Требует проверки", icon: "🟡" },

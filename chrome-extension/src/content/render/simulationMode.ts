@@ -10,7 +10,12 @@ const STAGES: { label: string; icon: string; detail: string; ms: number }[] = [
   { label: "Монетизация + модерация", icon: "💰", detail: "метки · аудио-матчи · вердикт", ms: 1200 },
 ];
 
-export function renderSimulation(container: HTMLElement, onDone: () => void): () => void {
+export function renderSimulation(
+  container: HTMLElement,
+  onDone: () => void,
+  opts?: { wide?: boolean },
+): () => void {
+  const wide = opts?.wide ?? false;
   const box = document.createElement("div");
   box.className = "rz-panel";
   box.innerHTML = `<div class="rz-title">⚙️ Симуляция анализа</div>`;
@@ -25,7 +30,7 @@ export function renderSimulation(container: HTMLElement, onDone: () => void): ()
   box.append(loop);
 
   const list = document.createElement("div");
-  list.style.cssText = "display:flex;flex-direction:column;gap:8px;";
+  list.style.cssText = `display:grid;grid-template-columns:${wide ? "repeat(auto-fit,minmax(300px,1fr))" : "1fr"};gap:8px;`;
   box.append(list);
 
   let cancelled = false;
@@ -36,7 +41,7 @@ export function renderSimulation(container: HTMLElement, onDone: () => void): ()
   startBtn.type = "button";
   startBtn.className = "rz-btn";
   startBtn.style.cssText =
-    "width:100%;padding:10px;font-size:14px;border-radius:10px;background:#fb5f93;color:#fff;border:0;cursor:pointer;font-weight:800;";
+    "width:100%;grid-column:1 / -1;padding:10px;font-size:14px;border-radius:10px;background:#fb5f93;color:#fff;border:0;cursor:pointer;font-weight:800;";
   startBtn.textContent = "▶ Запустить анализ";
   list.append(startBtn);
 

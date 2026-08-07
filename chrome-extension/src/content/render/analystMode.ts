@@ -112,13 +112,18 @@ function timeline(p: ModeData["passport"]): HTMLElement {
   return wrap;
 }
 
-export function renderAnalyst(container: HTMLElement, data: ModeData): () => void {
+export function renderAnalyst(
+  container: HTMLElement,
+  data: ModeData,
+  opts?: { wide?: boolean },
+): () => void {
   const p = data.passport;
   const metrics = data.metrics;
+  const wide = opts?.wide ?? false;
 
   // --- KPI-карточки: 4 ключевых числа ---
   const kpi = document.createElement("div");
-  kpi.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;";
+  kpi.style.cssText = `display:grid;grid-template-columns:${wide ? "repeat(4, minmax(120px, 1fr))" : "1fr 1fr"};gap:8px;margin-bottom:10px;`;
   const kpiCards: [string, string, string][] = [
     ["💰", String(metrics?.ad_slots ?? 0), "AD-слоты"],
     ["🛒", String(metrics?.ecom_items ?? 0), "Товары"],

@@ -50,6 +50,8 @@ const CSS = `
     border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 12px;
   }
   .rz-toggle button.active { background: #fb5f93; color: #fff; border-color: #fb5f93; }
+  .rz-toggle.wide button { padding: 7px 14px; font-size: 13px; }
+  .rz-expand:hover, .rz-modal-close:hover { filter: brightness(1.15); }
 `;
 
 /**

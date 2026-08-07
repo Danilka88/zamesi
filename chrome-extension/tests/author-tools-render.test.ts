@@ -2,6 +2,7 @@
 // Рендер панели автора: заголовки A/B, описания, графики, копирование, cleanup.
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { mountAuthorTools } from "../src/content/authorTools";
+import { renderAuthorBody } from "../src/content/authorTools/render";
 import { PASSPORT_REGISTRY } from "../src/data/registry";
 import type { Passport } from "../src/data/types";
 
@@ -106,5 +107,27 @@ describe("author-tools render", () => {
     cleanup();
     expect(document.body.querySelector(".rz-toast")).toBeNull();
     cleanup = undefined;
+  });
+});
+
+describe("author-tools render wide (fullscreen modal)", () => {
+  it("wide-раскладка: grid карточек, A/B+графики в одном ряду, полные тексты", () => {
+    const body = renderAuthorBody(
+      { passport: techPassport(), title: "Native Title", videoId: "Rv_tech_review_001" },
+      { wide: true },
+    );
+    const root = body.root;
+    const cards = root.querySelectorAll<HTMLElement>(".rz-cards");
+    expect(cards.length).toBeGreaterThanOrEqual(1);
+    expect(cards[0].style.display).toBe("grid");
+    const row = root.querySelector<HTMLElement>(".rz-wide-row");
+    expect(row).not.toBeNull();
+    expect(row!.textContent).toContain("A/B прогноз эффективности");
+    expect(row!.textContent).toContain("Графики (демо)");
+    // широкие SVG
+    expect(root.innerHTML).toContain('viewBox="0 0 640 56"');
+    // полный текст без обрезки в cmpBar
+    expect(root.textContent).toContain("Наушники за свои деньги: TDS флагманов Sony, Audio-Technica и Sennheiser");
+    body.cleanup();
   });
 });

@@ -56,7 +56,7 @@
         <marker required="true">[M-EXTENSION][SHADOW][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][MODES][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][TEST-MODES][START_BLOCK]</marker>
-        <assert>mountHost создаёт shadowRoot с панелью, идемпотентен; ModesController переключает viewer/analyst/simulation без сбоев</assert>
+        <assert>mountHost создаёт shadowRoot с панелью, идемпотентен; ModesController переключает viewer/analyst/simulation/author без сбоев; expand() открывает полноширинную модалку в shadow root с 4 вкладками, закрытие ✕/Esc/подложкой, сайдбар приостановлен и восстановлен</assert>
       </evidence>
     </Scenario>
     <Scenario id="S-M-EXT-6" type="backward">
@@ -94,7 +94,7 @@
         <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-GENERATE][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-CHARTS][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-RENDER][START_BLOCK]</marker>
-        <assert>buildTitleVariants отдаёт native первым + 3 AI (курируемые по паспорту, дедупликация native); fallback строится из полей; buildDescriptionVariants возвращает 2 варианта; генерация детерминирована (NFR-7); projectVariantMetrics стабилен для варианта и различен между вариантами, в границах (CTR 2.5–7%, вовлечённость 40–95); retentionSeries/hours stable для seed; render монтирует заголовки/описания с метриками + блок «A/B прогноз эффективности» с CTR-барами и лидером прогноза + копирование в clipboard + toast; cleanup удаляет toast</assert>
+        <assert>buildTitleVariants отдаёт native первым + 3 AI (курируемые по паспорту, дедупликация native); fallback строится из полей; buildDescriptionVariants возвращает 2 варианта; генерация детерминирована (NFR-7); projectVariantMetrics стабилен для варианта и различен между вариантами, в границах (CTR 2.5–7%, вовлечённость 40–95); retentionSeries/hours stable для seed; render монтирует заголовки/описания с метриками + блок «A/B прогноз эффективности» с CTR-барами и лидером прогноза + копирование в clipboard + toast; cleanup удаляет toast; ModesController.expand открывает полноширинную модалку в shadow root с 4 вкладками, переключение вкладок перерисовывает режим, закрытие ✕/Esc/подложка, сайдбар приостановлен и восстанавливается; renderAuthorBody(wide) даёт grid-карточки и ряд A/B+графики</assert>
       </evidence>
     </Scenario>
   </Scenarios>

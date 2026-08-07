@@ -10,6 +10,7 @@ export function renderViewer(
   container: HTMLElement,
   player: PlayerHandle,
   data: ModeData,
+  _opts?: { wide?: boolean },
 ): () => void {
   const title = document.createElement("div");
   title.className = "rz-title";

@@ -16,7 +16,8 @@
     <function name="renderCta">Демо-CTA: товар/билет/афиша/мерч</function>
     <function name="renderAnalyst">Сайдбар аналитика: монетизации/модерация/аудио/метрики</function>
     <function name="renderSimulation">Анимированный разбор ASR→сцены→метки</function>
-    <function name="ModesController">Оркестрация 3 режимов (viewer/analyst/simulation)</function>
+    <function name="ModesController">Оркестрация 4 режимов (viewer/analyst/simulation/author) + expand(): полноширинная модалка со всеми вкладками (shadow root), Esc/подложка/✕-закрытие</function>
+    <function name="renderAuthorBody">Контент «Инструментов автора» с wide-раскладкой (grid карточек, A/B+графики в ряд) — переиспользуется сайдбаром и модалкой</function>
     <function name="DataProvider">Контракт данных: Demo/Real(stub)</function>
     <function name="mountGameOfferCard">Игровой оффер: карточка «купить/играть в облаке» после meta-row для game_review</function>
     <function name="detectGameContext">Детект игрового видео + извлечение названия игры (passport/category/hashtags)</function>

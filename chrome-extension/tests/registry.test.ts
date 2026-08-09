@@ -42,10 +42,15 @@ describe("PASSPORT_REGISTRY", () => {
     expect(issues).toEqual([]);
   });
 
-  it("binds tech_review to the real RUTUBE video_id", () => {
+  it("binds iphone_50k_wylsacom to the real RUTUBE video_id (Wylsacom iPhone)", () => {
+    const iphone = PASSPORT_REGISTRY.find((e) => e.id === "iphone_50k_wylsacom");
+    expect(iphone?.boundVideoId).toBe("2013f4eba6ade7b01582fb411f9e901a");
+    expect(iphone?.passport.frontmatter.domain_type).toBe("tech_review");
+  });
+
+  it("tech_review не привязан к конкретному видео (автоподбор по заголовку)", () => {
     const tech = PASSPORT_REGISTRY.find((e) => e.id === "tech_review");
-    expect(tech?.boundVideoId).toBe("2013f4eba6ade7b01582fb411f9e901a");
-    expect(tech?.passport.frontmatter.domain_type).toBe("tech_review");
+    expect(tech?.boundVideoId).toBeUndefined();
   });
 });
 // = [M-EXTENSION][TEST-REGISTRY][END_BLOCK]

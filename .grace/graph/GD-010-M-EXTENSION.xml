@@ -27,6 +27,13 @@
     <function name="detectTravelContext">Детект тревел-видео + извлечение направления из заголовка</function>
     <function name="extractTravelDestination">Извлечение города/страны из заголовка («…в Нячанге» → «Нячанг»)</function>
     <function name="unmountTravelOfferCard">Удаление тревел-оффера при смене контекста</function>
+    <function name="mountMerchOfferCard">МЕРЧ-оффер: карточка «товары из видео + мерч канала + магазины» после meta-row для ecom_item/artist_merch</function>
+    <function name="detectMerchContext">Детект видео с товарами + сбор товаров из паспорта (ecom/merch) и бренда мерча</function>
+    <function name="collectMerchProducts">Сбор товаров из timeline паспорта: ecom_item/artist_merch, дедупликация, сортировка по confidence, limit</function>
+    <function name="merchBrandFor">Бренд мерча из celebrity_voice (Wylsacom) / фолбэк по domain_type</function>
+    <function name="productIconFor">Иконка товара по ключевым словам (iPhone → 📱, стекло → 🛡️, …)</function>
+    <function name="merchStoresFor">Магазины бренда из карты MERCH_STORE_BY_BRAND (Biggeek, Царские стёкла, WB, OZON, Я.Маркет) / DEFAULT_STORES</function>
+    <function name="unmountMerchOfferCard">Удаление мерч-оффера при смене контекста</function>
     <function name="mountAuthorTools">Инструменты автора: панель A/B-вариантов заголовка/описания + демо-графики (вкладка «✍️ Автор»)</function>
     <function name="buildTitleVariants">Варианты заголовка для A/B: native первым, затем AI (курируемые/fallback из полей паспорта)</function>
     <function name="buildDescriptionVariants">Варианты описания (два: полный и короткий) с фичами и длиной</function>

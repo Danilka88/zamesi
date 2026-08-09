@@ -12,6 +12,7 @@ import { waitForPlayer, waitForSidebar, type PlayerHandle } from "./rutube";
 import { ModesController } from "./modes";
 import { mountGameOffer } from "./gameOffer";
 import { mountTravelOffer } from "./travelOffer";
+import { mountMerchOffer } from "./merchOffer";
 
 export function parseVideoId(url: string): string | null {
   const m = url.match(/rutube\.ru\/video\/([a-f0-9]+)\/?/);
@@ -62,13 +63,19 @@ async function main(): Promise<void> {
   controller = new ModesController(hostRef, playerRef, { passport, metrics, title, videoId });
   controller.render();
 
-  // Игровой оффер-блок: если видео об игре — карточка «купить/играть в облаке»
-  // встраивается сразу после section[aria-label="информация о видео"].
-  void mountGameOffer(passport, title);
-
-  // Тревел-оффер-блок: если видео о путешествии — карточка «билеты из
-  // Краснодара в направление» встраивается там же (взаимоисключающе с игровым).
-  void mountTravelOffer(passport, title);
+  // Оффер-блоки после section[aria-label="информация о видео"] — взаимоисключающе:
+  // первая успешно смонтированная карточка выигрывает. Порядок: игра → тревел →
+  // товары/мерч (мерч срабатывает на видео с ecom/artist_merch метками).
+  const offerMounts: Array<(p: Passport, t: string) => Promise<boolean>> = [
+    mountGameOffer,
+    mountTravelOffer,
+    mountMerchOffer,
+  ];
+  void (async () => {
+    for (const mount of offerMounts) {
+      if (await mount(passport, title)) break;
+    }
+  })();
 
   // :: Метаданные хоста для E2E/смоук
   hostRef.host.dataset.rzVideoId = videoId;

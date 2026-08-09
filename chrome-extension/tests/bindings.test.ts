@@ -7,8 +7,8 @@ const REAL_ID = "2013f4eba6ade7b01582fb411f9e901a";
 const REAL_TITLE = "Какой iPhone выбрать за 50 000 рублей?";
 
 describe("bindings", () => {
-  it("matches tech_review by real video_id", () => {
-    expect(matchByVideoId(REAL_ID)?.id).toBe("tech_review");
+  it("matches iphone_50k_wylsacom by real video_id (Wylsacom iPhone)", () => {
+    expect(matchByVideoId(REAL_ID)?.id).toBe("iphone_50k_wylsacom");
   });
 
   it("autoselects iphone_50k_wylsacom for the real iPhone title", () => {
@@ -19,7 +19,7 @@ describe("bindings", () => {
 
   it("resolveBinding prefers video_id binding", () => {
     const viaId = resolveBinding(REAL_ID, "Совсем другой заголовок без совпадений");
-    expect(viaId?.id).toBe("tech_review");
+    expect(viaId?.id).toBe("iphone_50k_wylsacom");
   });
 
   it("resolveBindingDetailed reports method", () => {

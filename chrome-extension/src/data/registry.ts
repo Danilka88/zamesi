@@ -38,7 +38,6 @@ export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
     title: "Обзор техники (наушники)",
     domainType: "tech_review",
     keywords: ["iphone", "наушник", "смартфон", "обзор", "выбрать", "гаджет", "рублей"],
-    boundVideoId: "2013f4eba6ade7b01582fb411f9e901a",
     passport: passports.tech_review,
   },
   {
@@ -46,7 +45,7 @@ export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
     title: "Какой iPhone выбрать за 50 000 ₽ (Wylsacom)",
     domainType: "tech_review",
     keywords: ["iphone", "выбрать", "50 000", "смартфон", "рублей", "wylsacom", "айфон"],
-    boundVideoId: "2016iphone50k_wylsacom",
+    boundVideoId: "2013f4eba6ade7b01582fb411f9e901a",
     passport: passports.iphone_50k_wylsacom,
   },
   {

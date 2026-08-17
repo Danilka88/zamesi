@@ -1085,6 +1085,8 @@ Markdown-текст подборки. Content-Type: `text/markdown`.
 
 ### Пример 1: How-to (ремонт автомобиля)
 
+> Упрощённая иллюстрация основных полей. Полная структура реального паспорта (модерация с evidence, word-таймкоды, аудио, мерч, события) — в [Примере 6](#пример-6-полный-реальный-паспорт--какой-iphone-выбрать-за-50-000--wylsacom).
+
 Вход: 5-минутное видео «Замена генератора на ВАЗ-2110».  
 Выход: паспорт с 4 сценами, 2 `ECOM_ITEM`, 1 `AD_SLOT`, 1 `CLIP_CANDIDATE`.
 
@@ -1133,6 +1135,8 @@ ad_targeting_keywords: ["генератор", "автозапчасти", "ин�
 ```
 
 ### Пример 2: Подкаст / интервью
+
+> Упрощённая иллюстрация. Полная структура реального паспорта — в [Примере 6](#пример-6-полный-реальный-паспорт--какой-iphone-выбрать-за-50-000--wylsacom).
 
 Вход: 10-минутный выпуск подкаста «Технологии будущего».  
 Выход: паспорт с 6 сценами, 2 `AD_SLOT` (контекстная реклама), без `ECOM_ITEM` и `CLIP_CANDIDATE`.  
@@ -1289,6 +1293,96 @@ VLM ratio: 0% — OCR на I-frame покрыл весь текст. 0 VLM calls
 ```
 
 Mixer на запрос `"фоторамка из картона своими руками"` → 4 этапа, 7 сцен. Markdown в `mix_passport.md`. Статус проверяется через `GET /mix/{id}` → пока stages пустой — ещё не готов.
+
+---
+
+### Пример 6: Полный реальный паспорт — «Какой iPhone выбрать за 50 000 ₽» (Wylsacom)
+
+Это примеры 1–2 в упрощённом виде не передают **полноту** паспорта. Реальный паспорт (`chrome-extension/src/data/passports/iphone_50k_wylsacom.json`, 985 c, 15 сцен) содержит **все шесть типов монетизации**, модерацию с флагами-доказательствами по тайм-кодам, по-словную транскрипцию, аудио-матчи и распознавание ведущего:
+
+```json
+{
+  "frontmatter": {
+    "video_id": "Rv_iphone_50k_wylsacom_001",
+    "domain_type": "tech_review",
+    "brand_safety_score": 84,
+    "target_audience": ["покупатели смартфонов", "фанаты Apple", "гики", "подписчики Wylsacom"],
+    "seo_title": "Какой iPhone выбрать за 50 000 рублей в 2026 — сравнение iPhone 15, 16e, 16 и 17e",
+    "seo_tags": ["iPhone за 50000", "iPhone 16", "iPhone 17e", "дешёвый iPhone 2026", "Wylsacom"],
+    "trending_cluster": "tech/gadgets/phones",
+    "auto_playlists": [
+      { "id": "iphone_2026", "order_index": 0, "reason": "прямое попадание в тематику iPhone 2026" },
+      { "id": "best_of_tech", "order_index": 1, "reason": "детальный разбор четырёх актуальных моделей" }
+    ],
+    "ad_targeting_keywords": ["iPhone 15", "iPhone 16e", "iPhone 17e", "купить iPhone", "защитное стекло 3D", "iCloud Plus", "маркетплейс смартфоны"],
+    "moderation": {
+      "age_rating": "16+",
+      "verdict": "approved",
+      "categories_flagged": ["language", "scam_warning"],
+      "flags": [
+        { "category": "language", "severity": "medium", "timestamp_sec": 743,
+          "evidence": "нецензурная лексика при обсуждении отсутствия MagSafe в iPhone 16e ('ублюдочное решение')" },
+        { "category": "scam_warning", "severity": "medium", "timestamp_sec": 965,
+          "evidence": "история про подделку iPhone 10R в корпусе iPhone Air за 25 000–26 000 ₽ на Авито" }
+      ],
+      "brand_safety_score": 84,
+      "summary": "Видео допущено к рекламе. Есть нецензурная лексика (16+), защитное предупреждение о мошенниках. Контент без алкоголя и политики; партнёр bigbig.ru и мерч канала представлены позитивно."
+    }
+  },
+  "timeline": [
+    {
+      "scene_summary": "Интро: самый дешёвый iPhone за 50 000 ₽; скриншот из Telegram с iPhone 17 Pro Max за 8 000 ₽ и предупреждение 'так делать не надо'",
+      "start_sec": 0, "end_sec": 60,
+      "monetization": [
+        { "type": "clip_candidate", "search_query": "самый дешёвый iPhone 2026", "reason": "hook с интригой про цену", "confidence": 0.9,
+          "hook": "iPhone 17 Pro Max за 8 000 рублей? Так делать не надо!", "time_range_start": 0, "time_range_end": 34, "virality_potential": "high" },
+        { "type": "ad_slot", "search_query": null, "reason": "pre-roll в самом начале ролика", "confidence": 0.86 }
+      ]
+    },
+    {
+      "scene_summary": "Интегрированная реклама мерча: матовое 3D-стекло 'Царское стекло' от Wylsacom",
+      "start_sec": 336, "end_sec": 400,
+      "monetization": [
+        { "type": "artist_merch", "search_query": "царское стекло Wylsacom 3D", "reason": "собственный мерч канала", "confidence": 0.98 },
+        { "type": "ecom_item", "search_query": "3D стекло Дядя Валли iPhone 17 Pro", "reason": "прямая продажа товара", "confidence": 0.93 },
+        { "type": "ad_slot", "search_query": null, "reason": "полноценный рекламный интеграционный блок мерча", "confidence": 0.88 }
+      ]
+    },
+    {
+      "scene_summary": "Анонс розыгрыша: совместно с bigbig.ru разыгрывают iPhone 16",
+      "start_sec": 895, "end_sec": 940,
+      "monetization": [
+        { "type": "event_ticket", "search_query": "розыгрыш iPhone 16", "reason": "конкурс с призом — привлечение аудитории", "confidence": 0.92 },
+        { "type": "ad_slot", "search_query": null, "reason": "партнёрский промо-блок bigbig.ru", "confidence": 0.85 }
+      ]
+    }
+  ],
+  "raw_timeline_segments": [
+    { "speaker": "Ведущий", "start_sec": 0, "end_sec": 9,
+      "text": "Народ, всем привет. С вами Wylsacom. Меня часто спрашивают, как купить самый дешёвый iPhone.",
+      "word_timestamps": [
+        { "word": "Народ,", "start_sec": 0, "end_sec": 1 },
+        { "word": "всем", "start_sec": 1, "end_sec": 1.6 },
+        { "word": "привет.", "start_sec": 1.6, "end_sec": 2.2 }
+      ] }
+  ],
+  "audio_matches": [
+    { "track_name": "Royalty-Free Background Beat", "artist": "Epidemic Sound", "confidence": 0.55, "genre": "Electronic / Lo-fi" },
+    { "track_name": "Cinematic Outro Stinger", "artist": "Artlist", "confidence": 0.5, "genre": "Cinematic / Ambient" }
+  ],
+  "celebrity_voice": { "name": "Wylsacom (Валентин Петухов)", "profession": "техноблогер", "confidence": 0.96 }
+}
+```
+
+**Что делает паспорт по-настоящему полным (в отличие от упрощённых примеров 1–2):**
+
+- **Шесть типов монетизации на одной сцене** — `ecom_item`, `ad_slot`, `clip_candidate`, `artist_merch`, `event_ticket`, `music_track`; каждый с `search_query` (готовый запрос для партнёрской ссылки), `reason` и `confidence`. Итого по паспорту: 11 `ecom_item`, 4 `ad_slot`, 6 `clip_candidate`, 3 `artist_merch`, 1 `event_ticket`, 2 `music_track`.
+- **Модерация с доказательствами** — возрастной рейтинг, вердикт, `categories_flagged`, и каждый флаг с `timestamp_sec` + дословным `evidence` из транскрипции («ублюдочное решение» на 743 с). Не просто «18+», а *почему* и *где именно*.
+- **По-словная транскрипция** (`word_timestamps`) — каждое слово с тайм-кодом; из неё собираются готовые тайм-коды описания и точные цитаты для evidence.
+- **Аудио-аналитика** — `audio_matches` (фоновая музыка с жанром и уверенностью) и `celebrity_voice` (распознан Wylsacom, 0.96) → привязка мерча и партнёрских магазинов к каналу.
+- **Готовая SEO-обвязка** — `seo_title`, `seo_tags`, `trending_cluster`, `ad_targeting_keywords`, `auto_playlists` с причинами.
+
+Именно эта многослойность превращает видео в **полноценный asset для монетизации**: расширение «Замеси» из него строит оффер-блоки, маркеры на плеере и A/B-заголовки, а AI-ассистент Studio — готовый черновик публикации.
 
 ---
 

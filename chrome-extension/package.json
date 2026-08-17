@@ -5,9 +5,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "npm run build:app && npm run build:content",
+    "build": "npm run build:app && npm run build:content && npm run build:studio",
     "build:app": "vite build",
     "build:content": "vite build -c vite.content.config.ts",
+    "build:studio": "vite build -c vite.studio.config.ts",
     "dev": "vite build -w",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

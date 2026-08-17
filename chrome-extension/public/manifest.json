@@ -21,8 +21,13 @@
       "matches": ["https://rutube.ru/video/*", "http://rutube.ru/video/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://studio.rutube.ru/*", "http://studio.rutube.ru/*"],
+      "js": ["studio.js"],
+      "run_at": "document_idle"
     }
   ],
   "permissions": ["storage"],
-  "host_permissions": ["https://rutube.ru/*", "http://rutube.ru/*"]
+  "host_permissions": ["https://rutube.ru/*", "http://rutube.ru/*", "https://studio.rutube.ru/*", "http://studio.rutube.ru/*"]
 }

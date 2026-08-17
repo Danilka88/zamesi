@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module-graph id="M-EXTENSION" name="Chrome Extension (Замеси)" type="INTERFACE" status="built">
-  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики, инструменты автора) на страницу видео RUTUBE rutube.ru/video/*. 4 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
+  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики, инструменты автора) на страницу видео RUTUBE rutube.ru/video/*. AI-ассистент «для редактора RUTUBE Studio» studio.rutube.ru/*: автозаполнение полей модалки video-editor по паспорту. 4 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
   <Source path="chrome-extension/src/"/>
   <Test path="chrome-extension/tests/"/>
   <Exports>
@@ -45,6 +45,36 @@
     <function name="hourlyBars">Почасовая гистограмма просмотров (сидированный PRNG, 24 ч)</function>
     <function name="sparklineSvg">SVG-спарклайн из точек [0..100]</function>
     <function name="barChartSvg">SVG-гистограмма из баров</function>
+    <function name="MODAL_SELECTOR">Селектор модалки video-editor RUTUBE Studio ([data-testid="video-editor-layout"])</function>
+    <function name="captureStudioForm">Захват хендлов полей формы редактора Studio (title/description/category/playlists/access/disclaimers/radio/чекбоксы/submit)</function>
+    <function name="findStudioModal">Поиск модалки video-editor в DOM (React SPA монтирует клиентски)</function>
+    <function name="setNativeValue">React-safe запись value через нативный setter прототипа + input/change события</function>
+    <function name="setNativeChecked">React-safe установка checked (нативный setter + input/change/click, ре-ассерт после happy-dom-тоггла)</function>
+    <function name="applyValue">Запись значения в поле, только если есть и отличается от текущего</function>
+    <function name="applyChecked">Установка чекбокса/радио, только если есть, не disabled и состояние отличается</function>
+    <function name="buildStudioSuggestions">Паспорт → полный набор предложений для редактора Studio (заголовок A/B, описание с тайм-кодами, категория, плейлисты, время, 18+/комментарии/дисклеймеры)</function>
+    <function name="suggestedCategory">domain_type → категория RUTUBE (tech_review→Наука и техника, travel_vlog→Путешествия, …)</function>
+    <function name="suggestedPlaylists">auto_playlists → человекочитаемые имена + причины для поиска в мультиселекте</function>
+    <function name="chapterLines">Тайм-коды сцен из raw_timeline_segments (mm:ss + текст)</function>
+    <function name="fmtClock">Формат сек → mm:ss / h:mm:ss</function>
+    <function name="publishRecommendation">Время публикации: now/delayed (delayed при rejected/flagged-модерации)</function>
+    <function name="adultSuggestion">18+ из moderation.age_rating</function>
+    <function name="commentsSuggestion">Комментарии включены, кроме rejected-вердикта</function>
+    <function name="disclaimerHint">Текстовый хинт дисклеймеров при флагах модерации</function>
+    <function name="renderStudioPanel">Рендер панели «AI для редактора RUTUBE Studio»: секции по полям + кнопка «Заполнить всё» + toast + сворачивание/пилюля</function>
+    <function name="mountStudioPanel">Монтаж панели в Shadow DOM в document.body (fixed, вне модалки — React не вычищает; CSS-изоляция NFR-6)</function>
+    <function name="findStudioVideoId">Извлечение video_id из ссылки /video/ внутри модалки</function>
+    <function name="studioNativeTitle">Заголовок из поля title/og:title/document.title</function>
+    <function name="resolveStudioPassport">Автоподбор паспорта по video_id/заголовку, fallback на дефолтный паспорт</function>
+    <function name="mountForModal">Монтаж/перерисовка панели с выбранным паспортом для текущей модалки</function>
+    <function name="observeStudio">Поллинг (500 мс) на появление модалки: монтирует панель, убирает при закрытии. Лёгкий — не нагружает SPA в отличие от MutationObserver</function>
+    <function name="box">UI-примитив: карточка-секция с заголовком и акцентной полосой</function>
+    <function name="chip">UI-примитив: чип-кнопка (вариант/категория/подсказка)</function>
+    <function name="applyBtn">UI-примитив: основная градиентная кнопка</function>
+    <function name="makeToast">UI-примитив: toast внизу экрана с автоскрытием</function>
+    <function name="enableDrag">Перетаскивание панели за заголовок с сохранением позиции в localStorage</function>
+    <function name="restorePosition">Восстановление сохранённой позиции fixed-предка root</function>
+    <function name="safeGet/safeSet">Безопасный доступ к localStorage (try/catch)</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

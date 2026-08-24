@@ -85,6 +85,70 @@ export function findBikeEntryById(id: string): BikeSearchEntry | undefined {
   return BIKE_SEARCH_ENTRIES.find((e) => e.passportId === id);
 }
 
+/** video_id подборки по passportId (для тайм-код-ссылок). */
+export function videoIdForPassport(passportId: string): string {
+  return findBikeEntryById(passportId)?.boundVideoId ?? "";
+}
+
+/** Фрагмент видео для «пути зрителя» (кликабельный тайм-код). */
+export interface BikeJourneyClip {
+  /** id паспорта из подборки (bike_dont_buy / bike_top_april / bike_mtb_80k). */
+  passportId: string;
+  /** Короткое название фрагмента. */
+  title: string;
+  startSec: number;
+  endSec: number;
+}
+
+/** Ступень «пути зрителя»: вопрос новичка → фрагменты-ответы. */
+export interface BikeJourneyStage {
+  /** Номер ступени (1..3). */
+  level: number;
+  /** Гуманитарный лейбл уровня. */
+  levelLabel: string;
+  /** Вопрос пользователя, на который отвечает ступень. */
+  question: string;
+  /** Клипы из разных видео, которые «миксуются» в этой ступени. */
+  clips: BikeJourneyClip[];
+}
+
+/**
+ * Курируемый «путь новичка → профи» для демонстрации миксирования.
+ * Тайм-коды взяты из реальных паспортов (raw_timeline_segments).
+ */
+export const BIKE_JOURNEY_STAGES: BikeJourneyStage[] = [
+  {
+    level: 1,
+    levelLabel: "Новичок",
+    question: "Какой класс велосипеда мне подходит?",
+    clips: [
+      { passportId: "bike_dont_buy", title: "Хардтейл XC — универсальный (Aspect AMP DC)", startSec: 303, endSec: 430 },
+      { passportId: "bike_dont_buy", title: "Gravel — для смешанной езды (Aspect Allroad Pro)", startSec: 470, endSec: 560 },
+    ],
+  },
+  {
+    level: 2,
+    levelLabel: "Продвинутый",
+    question: "Сколько стоит хороший велосипед?",
+    clips: [
+      { passportId: "bike_top_april", title: "Hagen HG10 — городской универсал за 91 000", startSec: 22, endSec: 66 },
+      { passportId: "bike_top_april", title: "Aspect Allroad Elite 1x11 — 160 000", startSec: 156, endSec: 215 },
+      { passportId: "bike_top_april", title: "Rush Hour — фитнес-МТВ за 30 000", startSec: 215, endSec: 265 },
+    ],
+  },
+  {
+    level: 3,
+    levelLabel: "Профи",
+    question: "Как не купить «хлам» за 80 000?",
+    clips: [
+      { passportId: "bike_mtb_80k", title: "Рама: алюминий 601, конусный стакан", startSec: 268, endSec: 340 },
+      { passportId: "bike_mtb_80k", title: "Вилка: Suntour или китайская воздушная", startSec: 410, endSec: 460 },
+      { passportId: "bike_mtb_80k", title: "Тормоза: гидравлика Shimano MT200", startSec: 724, endSec: 770 },
+      { passportId: "bike_mtb_80k", title: "Итог: 80 000 — балансный байк, а не хлам", startSec: 835, endSec: 866 },
+    ],
+  },
+];
+
 /** Зарегистрированный entry паспорта (для получения Passport и монетизации). */
 export function registryEntryFor(passportId: string): PassportRegistryEntry | undefined {
   return PASSPORT_REGISTRY.find((e) => e.id === passportId);

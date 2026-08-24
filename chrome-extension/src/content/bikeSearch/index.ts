@@ -9,9 +9,17 @@ import {
   extractQueryFromUrl,
   isBikeQuery,
   BIKE_SEARCH_ENTRIES,
+  BIKE_JOURNEY_STAGES,
   collectBikeProducts,
 } from "./detect";
-import { mountBikeSearchCard, unmountBikeSearchCard } from "./render";
+import {
+  mountBikeSearchCard,
+  unmountBikeSearchCard,
+  mountBikeJourneyCard,
+  unmountBikeJourneyCard,
+  BIKE_SEARCH_ATTR,
+  BIKE_JOURNEY_ATTR,
+} from "./render";
 
 /** Селектор якоря — блок фильтров поиска (после поля поиска). */
 const SEARCH_CONTENT_SELECTORS = [
@@ -48,9 +56,17 @@ let mountedAnchor: HTMLElement | null = null;
 
 function restoreCard(): void {
   if (!mountedAnchor || !mountedAnchor.isConnected) return;
-  if (mountedAnchor.nextElementSibling?.hasAttribute("data-rz-bike-search")) return;
-  if (isSearchPage(location.href) && isBikeQuery(currentQuery())) {
-    mountBikeSearchCard(mountedAnchor, BIKE_SEARCH_ENTRIES, collectBikeProducts());
+  const listCard = mountedAnchor.nextElementSibling;
+  if (!listCard || !listCard.hasAttribute(BIKE_SEARCH_ATTR)) {
+    if (!isSearchPage(location.href) || !isBikeQuery(currentQuery())) return;
+    const card = mountBikeSearchCard(mountedAnchor, BIKE_SEARCH_ENTRIES, collectBikeProducts());
+    if (card) mountBikeJourneyCard(card, BIKE_JOURNEY_STAGES);
+    return;
+  }
+  // Плейлист на месте — восстановим степпер, если его вычистил React.
+  const list = listCard as HTMLElement;
+  if (!list.nextElementSibling?.hasAttribute(BIKE_JOURNEY_ATTR)) {
+    mountBikeJourneyCard(list, BIKE_JOURNEY_STAGES);
   }
 }
 
@@ -66,7 +82,8 @@ export async function mountBikeSearch(timeoutMs = 8000): Promise<boolean> {
 
   unmountBikeSearchCard(anchor);
   mountedAnchor = anchor;
-  mountBikeSearchCard(anchor, BIKE_SEARCH_ENTRIES, collectBikeProducts());
+  const listCard = mountBikeSearchCard(anchor, BIKE_SEARCH_ENTRIES, collectBikeProducts());
+  if (listCard) mountBikeJourneyCard(listCard, BIKE_JOURNEY_STAGES);
 
   observer?.disconnect();
   observer = new MutationObserver(() => restoreCard());
@@ -79,6 +96,10 @@ export function removeBikeSearch(): void {
   observer?.disconnect();
   observer = null;
   if (mountedAnchor) {
+    const listCard = mountedAnchor.nextElementSibling;
+    if (listCard && listCard.hasAttribute(BIKE_SEARCH_ATTR)) {
+      unmountBikeJourneyCard(listCard as HTMLElement);
+    }
     unmountBikeSearchCard(mountedAnchor);
     mountedAnchor = null;
   }

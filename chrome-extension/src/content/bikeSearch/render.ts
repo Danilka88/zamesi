@@ -4,9 +4,12 @@
 // и секцию «товары из подборки». Реальные переходы на видео выполняются
 // (открытие в новой вкладке); внешние площадки виртуальные (NFR-7).
 import type { MerchProduct } from "../merchOffer/detect";
-import type { BikeSearchEntry } from "./detect";
+import type { BikeSearchEntry, BikeJourneyClip, BikeJourneyStage } from "./detect";
+import { videoIdForPassport } from "./detect";
 
 export const BIKE_SEARCH_ATTR = "data-rz-bike-search";
+/** Атрибут карточки «путь зрителя» (степер) — монтируется после плейлиста. */
+export const BIKE_JOURNEY_ATTR = "data-rz-bike-journey";
 
 /** Уникальный градиент блока поиска (отличается от других оффер-блоков, NFR-6). */
 export const BIKE_GRADIENT =
@@ -15,6 +18,23 @@ export const BIKE_GRADIENT =
 /** Видео из подборки — ссылка на rutube.ru/video/{id}. */
 export function videoUrl(videoId: string): string {
   return `https://rutube.ru/video/${videoId}/`;
+}
+
+/** Ссылка на фрагмент с тайм-кодом: rutube.ru/video/{id}/?start={sec}. */
+export function journeyVideoUrl(videoId: string, startSec: number): string {
+  return `https://rutube.ru/video/${videoId}/?start=${Math.floor(startSec)}`;
+}
+
+/** Секунды → «MM:SS» (например 303 → «05:03»). */
+export function formatTimecode(sec: number): string {
+  const mm = Math.floor(sec / 60);
+  const ss = Math.floor(sec % 60);
+  return `${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
+}
+
+/** Хвост ссылки, который RUTUBE добавляет к видеозаписи (для подписи под фрагментом). */
+export function timecodeRange(startSec: number, endSec: number): string {
+  return `${formatTimecode(startSec)}–${formatTimecode(endSec)}`;
 }
 
 interface Palette {
@@ -46,6 +66,13 @@ const LIGHT_PALETTE: Palette = {
   tileBg: "#fff3d9",
   chipBg: "#fbeed8",
 };
+
+/** Градиенты номеров ступеней: новичок → профи (прогрессивный переход). */
+const LEVEL_GRADIENTS = [
+  "linear-gradient(135deg,#2e7d32,#66bb6a)",
+  "linear-gradient(135deg,#e65100,#ff8f00)",
+  "linear-gradient(135deg,#6a1b9a,#ec407a)",
+];
 
 /** Определить тёмная ли тема страницы (зеркало travel/merch). */
 export function isDarkTheme(win: Window = window): boolean {
@@ -336,5 +363,229 @@ export function mountBikeSearchCard(anchor: HTMLElement, entries: BikeSearchEntr
 export function unmountBikeSearchCard(anchor: HTMLElement): void {
   const next = anchor.nextElementSibling;
   if (next && next.hasAttribute(BIKE_SEARCH_ATTR)) next.remove();
+}
+
+/* ----------------------------------------------------------------------- */
+/* Блок «Путь зрителя» (степер новичок → профи). Монтируется после плейлиста. */
+/* ----------------------------------------------------------------------- */
+
+/** Заглушка-‹ › если video не найден по passportId. */
+function journeyVideoIdOrFallback(passportId: string): string {
+  return videoIdForPassport(passportId);
+}
+
+/** Сборка строки-фрагмента с тайм-кодом (кликабельная ссылка ?start=). */
+function buildJourneyClip(clip: BikeJourneyClip, p: Palette): HTMLAnchorElement {
+  const videoId = journeyVideoIdOrFallback(clip.passportId);
+  const row = document.createElement("a");
+  row.href = journeyVideoUrl(videoId, clip.startSec);
+  row.target = "_blank";
+  row.rel = "noopener noreferrer";
+  row.dataset.rzBikeJourneyClip = clip.passportId;
+  row.title = `${clip.title} — смотреть с ${formatTimecode(clip.startSec)}`;
+  row.style.cssText = [
+    "box-sizing:border-box",
+    "display:flex",
+    "align-items:center",
+    "gap:8px",
+    `background:${p.tileBg}`,
+    "border-radius:9px",
+    "padding:7px 9px",
+    "text-decoration:none",
+    "color:inherit",
+    "transition:transform .12s ease,filter .12s ease",
+    "min-width:0",
+  ].join(";");
+  row.addEventListener("mouseenter", () => {
+    row.style.filter = "brightness(1.07)";
+    row.style.transform = "translateX(2px)";
+  });
+  row.addEventListener("mouseleave", () => {
+    row.style.filter = "";
+    row.style.transform = "";
+  });
+
+  const play = document.createElement("span");
+  play.textContent = "▶";
+  play.style.cssText = `font-size:11px;color:#ff8f00;flex:0 0 auto;`;
+
+  const tc = document.createElement("span");
+  tc.textContent = formatTimecode(clip.startSec);
+  tc.style.cssText =
+    "font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;color:#ff8f00;flex:0 0 auto;";
+
+  const label = document.createElement("span");
+  label.textContent = clip.title;
+  label.style.cssText = `font-size:11.5px;font-weight:600;line-height:1.3;color:${p.title};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;`;
+
+  row.append(play, tc, label);
+  return row;
+}
+
+/** Сборка одной ступени (колонка степпера). */
+function buildJourneyStage(stage: BikeJourneyStage, p: Palette): HTMLElement {
+  const el = document.createElement("div");
+  el.dataset.rzBikeJourneyStage = String(stage.level);
+  el.style.cssText = [
+    "box-sizing:border-box",
+    "flex:1 1 0",
+    "min-width:200px",
+    `background:${p.rowBg}`,
+    "border:1px solid rgba(255,255,255,.06)",
+    "border-radius:14px",
+    "padding:12px 13px",
+    "display:flex",
+    "flex-direction:column",
+    "gap:9px",
+  ].join(";");
+
+  // Шапка ступени: номер-бейдж + лейбл уровня.
+  const head = document.createElement("div");
+  head.style.cssText = "display:flex;align-items:center;gap:9px;";
+  const num = document.createElement("span");
+  num.textContent = String(stage.level);
+  const grad = LEVEL_GRADIENTS[(stage.level - 1) % LEVEL_GRADIENTS.length];
+  num.style.cssText = [
+    `background:${grad}`,
+    "color:#fff",
+    "width:26px",
+    "height:26px",
+    "border-radius:50%",
+    "display:inline-flex",
+    "align-items:center",
+    "justify-content:center",
+    "font-weight:900",
+    "font-size:13px",
+    "flex:0 0 auto",
+    "box-shadow:0 3px 8px rgba(0,0,0,.25)",
+  ].join(";");
+  const lvl = document.createElement("span");
+  lvl.textContent = stage.levelLabel;
+  lvl.style.cssText = `font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:${p.sub};`;
+  head.append(num, lvl);
+  el.append(head);
+
+  const q = document.createElement("div");
+  q.textContent = stage.question;
+  q.style.cssText = `font-weight:800;font-size:12.5px;line-height:1.4;color:${p.title};`;
+  el.append(q);
+
+  const clips = document.createElement("div");
+  clips.style.cssText = "display:flex;flex-direction:column;gap:6px;";
+  for (const c of stage.clips) clips.append(buildJourneyClip(c, p));
+  el.append(clips);
+
+  return el;
+}
+
+/** Соединительная стрелка-переход между ступенями (для «единого пути»). */
+function buildConnector(): HTMLElement {
+  const arrow = document.createElement("div");
+  arrow.textContent = "→";
+  arrow.setAttribute("data-rz-bike-journey-connector", "");
+  arrow.style.cssText = [
+    "align-self:stretch",
+    "display:flex",
+    "align-items:center",
+    "justify-content:center",
+    "flex:0 0 22px",
+    "color:#ff8f00",
+    "font-weight:900",
+    "font-size:20px",
+    "opacity:.85",
+  ].join(";");
+  return arrow;
+}
+
+/**
+ * Создать карточку «Путь зрителя: от новичка до профи» (не монтирует в DOM).
+ * Ступени выравниваются в одну горизонтальную линию с соединительными
+ * стрелками — пользователь считывает весь блок как единый маршрут.
+ */
+export function buildBikeJourneyCard(stages: BikeJourneyStage[]): HTMLElement {
+  const dark = isDarkTheme();
+  const p = dark ? DARK_PALETTE : LIGHT_PALETTE;
+
+  const card = document.createElement("div");
+  card.setAttribute(BIKE_JOURNEY_ATTR, "");
+  card.style.cssText = [
+    "box-sizing:border-box",
+    "margin:6px 0 0",
+    "padding:16px",
+    `border:1px solid ${p.cardBorder}`,
+    "border-radius:16px",
+    `background:${p.cardBg}`,
+    `color:${p.title}`,
+    "font-family:-apple-system,'Segoe UI',Roboto,sans-serif",
+    "font-size:13px",
+    "line-height:1.45",
+    "box-shadow:0 12px 34px rgba(0,0,0,.28)",
+    "max-width:920px",
+    "overflow:hidden",
+  ].join(";");
+
+  // Шапка: бренд-пилюля + заголовок «как смешать».
+  const header = document.createElement("div");
+  header.style.cssText = "display:flex;align-items:center;gap:11px;margin-bottom:13px;flex-wrap:wrap;";
+  const badge = document.createElement("span");
+  badge.textContent = "🎓 RUTUBE Замеси";
+  badge.style.cssText = [
+    `background:${BIKE_GRADIENT}`,
+    "color:#fff",
+    "font-weight:800",
+    "font-size:11px",
+    "padding:6px 12px",
+    "border-radius:999px",
+    "letter-spacing:.04em",
+    "box-shadow:0 5px 14px rgba(230,81,0,.4)",
+  ].join(";");
+  const title = document.createElement("div");
+  title.textContent = "Как смешать это в подборку: путь зрителя";
+  title.style.cssText = "font-weight:900;font-size:16px;line-height:1.3;";
+  const sub = document.createElement("div");
+  sub.textContent = "Тайм-коды из разных видео — перемотайте и посмотрите каждый шаг пути";
+  sub.style.cssText = `width:100%;font-size:12.5px;color:${p.sub};`;
+  header.append(badge, title, sub);
+  card.append(header);
+
+  // Ступени в одну линию с соединительными стрелками.
+  const rail = document.createElement("div");
+  rail.style.cssText = "display:flex;align-items:stretch;gap:0;flex-wrap:wrap;";
+  for (let i = 0; i < stages.length; i++) {
+    if (i > 0) rail.append(buildConnector());
+    rail.append(buildJourneyStage(stages[i], p));
+  }
+  card.append(rail);
+
+  // Нижняя подсказка.
+  const footer = document.createElement("div");
+  footer.style.cssText = `margin-top:13px;font-size:11px;color:${p.sub};display:flex;align-items:center;gap:6px;`;
+  const dot = document.createElement("span");
+  dot.textContent = "•";
+  dot.style.cssText = "color:#ff8f00;font-weight:800;";
+  const txt = document.createElement("span");
+  txt.textContent = "Каждая ступень собирает фрагменты из нашего анализа — это и есть микс из 3 видео";
+  footer.append(dot, txt);
+  card.append(footer);
+
+  return card;
+}
+
+/** Вставить карточку «путь зрителя» сразу после карточки-плейлиста. Идемпотентно. */
+export function mountBikeJourneyCard(
+  playlistCard: HTMLElement,
+  stages: BikeJourneyStage[],
+): HTMLElement | null {
+  const next = playlistCard.nextElementSibling;
+  if (next && next.hasAttribute(BIKE_JOURNEY_ATTR)) return next as HTMLElement;
+  const card = buildBikeJourneyCard(stages);
+  playlistCard.insertAdjacentElement("afterend", card);
+  return card;
+}
+
+/** Убрать карту «путь зрителя», если она идёт после плейлиста. */
+export function unmountBikeJourneyCard(playlistCard: HTMLElement): void {
+  const next = playlistCard.nextElementSibling;
+  if (next && next.hasAttribute(BIKE_JOURNEY_ATTR)) next.remove();
 }
 // = [M-EXTENSION][BIKE-SEARCH][RENDER][END_BLOCK]

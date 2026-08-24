@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <verification-entry id="V-M-EXTENSION" module="M-EXTENSION" priority="high">
-  <description>Chrome extension MV3: валидация 7 демо-паспортов под TS-схему Passport, binding (ручной+автоподбор), DataProvider (Demo/Real-stub), маркеры монетизаций+seek, режимы, Shadow DOM-хост</description>
+  <description>Chrome extension MV3: валидация 10 демо-паспортов под TS-схему Passport, binding (ручной+автоподбор), DataProvider (Demo/Real-stub), маркеры монетизаций+seek, режимы, Shadow DOM-хост, микс-блок «Велосипеды» на /search/* + степпер «Путь зрителя»</description>
   <Scenarios>
-    <Scenario id="S-M-EXT-1" type="success">
-      <description>A-C003-03: 7 демо-паспортов валидны под TS Passport; реестр с привязкой tech_review↔video_id</description>
+<Scenario id="S-M-EXT-1" type="success">
+      <description>A-C003-03: 10 демо-паспортов валидны под TS Passport; реестр с привязкой tech_review↔video_id и 3 вело-паспортов к реальным video_id</description>
       <commands>
         <command>npx vitest run tests/registry.test.ts</command>
       </commands>
       <evidence>
         <marker required="true">[M-EXTENSION][REGISTRY][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][TEST-REGISTRY][START_BLOCK]</marker>
-        <assert>diy_frame, tech_review, movie_review, cooking_dinner, iphone_50k_wylsacom, atomic_heart_review, vietnam_nha_trang проходят валидацию; реестр мапит tech_review → 2013f4eba6ade7b01582fb411f9e901a и vietnam_nha_trang → 7130901c1c9147f239190def16eb741c</assert>
+        <assert>diy_frame, tech_review, movie_review, cooking_dinner, iphone_50k_wylsacom, atomic_heart_review, vietnam_nha_trang, bike_dont_buy, bike_top_april, bike_mtb_80k проходят валидацию; реестр мапит tech_review → 2013f4eba6ade7b01582fb411f9e901a, vietnam_nha_trang → 7130901c1c9147f239190def16eb741c, bike_dont_buy → 1925a43e9479e500654b611eb8009072, bike_top_april → 555c960ce50ecde6170c6560e3ac8888 и bike_mtb_80k → 7acf946b872b1f304345c7ca8b249f21; у каждого bike-паспорта есть ecom-метки (для поискового блока)</assert>
       </evidence>
     </Scenario>
     <Scenario id="S-M-EXT-2" type="success">
@@ -95,6 +95,21 @@
         <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-CHARTS][START_BLOCK]</marker>
         <marker required="true">[M-EXTENSION][TEST-AUTHOR-TOOLS-RENDER][START_BLOCK]</marker>
         <assert>buildTitleVariants отдаёт native первым + 3 AI (курируемые по паспорту, дедупликация native); fallback строится из полей; buildDescriptionVariants возвращает 2 варианта; генерация детерминирована (NFR-7); projectVariantMetrics стабилен для варианта и различен между вариантами, в границах (CTR 2.5–7%, вовлечённость 40–95); retentionSeries/hours stable для seed; render монтирует заголовки/описания с метриками + блок «A/B прогноз эффективности» с CTR-барами и лидером прогноза + копирование в clipboard + toast; cleanup удаляет toast; ModesController.expand открывает полноширинную модалку в shadow root с 4 вкладками, переключение вкладок перерисовывает режим, закрытие ✕/Esc/подложка, сайдбар приостановлен и восстанавливается; renderAuthorBody(wide) даёт grid-карточки и ряд A/B+графики</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-EXT-9" type="success">
+      <description>Микс-блок «Велосипеды» на /search/*: детект вело-запроса, карточка подборки (3 видео со скриншотами + товары), степпер «Путь зрителя» (3 ступени, кликабельные тайм-коды ?start=)</description>
+      <commands>
+        <command>npx vitest run tests/bike-search-detect.test.ts tests/bike-search-offer.test.ts tests/bike-search-journey.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][BIKE-SEARCH][DETECT][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][BIKE-SEARCH][RENDER][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][BIKE-SEARCH][INDEX][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-BIKE-SEARCH-DETECT][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-BIKE-SEARCH-OFFER][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-BIKE-SEARCH-JOURNEY][START_BLOCK]</marker>
+        <assert>isBikeQuery распознаёт «велосипеды/велик/байк/mtb» и отбрасывает наушники/iphone; extractQueryFromUrl вычитывает query из закодированного URL; BIKE_SEARCH_ENTRIES содержит ровно 3 видео с реальными rutube video_id и скриншотами .png; buildBikeSearchCard строит 3 видео-строки (href=rutube/video/{id}/, target=_blank) + секцию «Товары из подборки» (ecom-метки паспортов, сортировка по confidence); степпер BIKE_JOURNEY_STAGES — 3 ступени (Новичок/Продвинутый/Профи) с вопросами и клипами, formatTimecode(303)=05:03, journeyVideoUrl добавляет ?start=; buildBikeJourneyCard рисует 3 ступени + 2 коннектора-стрелки; mountBikeJourneyCard идемпотентен, вставляется после плейлиста, unmount убирает только степпер</assert>
       </evidence>
     </Scenario>
   </Scenarios>

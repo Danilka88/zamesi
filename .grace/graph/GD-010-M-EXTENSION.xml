@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module-graph id="M-EXTENSION" name="Chrome Extension (Замеси)" type="INTERFACE" status="built">
-  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики, инструменты автора) на страницу видео RUTUBE rutube.ru/video/*. AI-ассистент «для редактора RUTUBE Studio» studio.rutube.ru/*: автозаполнение полей модалки video-editor по паспорту. 4 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
+  <Purpose>Chrome MV3-расширение: инъекция Shadow DOM-панелей (монетизации, модерация, аудио, метрики, инструменты автора) на страницу видео RUTUBE rutube.ru/video/*. Микс-блок «Замеси: Велосипеды» на странице поиска rutube.ru/search/* (3 видео-карточки со скриншотами + товары подборки + степпер «Путь зрителя» с кликабельными тайм-кодами ?start=). AI-ассистент «для редактора RUTUBE Studio» studio.rutube.ru/*: автозаполнение полей модалки video-editor по паспорту. 4 демо-режима + Real-провайдер (заглушка). Vanilla TS + Vite + Vitest.</Purpose>
   <Source path="chrome-extension/src/"/>
   <Test path="chrome-extension/tests/"/>
   <Exports>
@@ -75,6 +75,21 @@
     <function name="enableDrag">Перетаскивание панели за заголовок с сохранением позиции в localStorage</function>
     <function name="restorePosition">Восстановление сохранённой позиции fixed-предка root</function>
     <function name="safeGet/safeSet">Безопасный доступ к localStorage (try/catch)</function>
+    <function name="isBikeQuery">Детект вело-запроса поиска по keywords (велосипед/велик/байк/mtb/…) на /search/*</function>
+    <function name="extractQueryFromUrl">Извлечение query из URL поиска (/search/?query=…, кодированный/прямой)</function>
+    <function name="extractQueryFromHeader">Извлечение query из input хедера SPA (redux state)</function>
+    <function name="BIKE_SEARCH_ENTRIES">Демо-подборка «Велосипеды»: 3 записи (паспорт, video_id, скриншот, blurb)</function>
+    <function name="BIKE_JOURNEY_STAGES">Курируемые ступени «Путь зрителя»: Новичок/Продвинутый/Профи с вопросами и клипами (passportId + startSec/endSec)</function>
+    <function name="videoIdForPassport">Резолв real video_id подборки по passportId</function>
+    <function name="collectBikeProducts">Товары подборки: ecom-метки со всех паспортов, дедупликация, сортировка по confidence, limit</function>
+    <function name="buildBikeSearchCard">Карточка «Замеси: Велосипеды»: шапка + 3 видео-строки (скриншоты, открыть в новой вкладке) + «Товары из подборки»</function>
+    <function name="mountBikeSearchCard/unmountBikeSearchCard">Монтаж/снятие карточки поиска после блока фильтров (идемпотентно)</function>
+    <function name="buildBikeJourneyCard">Степпер «Путь зрителя»: ступени в одну линию с соединительными стрелками, кликабельные тайм-коды</function>
+    <function name="mountBikeJourneyCard/unmountBikeJourneyCard">Монтаж/снятие степпера после плейлист-карточки (идемпотентно)</function>
+    <function name="journeyVideoUrl">Ссылка на фрагмент: rutube.ru/video/{id}/?start={sec} (перемотка с новой вкладке)</function>
+    <function name="formatTimecode">Секунды → «MM:SS» (303 → «05:03»)</function>
+    <function name="screenshotSrc">Скриншот подборки: внешний URL или локальный bundle (chrome.runtime.getURL bike/{name})</function>
+    <function name="mountBikeSearch">Оркестрация блока на /search/*: ждёт фильтры, монтирует карточку+степер, MutationObserver восстанавливает при перерисовке SPA</function>
   </Exports>
   <CrossLinks>
     <Link target="M-CORE" relation="uses-types"/>

@@ -37,8 +37,8 @@
     <Entry id="V-M-MODERATOR" routed="VD-M-MODERATOR.xml" module="M-MODERATOR" priority="medium" scenarios="4">
       <description>LLM-as-Judge модерация: парсинг ответа, fallback при ошибке LLM, интеграция в паспорт</description>
     </Entry>
-    <Entry id="V-M-EXTENSION" routed="VD-M-EXTENSION.xml" module="M-EXTENSION" priority="high" scenarios="8">
-      <description>Chrome extension MV3: валидация 4 демо-паспортов, binding, DataProvider (Demo/Real-stub), маркеры+seek, режимы, Shadow DOM-хост, инструменты автора (A/B + графики)</description>
+    <Entry id="V-M-EXTENSION" routed="VD-M-EXTENSION.xml" module="M-EXTENSION" priority="high" scenarios="9">
+      <description>Chrome extension MV3: валидация 10 демо-паспортов, binding, DataProvider (Demo/Real-stub), маркеры+seek, режимы, Shadow DOM-хост, инструменты автора (A/B + графики), микс-блок «Велосипеды» на /search/* (подборка + товары + степпер «Путь зрителя»)</description>
     </Entry>
     <Entry id="V-M-UI" routed="VD-M-UI.xml" module="M-UI" priority="high" scenarios="5">
       <description>React SPA: API-Proxy (demo/real), DemoApiClient (офлайн NFR-7), демо-данные, страницы Dashboard/Search/Passport/Mix, i18n, семантические маркеры [M-UI]. Тесты: vitest в ui/</description>

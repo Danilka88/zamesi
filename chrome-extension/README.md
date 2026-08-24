@@ -23,6 +23,7 @@
 - **Игровой оффер-блок** — на видео о компьютерных играх (детект по `ya:ovs:category=Видеоигры`, хэштегам `#шутеры/#игра/#геймплей` или паспорту `game_review`) сразу после `section[aria-label="информация о видео"]` встраивается карточка с обложкой игры и кнопками «купить в VK Play / играть в облаке VK Play Cloud и Yandex Play» (демо-заглушки, NFR-7).
 - **Тревел-оффер-блок** (`content/travelOffer/`) — на видео о путешествиях (детект по `ya:ovs:category` со значениями «Путешествия»/«Туризм», хэштегам `#путешествия/#тревел/#отпуск` или паспорту `travel_vlog`) встраивается карточка «Билеты {Краснодар} → {направление}» (авиабилеты, туры, отели, экскурсии); направление извлекается из заголовка видео.
 - **МЕРЧ-оффер-блок** (`content/merchOffer/`) — на видео с метками товаров (`ecom_item`/`artist_merch`) встраивается карточка «товары из видео + мерч канала + магазины»: до 6 плиток товаров с иконками (`collectMerchProducts`), бренд из `celebrity_voice` (на видео Wylsacom — мерч «Царские стёкла»), чипы магазинов из карты `MERCH_STORE_BY_BRAND` (Biggeek, Царские стёкла, Wildberries, OZON, Яндекс Маркет). Реальный `video_id` `2013f4eba6ade7b01582fb411f9e901a` привязан к паспорту `iphone_50k_wylsacom`. Игры/тревел/мерч монтируются взаимоисключающе (первая успешная карточка выигрывает).
+- **Микс-блок на странице поиска** (`content/bikeSearch/`) — на `/search/*` с вело-запросом («велосипеды», «велик», «байк», «mtb») встраивается карточка «Замеси: Велосипеды»: 3 видео-карточки со скриншотами (`public/bike/`, web_accessible_resources), открытие реального видео в новой вкладке, секция «Товары из подборки» (ECom-метки паспортов, сортировка по confidence). Ниже — степпер «Путь зрителя» (3 ступени Новичок/Продвинутый/Профи с кликабельными тайм-кодами `?start=` из разных видео). Идемпотентный монтаж + MutationObserver от перерисовки React SPA (NFR-7).
 - **Privacy by design** — демо-данные хранятся локально, ноль внешних запросов в демо-режимах (NFR-7).
 - **Готов к реальному провайдеру** — контракт `DataProvider` реализован заглушкой `RealDataProvider` (возвращает `not_implemented`), интерфейс готов под FastAPI `/analyze`.
 
@@ -62,7 +63,7 @@ mountHost() → Shadow DOM → ModesController
 cd chrome-extension
 npm install
 npm run build        # dist/{content,popup,background}.js + manifest.json + иконки
-npm test             # vitest: 135 тестов
+npm test             # vitest: 191 тест
 ```
 
 **Load unpacked (ручной smoke):**
@@ -87,6 +88,7 @@ src/
 │   ├── gameOffer/          игровой оффер-блок: detect / render / mount (NFR-7)
 │   ├── travelOffer/        тревел-оффер-блок: detect / render / mount (NFR-7)
 │   ├── merchOffer/         мерч-оффер-блок: detect / render / mount (NFR-7)
+│   ├── bikeSearch/         микс-блок «Велосипеды» на /search/*: detect / render / index (подборка + товары + степпер «Путь зрителя», NFR-7)
 │   ├── authorTools/        инструменты автора: generate / render / charts (NFR-7)
 │   ├── modes.ts            ModesController (viewer/analyst/simulation/author)
 │   ├── data/
@@ -146,7 +148,7 @@ src/
 | `merch-offer-detect.test.ts` | детект видео с товарами, `collectMerchProducts` (дедуп/сортировка/limit), `merchBrandFor` |
 | `merch-offer.test.ts` | мерч-карточка: вставка после meta-row, товары/магазины, идемпотентность |
 
-Проверка: `npm run typecheck && npm test` (135 тестов, зелёные).
+Проверка: `npm run typecheck && npm test` (191 тест, зелёные).
 
 ## Подключение реального анализатора (FastAPI)
 

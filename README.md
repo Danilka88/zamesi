@@ -23,7 +23,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. **205 pytest + 164 vitest (M-EXTENSION) + 14 vitest (M-UI) = 383 теста**, 0 failures, с изоляцией внешних вызовов (monkeypatch, AsyncMock). 11 независимых модулей (9 Python + Chrome-расширение M-EXTENSION + Web UI M-UI), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения и UI — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. **205 pytest + 191 vitest (M-EXTENSION) + 14 vitest (M-UI) = 410 тестов**, 0 failures, с изоляцией внешних вызовов (monkeypatch, AsyncMock). 11 независимых модулей (9 Python + Chrome-расширение M-EXTENSION + Web UI M-UI), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения и UI — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs, timeouts, fallbacks), structlog с 81 log-маркером и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -63,7 +63,11 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **МЕРЧ-оффер-блок в расширении** (`chrome-extension/src/content/merchOffer/`, NFR-7) — на любом видео, в паспорте которого есть метки товаров (`ecom_item`/`artist_merch`), сразу после `section[aria-label="информация о видео"]` встраивается карточка «товары из видео + мерч канала + магазины». Товары извлекаются из паспорта (`collectMerchProducts()`: дедупликация, сортировка по confidence, до 6 плиток с иконками), бренд — из `celebrity_voice` (для видео Wylsacom — его мерч «Царские стёкла»), магазины — из курируемой карты `MERCH_STORE_BY_BRAND` (для `wylsacom`: Biggeek, Царские стёкла, Wildberries, OZON, Яндекс Маркет). Реальный видео_id `2013f4eba6ade7b01582fb411f9e901a` («Какой iPhone выбрать за 50 000₽») теперь привязан к паспорту `iphone_50k_wylsacom`. Три оффер-блока (игры/тревел/мерч) монтируются взаимоисключающе — первая успешная карточка выигрывает. Идемпотентный монтаж + MutationObserver. Новый канал монетизации e-commerce сегмента — из коробки.
 
-- **Chrome-расширение «RUTUBE Замеси»** (`chrome-extension/`, MV3 + Shadow DOM + Vanilla TS + Vitest) — монетизация прямо на странице видео `rutube.ru/video/*`: кликабельные маркеры `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` на прогресс-баре (клик → seek), панель текущей сцены поверх плеера и сайдбар аналитика. **4 режима**: «Зритель», «Аналитик», «Симуляция» и «Автор». Shadow DOM-изоляция — ноль конфликтов с CSS RUTUBE и ноль layout-shift (NFR-6). Привязка паспорта к видео: вручную в попапе / автоподбор по keywords заголовка / по `video_id` в реестре; при отсутствии совпадений автоматически применяется паспорт по умолчанию (`getDefaultPassport()`). Контракт `DataProvider` готов под реальный FastAPI `/analyze` (`RealDataProvider` — stub). 164 vitest-теста (21 файл), GRACE-модуль M-EXTENSION (change C-003).
+- **Микс-блок «Замеси: Велосипеды» на странице поиска** (`chrome-extension/src/content/bikeSearch/`, NFR-7) — расширение больше не ограничивается страницей видео: на `rutube.ru/search/*` с вело-запросом («велосипеды», «велик», «байк», «mtb», …) сразу после блока фильтров встраивается карточка подборки из **3 видео**: скриншоты из `public/bike/` (web_accessible_resources), бейдж домена («Гайд»/«Обзор»), клик → реальное `rutube.ru/video/{id}` в новой вкладке, и секция **«Товары из подборки»** (ECom-метки из паспортов, сортировка по confidence, иконки). Тёмная/светлая тема, идемпотентный монтаж + MutationObserver от перерисовки React SPA. Новый способ демонстрации миксирования прямо в поиске — из коробки.
+
+- **Степпер «Путь зрителя: новичок → профи»** (`bikeSearch/`, NFR-7) — вторая карточка под блоком подборки: **3 ступени** («Новичок», «Продвинутый», «Профи»), каждая отвечает на вопрос пользователя (например «Какой класс велосипеда мне подходит?») и собирает **кликабельные тайм-коды** из разных видео подборки (`journeyVideoUrl` → `rutube.ru/video/{id}/?start={sec}`). Ступени выстроены в одну горизонтальную линию с соединительными стрелками и градиентными номерами (зелёный→оранжевый→фиолетовый) — пользователь считывает блок как единый маршрут. Восстанавливается при перерисовке SPA вместе с плейлистом.
+
+- **Chrome-расширение «RUTUBE Замеси»** (`chrome-extension/`, MV3 + Shadow DOM + Vanilla TS + Vitest) — монетизация прямо на странице видео `rutube.ru/video/*`: кликабельные маркеры `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` на прогресс-баре (клик → seek), панель текущей сцены поверх плеера и сайдбар аналитика. **4 режима**: «Зритель», «Аналитик», «Симуляция» и «Автор». Shadow DOM-изоляция — ноль конфликтов с CSS RUTUBE и ноль layout-shift (NFR-6). Привязка паспорта к видео: вручную в попапе / автоподбор по keywords заголовка / по `video_id` в реестре; при отсутствии совпадений автоматически применяется паспорт по умолчанию (`getDefaultPassport()`). Контракт `DataProvider` готов под реальный FastAPI `/analyze` (`RealDataProvider` — stub). 191 vitest-тест (24 файла), GRACE-модуль M-EXTENSION (change C-003).
 
 - **AI-ассистент для редактора RUTUBE Studio** (`chrome-extension/src/studio/`, M-EXTENSION) — второй content-script расширения на `studio.rutube.ru/*`: поллинг-детект модалки video-editor (`[data-testid="video-editor-layout"]`), автоподбор паспорта по video_id/заголовку и монтаж Shadow DOM-панели «AI для редактора». Панель **заполняет все поля публикации одним кликом**: заголовок (A/B-варианты), описание с тайм-кодами сцен, категория (domain_type → раздел RUTUBE), плейлисты, время публикации (сейчас/позже — delayed при rejected-модерации), чекбоксы 18+ (из `age_rating`) и комментариев. Запись в React-поля через нативный setter прототипа + `input`/`change` события — без хаков. Панель сворачивается в пилюлю, перетаскивается (позиция в localStorage), toast-фидбек. 29 новых vitest-тестов (4 файла: studio-autofill/mapping/render/selectors). Замыкает цикл «паспорт → публикация»: паспорт превращается в готовый черновик публикации в Studio.
 
@@ -764,7 +768,8 @@ npm run build      # готовый билд в ui/dist/
 - **Панель текущей сцены** — по `timeupdate` показывает summary и монетизацию активной сцены поверх плеера.
 - **4 режима:** «Зритель» (маркеры + сцена + CTA), «Аналитик» (4 блока: монетизации, модерация, аудио, метрики), «Симуляция» (анимированный разбор ASR → сцены → метки) и «Автор» (A/B-варианты заголовков/описаний + прогнозные метрики). Полноширинная модалка (`expand`) с таббаром всех 4 режимов.
 - **Инструменты автора** (`authorTools/`) — генератор A/B-вариантов заголовков и описаний (детерминированный PRNG из паспорта + курируемые варианты для 7 известных паспортов), прогнозные метрики эффективности, SVG-графики retention/монетизации/почасовой активности (NFR-7, без сети).
-- **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по keywords заголовка + регистрация по `video_id` в реестре; при отсутствии совпадений — дефолтный паспорт (`getDefaultPassport()`). В реестре 7 демо-паспортов, включая `atomic_heart_review` (game_review, boundVideoId `aceaa503bdb8c200278f94dd3deaf7f5`) и `vietnam_nha_trang` (travel_vlog, boundVideoId `7130901c1c9147f239190def16eb741c`).
+- **Привязка паспорта к видео** — ручной выбор в попапе + автоподбор по keywords заголовка + регистрация по `video_id` в реестре; при отсутствии совпадений — дефолтный паспорт (`getDefaultPassport()`). В реестре 10 демо-паспортов, включая `atomic_heart_review` (game_review, boundVideoId `aceaa503bdb8c200278f94dd3deaf7f5`), `vietnam_nha_trang` (travel_vlog, boundVideoId `7130901c1c9147f239190def16eb741c`) и 3 вело-паспорта (`bike_dont_buy`/`bike_top_april`/`bike_mtb_80k`).
+- **Микс-блок на странице поиска** (`bikeSearch/`) — на `/search/*` с вело-запросом встраивается карточка «Замеси: Велосипеды»: 3 видео-карточки со скриншотами (открытие в новой вкладке) + «Товары из подборки»; ниже степпер «Путь зрителя» — 3 ступени (Новичок/Продвинутый/Профи) с кликабельными тайм-кодами `?start=` из разных видео (NFR-7).
 - **Игровой оффер-блок** (`gameOffer/`) — на игровых видео после `section[aria-label="информация о видео"]` встраивается карточка с обложкой игры и кнопками VK Play / VK Play Cloud / Yandex Play.
 - **Тревел-оффер-блок** (`travelOffer/`) — на тревел-видео встраивается карточка «Билеты {Краснодар} → {направление}» (авиабилеты, туры, отели, экскурсии); направление извлекается из заголовка.
 - **МЕРЧ-оффер-блок** (`merchOffer/`) — на видео с метками `ecom_item`/`artist_merch` встраивается карточка «товары из видео + мерч канала + магазины» (до 6 плиток товаров с иконками, чипы магазинов из карты `MERCH_STORE_BY_BRAND`); бренд — из `celebrity_voice` (для видео Wylsacom — мерч «Царские стёкла»).
@@ -810,7 +815,7 @@ mountStudioPanel() → Shadow DOM «AI для редактора RUTUBE Studio»
 cd chrome-extension
 npm install
 npm run build   # dist/{content,popup,background,studio}.js + manifest.json
-npm test        # vitest: 164 теста, 21 файл
+npm test        # vitest: 191 тестов, 24 файла
 ```
 
 **Load unpacked:** `chrome://extensions` → «Режим разработчика» → «Загрузить распакованное» → `chrome-extension/dist/` → открыть [референсное видео](https://rutube.ru/video/2013f4eba6ade7b01582fb411f9e901a) и выбрать сценарий в попапе.
@@ -944,7 +949,7 @@ cd ui && npm install && npm run dev
 
 Chrome-расширение «RUTUBE Замеси» (независимо от бэкенда):
 ```bash
-cd chrome-extension && npm install && npm test   # vitest: 164 теста
+cd chrome-extension && npm install && npm test   # vitest: 191 тест
 npm run build    # dist/ → «Загрузить распакованное» в chrome://extensions
 ```
 
@@ -1424,7 +1429,7 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 11. ✅ **Автоиндексация в ChromaDB** — паспорт индексируется сразу после сборки (реализовано)
 12. ✅ **Строгий режим валидации** — `strict=True` для CI-гейтов (реализовано)
 13. ✅ **FingerprintDB + index_track()** — персистентное хранилище аудиоотпечатков, CLI-индексация (реализовано)
-14. ✅ **Chrome-расширение «RUTUBE Замеси»** — MV3 + Shadow DOM + Vitest (164 теста, 21 файл, 7 демо-паспортов), GRACE-модуль M-EXTENSION, change C-003 (реализовано)
+14. ✅ **Chrome-расширение «RUTUBE Замеси»** — MV3 + Shadow DOM + Vitest (191 тест, 24 файла, 10 демо-паспортов), GRACE-модуль M-EXTENSION, change C-003 (реализовано)
 15. ✅ **LLM fallback chain** — приоритетный список провайдеров на каждую роль, автоматический fallback при отказе primary (реализовано)
 16. ✅ **Инструменты автора (A/B-тестирование контента)** — 4-й режим расширения: генератор вариантов заголовков/описаний + прогнозные метрики + SVG-графики, полноширинная модалка (реализовано)
 17. ✅ **Vitest-тесты M-UI** — 14 тестов для Web UI (DemoApiClient + HTTP-прокси), GRACE-верификация V-M-UI (реализовано)
@@ -1457,4 +1462,4 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 
 *GRACE 4-governed project: 32 `.grace` артефакта, 11 MODULE_CONTRACT, 72 semantic block pairs, 60 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `chrome-extension/` (M-EXTENSION), `ui/` (M-UI). GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
 
-*Обновлено: 205 pytest + 164 vitest (M-EXTENSION) + 14 vitest (M-UI) = 383 теста, 7 демо-паспортов, режим «Автор» с A/B-тестированием контента, третий оффер-блок — товары/мерч канала, AI-ассистент для редактора RUTUBE Studio, сценарий Яндекс AI Studio в юнит-экономике (~$0.18/ч, ~0.26 ₽/мин).*
+*Обновлено: 205 pytest + 191 vitest (M-EXTENSION) + 14 vitest (M-UI) = 410 тестов, 10 демо-паспортов, режим «Автор» с A/B-тестированием контента, оффер-блоки (игры/тревел/мерч), AI-ассистент для редактора RUTUBE Studio, микс-блок «Велосипеды» на странице поиска + степпер «Путь зрителя», 3 вело-паспорта и промты для Яндекс AI Studio, сценарий Яндекс AI Studio в юнит-экономике (~$0.18/ч, ~0.26 ₽/мин).*

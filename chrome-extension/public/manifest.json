@@ -18,7 +18,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://rutube.ru/video/*", "http://rutube.ru/video/*"],
+      "matches": [
+        "https://rutube.ru/video/*",
+        "http://rutube.ru/video/*",
+        "https://rutube.ru/search/*",
+        "http://rutube.ru/search/*"
+      ],
       "js": ["content.js"],
       "run_at": "document_idle"
     },
@@ -29,5 +34,11 @@
     }
   ],
   "permissions": ["storage"],
-  "host_permissions": ["https://rutube.ru/*", "http://rutube.ru/*", "https://studio.rutube.ru/*", "http://studio.rutube.ru/*"]
+  "host_permissions": ["https://rutube.ru/*", "http://rutube.ru/*", "https://studio.rutube.ru/*", "http://studio.rutube.ru/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["bike/*.png"],
+      "matches": ["https://rutube.ru/*", "http://rutube.ru/*"]
+    }
+  ]
 }

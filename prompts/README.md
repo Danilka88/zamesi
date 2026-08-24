@@ -9,6 +9,9 @@
 | `passport-iphone-50k.md` | «Какой iPhone выбрать за 50 000 ₽» (Wylsacom) | `tech_review` | 22 сегмента |
 | `passport-atomic-heart.md` | «Обзор Atomic Heart» (StopGame) | `game_review` | 25 сегментов |
 | `passport-vietnam-nha-trang.md` | «Сколько стоит жить в Нячанге» (тревел-блог) | `travel_vlog` | 15 сегментов |
+| `passport-bike-dont-buy.md` | «Не покупай велосипед, пока не посмотришь это видео» | `how_to` | 98 сегментов |
+| `passport-bike-top-april-2025.md` | «ТОП велосипедов АПРЕЛЬ 2025: Hagen, Aspect, Welt, Rush Hour» | `review` | 30 сегментов |
+| `passport-bike-mtb-80k.md` | «Горный велосипед за 80 000 ₽ в 2025. Как НЕ купить ХЛАМ?» | `review` | 71 сегмент |
 
 ## Как пользоваться
 
@@ -35,6 +38,9 @@
 | `passport-iphone-50k.md` | `output/Rv_iphone_50k_wylsacom_001.json` | `output/Rv_iphone_50k_wylsacom_001.md` |
 | `passport-atomic-heart.md` | `output/Rv_atomic_heart_review_001.json` | `output/Rv_atomic_heart_review_001.md` |
 | `passport-vietnam-nha-trang.md` | `output/Rv_vietnam_nha_trang_001.json` | `output/Rv_vietnam_nha_trang_001.md` |
+| `passport-bike-dont-buy.md` | `chrome-extension/src/data/passports/bike_dont_buy.json` | (markdown из этого JSON) |
+| `passport-bike-top-april-2025.md` | `chrome-extension/src/data/passports/bike_top_april.json` | (markdown из этого JSON) |
+| `passport-bike-mtb-80k.md` | `chrome-extension/src/data/passports/bike_mtb_80k.json` | (markdown из этого JSON) |
 
 Чем ближе ответ чата к эталону, тем лучше промт воспроизводит системный пайплайн.
 

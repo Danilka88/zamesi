@@ -2,6 +2,27 @@ import type { JobSummary } from '../types'
 
 export const demoJobs: JobSummary[] = [
   {
+    job_id: 'bike_dont_buy',
+    video_id: 'bike_dont_buy',
+    status: 'done',
+    created_at: '2026-08-24T09:00:00Z',
+    updated_at: '2026-08-24T09:24:00Z',
+  },
+  {
+    job_id: 'bike_top_april',
+    video_id: 'bike_top_april',
+    status: 'done',
+    created_at: '2026-08-24T09:30:00Z',
+    updated_at: '2026-08-24T09:42:00Z',
+  },
+  {
+    job_id: 'bike_mtb_80k',
+    video_id: 'bike_mtb_80k',
+    status: 'done',
+    created_at: '2026-08-24T09:45:00Z',
+    updated_at: '2026-08-24T10:05:00Z',
+  },
+  {
     job_id: 'diy_frame',
     video_id: 'diy_frame',
     status: 'done',

@@ -1,0 +1,237 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_bike_dont_buy_001",
+    "domain_type": "how_to",
+    "brand_safety_score": 100,
+    "target_audience": ["bike_beginners", "first_bike_buyers", "mountain_bikers", "commuters", "budget_shoppers"],
+    "seo_title": "Как выбрать первый велосипед: 5 ошибок и гайд по классам (опрос 4000 человек)",
+    "seo_tags": ["как выбрать велосипед", "первый велосипед", "классы велосипедов", "горный велосипед", "гравийный велосипед", "двухподвес", "ошибки при выборе", "ростовка велосипеда", "велосипеды для новичков", "хардтейл"],
+    "trending_cluster": "bike_generation_guides",
+    "auto_playlists": [
+      { "id": "pl_bike_how_to", "order_index": 1, "reason": "Практический гайд по выбору велосипеда, входит в подборку инструкций" },
+      { "id": "pl_first_bike_buyers", "order_index": 2, "reason": "Целевая тема — выбор первого велосипеда для новичков" },
+      { "id": "pl_mtb_classes", "order_index": 5, "reason": "Разбор классов внедорожных велосипедов (XC, трейл, эндуро)" }
+    ],
+    "ad_targeting_keywords": ["велосипед купить", "горный велосипед", "велосипед для новичков", "хардтейл", "двухподвес", "гравийный велосипед", "ростовка", "велосипед цены", "Виктория покрышки", "Rockshox вилка", "Shimano трансмиссия", "велострана", "велоподбор"],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 100,
+      "summary": "Образовательный гайд по выбору велосипеда: классы, статистика 4000 респондентов, советы по ростовке и цене. Без запрещённых тем, реклама магазинов упомянута корректно."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: диалог о велосипедах, шуточные представления «зверный велик» и «колесница ракетница»",
+      "monetization": [],
+      "clip_candidate": {
+        "hook": "Вас всех обманули? — крючок интриги в первой минуте",
+        "time_range_start": 0,
+        "time_range_end": 30,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Проблема: современный рынок велосипедов огромен, легко ошибиться с классом, ценой, ростовкой",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Вводная проблема рынка — хорошая точка для mid-roll рекламы магазинов велосипедов",
+          "confidence": 0.55
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Методология: опрос более 4000 человек о первом велосипеде, статистика satisfied/unsatisfied (64% довольны, 25% ошиблись)",
+      "monetization": [],
+      "clip_candidate": {
+        "hook": "25% покупателей первого велосипеда об этом пожалели",
+        "time_range_start": 176,
+        "time_range_end": 244,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ошибка №1 — класс: 48% ошиблись с классом; 44% взяли хардтейл XC. В кадре Aspect AMP DC Elite за 127 000 ₽",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "велосипед кантри хардтейл 29 дюймов",
+          "reason": "Ключевой товар сцены — горный велосипед класса XC, показан Aspect AMP DC Elite",
+          "confidence": 0.9
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "покрышки Швальбе бес камерные велосипедные",
+          "reason": "Показаны покрышки Vittoria, рассчитанные на бескамерную установку",
+          "confidence": 0.7
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "вилка воздушно масляная Rocks",
+          "reason": "В комплектации — воздушно-масляная вилка, бренд в кадре",
+          "confidence": 0.65
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Классы внедорожных велосипедов: hardtail XC, gravel, trail хардтейл, двухподвес-трейл, эндуро — с ценовыми вилками",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "гравийный велосипед до 150000",
+          "reason": "Вторая позиция популярных классов — гравник (21% недовольных хотели бы gravel)",
+          "confidence": 0.85
+        },
+        {
+          "type": "ad_slot",
+          "search_query": "велосипеды",
+          "reason": "Разбор классов — самый селл совета, но не рекламная пауза в данном месте",
+          "confidence": 0.5
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.1
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ошибка №2 — ростовка: 21% не угадали размер; советы по сайзчарту и геометрии",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "reason": "Этап совета по ростовке — естественная пауза в середине ролика",
+          "confidence": 0.6
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ошибка №3 — низкая цена; статистика бюджетов (55% недовольных купили до 50 000 ₽), вывод про 100 000 ₽",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "confidence": 0.55,
+          "reason": "Обсуждение цены — логичная пред-рекламная пауза"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ошибка №4 — невыгодное предложение: бренды, год, скидки; пример швейцарского Nostra XC за 664 000 vs Aspect Covenant за 236 000",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "велосипед Aspect Covenant хардтейл",
+          "confidence": 0.85,
+          "reason": "Конкретная модель для сравнения в кадре"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "велосипед календарь прошлого года скидки",
+          "confidence": 0.6,
+          "reason": "Совет искать велосипеды прошлого сезона на скидках"
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Один и тот же байк: 664 000 за раму или 236 000 — за весь — как Москва не для вас?",
+        "time_range_start": 830,
+        "time_range_end": 920,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.0
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Ошибка №5 — покупка б/у; типы личности (Дима vs Игорян), проверка велобу перед покупкой, барахолки",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "confidence": 0.55,
+          "reason": "Раздел про б/у — хороший слот для рекламы сервисов/барахолок"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Финал: призыв посмотреть гайды (55 минут, 23 минуты) и подобрать велосипед по душе; пожелания, коби-юмор с «картошкой»",
+      "monetization": [
+        {
+          "type": "clip_candidate",
+          "search_query": null,
+          "confidence": null,
+          "reason": "Финальный клип призывает к сохранению видео"
+        }
+      ],
+      "clip_candidate": {
+        "hook": "55 минут гайда — чтобы купить велосипед мечты, а не «клуб Горемык»",
+        "time_range_start": 1880,
+        "time_range_end": 1960,
+        "virality_potential": "low"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    }
+  ],
+  "raw_timeline_segments": [
+    { "speaker": "voiceover_male", "start_sec": 0, "end_sec": 17, "text": "Расскажите о своём велосипеде. Up, bro. Это зверный велик, any loads no problem. Прочный, мощный, сочный. Мне сказали: «Бери, не пожалеешь». Я взял сап." },
+    { "speaker": "voiceover_male", "start_sec": 24, "end_sec": 44, "text": "А вот моя колесница-ракетница. Рама из углеволокниженных нитей, разнообразные рычаги-крутилки." },
+    { "speaker": "voiceover_male", "start_sec": 46, "end_sec": 60, "text": "У вас свистелки-пищатки, а у меня байк не сломается, когда нечему ломаться. Говорят, летать должен хорошо." },
+    { "speaker": "voiceover_male", "start_sec": 66, "end_sec": 90, "text": "Разрешите поинтересоваться, по какому принципу мы здесь. Есть один аспект, который вас объединяет: вас всех обманули." },
+    { "speaker": "voiceover_male", "start_sec": 119, "end_sec": 180, "text": "Современный мир велосипедов огромен: десятки стилей и классов, сотни брендов, тысячи магазинов и барахолок. Очень легко ошибиться." },
+    { "speaker": "voiceover_male", "start_sec": 176, "end_sec": 260, "text": "Мы опросили более 4000 человек о первом велосипеде: 2650 остались довольны, 408 сомневаются, а 25% уверены, что ошиблись." },
+    { "speaker": "voiceover_male", "start_sec": 303, "end_sec": 330, "text": "Ошибка №1 — класс. 48% ошиблись именно с классом. Самая частая: это хардтейл для XC, до 44% от ошибочно выбранных классов." },
+    { "speaker": "voiceover_male", "start_sec": 352, "end_sec": 430, "text": "Хардтейл XC — универсальный горный велосипед. В кадре Aspect AMP DC Elite 26-го года за 127 000 ₽. Хорошая геометрия и пожизненная гарантия, воздушно-масленая вилка, Shimano SLX, покрышки Vittoria." },
+    { "speaker": "voiceover_male", "start_sec": 470, "end_sec": 560, "text": "Gravel — 21% недовольных хотели бы гравийный. Aspect Allroad Pro за 111 000. Gravel, trail hardtail, trail за двост по 19% и 12%, enduro 9%." },
+    { "speaker": "voiceover_male", "start_sec": 570, "end_sec": 660, "text": "Двухподвес для трейла — карбоновый Covenant красный 270 000 ₽, тормоза Magura, кокпит Race Face, трансмиссия Shimano SLX." },
+    { "speaker": "voiceover_male", "start_sec": 665, "end_sec": 800, "text": "Эндуро: как высоким хардтейл, только жирнее. Ход подвески 150-180 мм. Enduro-прототип с 160/170 ходом и вилкой с ногами 38 мм." },
+    { "speaker": "voiceover_male", "start_sec": 900, "end_sec": 1040, "text": "Ошибка №2 — ростовка. 21% сделавших ошибку не угадали с ростовкой. Совет — смотрите сайз-чарт конкретного бренда и геометрию модели." },
+    { "speaker": "voiceover_male", "start_sec": 1041, "end_sec": 1200, "text": "Ошибка №3 — низкая цена. 55% недовольных купили велосипед до 50 000 ₽. Для любительских дисциплин обычно нужно от 100 000 ₽." },
+    { "speaker": "voiceover_male", "start_sec": 1240, "end_sec": 1500, "text": "Ошибка №4 — невыгодное предложение. Бренд, год, акции. Swissгонователь контриник за 664 000 vs российско-китайский Aspect Covenant за 236 000." },
+    { "speaker": "voiceover_male", "start_sec": 1600, "end_sec": 1780, "text": "Ошибка №5 — б/у. Типы личности: Диман любит бу с жирной комплектацией, Игорян — новый. Проверяйте б/у: стеля, подотник, раму." },
+    { "speaker": "voiceover_male", "start_sec": 1881, "end_sec": 1960, "text": "Посмотрв гайды по классам (55 минут) и по ростовке (23 минуты) — и выберете велосипед мечты. И не как те, кто обжёгся с первым великом." }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

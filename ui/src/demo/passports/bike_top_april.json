@@ -1,0 +1,173 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_bike_top_april_2025_001",
+    "domain_type": "review",
+    "brand_safety_score": 100,
+    "target_audience": ["bike_shoppers", "gravel_enthusiasts", "mtb_riders", "fitness_riders", "budget_shoppers"],
+    "seo_title": "ТОП велосипедов апреля 2025: Hagen HG10, Welt G100, Aspect Allroad, Rush Hour — цены от 30 000",
+    "seo_tags": ["топ велосипедов", "Hagen HG10", "Welt G10", "Aspect Allroad", "Rush Hour велосипед", "топ велосипедов 2025", "гравийный велосипед", "фитнес велосипед", "выбор велосипеда", "велосипед до 100000"],
+    "trending_cluster": "bike_seasonal_rankings",
+    "auto_playlists": [
+      { "id": "pl_bike_top", "order_index": 1, "reason": "Подборка лучших велосипедов сезона — тема видеоролика" },
+      { "id": "pl_gravel_bikes", "order_index": 3, "reason": "Три из четырёх моделей — гравийные велосипеды (Hagen, Welt, Aspect)" },
+      { "id": "pl_budget_bikes", "order_index": 6, "reason": "Включает бюджетный велосипед Rush Hour за 30 000 ₽" }
+    ],
+    "ad_targeting_keywords": ["велосипед купить", "гравийный велосипед", "Hagen велосипед", "Welt велосипед", "Aspect велосипед", "Rush Hour велосипед", "велосипед до 100000", "велострана", "sportruper", "промокод спортрупер"],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 100,
+      "summary": "Обзор топ-4 велосипедов апреля 2025 (30–160 тыс. ₽): гравий, фитнес-МТБ. Спонсор — магазин Велострана, упоминание промокода канала, без запрещённых тем."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: анонс апрельского топа велосипедов, диапазон цен от 30 до 160 000 ₽",
+      "monetization": [],
+      "clip_candidate": {
+        "hook": "Первый вело-топ сезона: от 30 до 160 тысяч — что выбрать?",
+        "time_range_start": 0,
+        "time_range_end": 25,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Hagen HG10: универсальный городской/гравийный велосипед, алюминиевая рама, карбоновая ригидная вилка, трансмиссия 1x10, вес 11 кг — цена 91 000 ₽",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "Hagen HG10 велосипед",
+          "reason": "Первая модель топа — конкретный товар, назван в кадре",
+          "confidence": 0.95
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "велосипед городской универсальный flatbar",
+          "confidence": 0.6,
+          "reason": "Товарный класс — городской велосипед с flatbar рулём"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Welt G10 (гравийный эндуранс): алюминий, double butting, карбоновая вилка, трансмиссия 2x10, Shimano GRX-400, гидравлика — цена 150 000 ₽",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "Welt G10 гравийный велосипед",
+          "confidence": 0.95,
+          "reason": "Вторая модель топа, названа в кадре"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "гравийный велосипед 2x10 Shimano GRX",
+          "confidence": 0.75,
+          "reason": "Ключевые компоненты: трансмиссия 2x10, тормоза Shimano GRX"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Aspect Allroad Elite 2025 — скоростной гравий с 1x11 трансмиссией Shimano GRX 800, 42 мм покрышки; цена 160 000 ₽, промокод канала Sportruper в Велостране",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "Aspect Allroad Elite велосипед",
+          "confidence": 0.95,
+          "reason": "Третья модель топа, названа в кадре"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "велосипед гравийный 1x11",
+          "confidence": 0.7,
+          "reason": "Характеристики трансмиссии 1x11"
+        },
+        {
+          "type": "ad_slot",
+          "search_query": "велострана промокод",
+          "confidence": 0.7,
+          "reason": "Промокод интергации спонсора"
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Новинка сезона: гравий 1x11 всего за 160 000 — скупай до конца апреля?",
+        "time_range_start": 190,
+        "time_range_end": 250,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 1.0
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Rush Hour — фитнес-МТВ за 30 000 ₽: алюминиевая рама, эксцентрики, 1x9 трансмиссия Shimano Acera, механика; отзывы на Ozon",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "Rush Hour велосипед 30 000",
+          "confidence": 0.95,
+          "reason": "Бюджетная модель топа, названа в кадре"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "фитнес велосипед недорогой",
+          "confidence": 0.8,
+          "reason": "Класс велосипеда — fitness MTB"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Заключение: призыв к комментариям, реклама услуг велоподбора Sportruper (подбор за 24 часа), пожелания на вело-сезон",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "confidence": 0.5,
+          "reason": "Рекламный блок в финале — услуга подбора велосипеда"
+        }
+      ],
+      "clip_candidate": {
+        "hook": "Велоподбор за 24 часа: 2–5 байков под вас — и скидка в магазине",
+        "time_range_start": 267,
+        "time_range_end": 309,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    }
+  ],
+  "raw_timeline_segments": [
+    { "speaker": "voiceover_male", "start_sec": 0, "end_sec": 22, "text": "Друзья, всем привет. Сегодня 1 апреля, а это значит, что у нас будет сегодня топ велосипедов. Это первый топ в этом велосипедном сезоне. Будем разбирать байки от 30 до 160 000 ₽." },
+    { "speaker": "voiceover_male", "start_sec": 22, "end_sec": 66, "text": "Hagen HG10 — универсальный велосипед для смешанного стиля городской езды. Алюминиевая рама с бесшовной обработкой, карбоновая ригидна вилка, flatbar 680 мм, 1x трансмиссия. Вес чуть больше 11 кг. Цена — 91 000 ₽." },
+    { "speaker": "voiceover_male", "start_sec": 92, "end_sec": 130, "text": "Дальше — Welt G10. Моделька гравийного велосипеда, endurance геометрия, рама с швами и double butting. вилка карбоновая, колёса с широкими покрышками 45 мм. Трансмиссия 2x10, Shimano GRX-400, гидравлика." },
+    { "speaker": "voiceover_male", "start_sec": 130, "end_sec": 160, "text": "Широкий диапазон кассеты 46x30, диапазон 36: субкомпакт. Актуальная стоимость 2025 года — 150 000 ₽. Heгейный эндюранс для шоссе и тропинок." },
+    { "speaker": "voiceover_male", "start_sec": 156, "end_sec": 215, "text": "Aspect Allroad Elite 2025 года — серьёзная новинка сезона для скорости. Алюминиевая рама с трейловой геометрией, внутренняя проводка, осевые крепления. Трансмиссия 1x11 с GRX-800, тормоза Shimano GRX-400, покрышки 42 мм. Стоит 160 000 ₽." },
+    { "speaker": "voiceover_male", "start_sec": 215, "end_sec": 265, "text": "Rush Hour — гроза бюджетного сегмента. Фитнес-МТВ за 30 000 ₽. Алюминиевая рама с внутренней проводкой, конусный рулевой стакан, втулки на промышленных подшипниках, 1x9 трансмиссия Shimano Acera. Отзывы на Озоне сами за себя." },
+    { "speaker": "voiceover_male", "start_sec": 267, "end_sec": 300, "text": "Топ на 1 апреля 2025 года готов. Какой велосипед добавицы в топ? Пишитев комментариях. Для тех, кто сомневается, — индивидуальный подбор велосипеда на sportruper.ru за 24 часа." },
+    { "speaker": "voiceover_male", "start_sec": 300, "end_sec": 309, "text": "Цена подбора чаще перекрывается скидкой в магазине. Ссылка в описании. Асваут Сабару, всем пока!" }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

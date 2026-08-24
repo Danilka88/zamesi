@@ -13,6 +13,7 @@ import { ModesController } from "./modes";
 import { mountGameOffer } from "./gameOffer";
 import { mountTravelOffer } from "./travelOffer";
 import { mountMerchOffer } from "./merchOffer";
+import { mountBikeSearch } from "./bikeSearch";
 
 export function parseVideoId(url: string): string | null {
   const m = url.match(/rutube\.ru\/video\/([a-f0-9]+)\/?/);
@@ -37,6 +38,13 @@ let playerRef: PlayerHandle | null = null;
 
 async function main(): Promise<void> {
   console.log("[M-EXTENSION] injected");
+
+  // Страница поиска: показываем микс-блок «Велосипеды» (без видео-панелей).
+  if (/rutube\.ru\/search\/?/.test(location.href)) {
+    void mountBikeSearch();
+    return;
+  }
+
   const videoId = parseVideoId(location.href);
   if (!videoId) return; // не видео-страница — не монтируемся
   console.log("[M-EXTENSION] videoId:", videoId);

@@ -11,6 +11,9 @@ import cookingDinner from "./passports/cooking_dinner.json" with { type: "json" 
 import iphone50kWylsacom from "./passports/iphone_50k_wylsacom.json" with { type: "json" };
 import atomicHeartReview from "./passports/atomic_heart_review.json" with { type: "json" };
 import vietnamNhaTrang from "./passports/vietnam_nha_trang.json" with { type: "json" };
+import bikeDontBuy from "./passports/bike_dont_buy.json" with { type: "json" };
+import bikeTopApril from "./passports/bike_top_april.json" with { type: "json" };
+import bikeMtb80k from "./passports/bike_mtb_80k.json" with { type: "json" };
 
 export interface PassportRegistryEntry {
   id: string;
@@ -30,6 +33,9 @@ const passports: Record<string, Passport> = {
   iphone_50k_wylsacom: iphone50kWylsacom as unknown as Passport,
   atomic_heart_review: atomicHeartReview as unknown as Passport,
   vietnam_nha_trang: vietnamNhaTrang as unknown as Passport,
+  bike_dont_buy: bikeDontBuy as unknown as Passport,
+  bike_top_april: bikeTopApril as unknown as Passport,
+  bike_mtb_80k: bikeMtb80k as unknown as Passport,
 };
 
 export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
@@ -106,6 +112,64 @@ export const PASSPORT_REGISTRY: PassportRegistryEntry[] = [
     ],
     boundVideoId: "7130901c1c9147f239190def16eb741c",
     passport: passports.vietnam_nha_trang,
+  },
+  {
+    id: "bike_dont_buy",
+    title: "Не покупай велосипед, пока не посмотришь это видео",
+    domainType: "how_to",
+    keywords: [
+      "велосипед",
+      "вело",
+      "велик",
+      "байк",
+      "не покупай",
+      "первый велосипед",
+      "классы",
+      "как выбрать",
+      "велософ",
+      "горный велосипед",
+      "хардтейл",
+    ],
+    boundVideoId: "1925a43e9479e500654b611eb8009072",
+    passport: passports.bike_dont_buy,
+  },
+  {
+    id: "bike_top_april",
+    title: "ТОП велосипедов АПРЕЛЬ 2025: Hagen, Aspect, Welt, Rush Hour",
+    domainType: "review",
+    keywords: [
+      "велосипед",
+      "топ велосипедов",
+      "hagen",
+      "aspect",
+      "welt",
+      "rush hour",
+      "велотоп",
+      "апрель",
+      "жиджер",
+      "вело",
+    ],
+    boundVideoId: "555c960ce50ecde6170c6560e3ac8888",
+    passport: passports.bike_top_april,
+  },
+  {
+    id: "bike_mtb_80k",
+    title: "Горный ВЕЛОСИПЕД за 80000р в 2025. Как НЕ купить ХЛАМ?",
+    domainType: "review",
+    keywords: [
+      "велосипед",
+      "горный велосипед",
+      "80000",
+      "80 000",
+      "mtb",
+      "хардтейл",
+      "как не купить",
+      "хлам",
+      "чест-лист",
+      "выбрать горный",
+    ],
+    boundVideoId: "7acf946b872b1f304345c7ca8b249f21",
+    passport: passports.bike_mtb_80k,
   },
 ];
 

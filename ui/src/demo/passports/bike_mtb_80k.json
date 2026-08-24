@@ -1,0 +1,218 @@
+{
+  "frontmatter": {
+    "video_id": "Rv_bike_mtb_80k_001",
+    "domain_type": "review",
+    "brand_safety_score": 100,
+    "target_audience": ["mtb_beginners", "budget_shoppers", "hardtail_riders", "diy_mechanics", "commuters_to_forest"],
+    "seo_title": "Горный велосипед за 80 000 ₽ в 2025: как НЕ купить хлам — чек-лист по раме, вилке, тормозам",
+    "seo_tags": ["горный велосипед 80000", "горный велосипед 2025", "какой горный велосипед выбрать", "хардтейл до 80000", "вилка Suntour", "Shimano MT200", "трансмиссия Shimano Cues", "выбор велосипеда по бюджету", "чект-лист велосипед", "Велострана"],
+    "trending_cluster": "bike_buying_checklists",
+    "auto_playlists": [
+      { "id": "pl_bike_how_to", "order_index": 2, "reason": "Экспертный разбор того, что искать в горном велосипеде за 80 000 ₽" },
+      { "id": "pl_mtb_budget", "order_index": 4, "reason": "Подборка бюджетного MTB (до 80 000 ₽)" },
+      { "id": "pl_mtb_hardtail", "order_index": 1, "reason": "Основной класс видео — хардтейл XC, входит в подборку хардтейлов" }
+    ],
+    "ad_targeting_keywords": ["горный велосипед 80000", "хардтейл", "вилка Suntour", "вилка воздушная велосипед", "Shimano MT200", "гидравлические тормоза", "трансмиссия Shimano", "кассета Shimano Cues", "покрышки Schwalbe велосипедные", "руль алюминиевый велосипед", "велострана", "велоподбор 80 000"],
+    "moderation": {
+      "age_rating": "0+",
+      "verdict": "approved",
+      "categories_flagged": [],
+      "flags": [],
+      "brand_safety_score": 100,
+      "summary": "Детальный эксперт-разбор, как выбрать горный велосипед до 80 000 ₽ без покупки хлама: рама, вилка, трансмиссия, тормоза. Рекламная интеграция магазина Велострана упомянута корректно."
+    }
+  },
+  "timeline": [
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Интро: Филичев Сергей, канал Велострана, задача — категория горных велосипедов ~80 000 ₽, отбор без «хлама»",
+      "monetization": [],
+      "clip_candidate": {
+        "hook": "Как купить горный велосипед за 80 000 и НЕ получить хлам — взгляд эксперта",
+        "time_range_start": 0,
+        "time_range_end": 35,
+        "virality_potential": "high"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Сравнение школ: восточные (Китай/Россия) vs западные (Европа/США) бренды — по философии комплектации и цены",
+      "monetization": [
+        {
+          "type": "ad_slot",
+          "search_query": null,
+          "confidence": 0.55,
+          "reason": "Вводный разбор школ — место для рекламы магазинов велосипедов"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Первый шаг — бренд: ищем официальный сайт, сайзкады, геометрию; красные флаги — нет сайта, нет геометрии",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "горный велосипед бренды российские",
+          "confidence": 0.65,
+          "reason": "Практический чек-лист по брендам — товарный запрос в контексте выбора"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Рама: алюминий 601, рулевой стакан конусный, ося/эксцентрика, гидроформинг и бутниг; красный флаг — сталь/карбон, штампованные дропауты",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "рама велосипед алюминиевая 27.5",
+          "confidence": 0.55,
+          "reason": "Ключевой элемент выбора — рама, обсуждается детально"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.1
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вилки: Suntour vs китайские воздушные, ход 100–120 мм, диаметр ног (30/32 мм), воздушные пружины; красные флаги — сталь, тихие ноги",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "вилка Suntour XCT 100 мм",
+          "confidence": 0.8,
+          "reason": "Конкретный тип вилки в бюджете — товар для будущей покупки"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "вилка воздушная 29 велосипед",
+          "confidence": 0.7,
+          "reason": "Альтернатива — китайские воздушные вилки"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.0
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Колёса и покрышки: размер 27.5/29, обод с внутр. шириной до 23 мм, покрышки 2.25+, Schwalbe/Maxxis/Kenda + готовность к безкаме",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "покрышки MTB 29 2.25 велосипедные",
+          "confidence": 0.85,
+          "reason": "Шины — прямо названный класс товаров с эталонами брендов"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Трансмиссия: Shimano Cues/Deore 9–10 скоростей, Microshift Advent-X — норм; 8/7 передач и стальные тросы — флаг. Система 1x или 2x",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "трансмиссия Shimano Cues 9 скоростей набор",
+          "confidence": 0.8,
+          "reason": "Рекомендуемые передачи в бюджете — конкретный товар"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "кассеa Shimano MTB 9 скоростей",
+          "confidence": 0.7,
+          "reason": "Кассета — товар в пичи выбора"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 1.1
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Тормоза: гидравлика Shimano MT200 (хорошо) или Tektro M275 (норм); диски 180/160 мм; механика — красный флаг",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "гидравлические тормоз Shimano MT200",
+          "confidence": 0.9,
+          "reason": "Эталонные тормоза бюджета — прямой товарный рекомендация"
+        },
+        {
+          "type": "ecom_item",
+          "search_query": "тормозной диск 180 мм mtb",
+          "confidence": 0.65,
+          "reason": "Диски в составе системы"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.9
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Рулевое и посадка: алюминий 31,8, ширина руля 720–740 мм, короткий вынос, механика сэдла, подседельный штырь алюминий",
+      "monetization": [
+        {
+          "type": "ecom_item",
+          "search_query": "руль MTB алюминиевой 740 мм",
+          "confidence": 0.65,
+          "reason": "Руль — компонент выбора велосипеда"
+        }
+      ],
+      "clip_candidate": null,
+      "fallback_used": null,
+      "processing_time_sec": 0.8
+    },
+    {
+      "action_is_clear": true,
+      "requires_vision": false,
+      "scene_summary": "Вывод: за 80 000 не купить откровенно плохой байк, но главен баланс под свою задачу; приоритет — потребность/задача",
+      "monetization": [],
+      "clip_candidate": {
+        "hook": "«Городний» итог: подбирайте не бренд, а под свою задачу",
+        "time_range_start": 760,
+        "time_range_end": 820,
+        "virality_potential": "medium"
+      },
+      "fallback_used": null,
+      "processing_time_sec": 0.7
+    }
+  ],
+  "raw_timeline_segments": [
+    { "speaker": "voiceover_male", "start_sec": 5, "end_sec": 33, "text": "Всем привет, с вами Филчев Сергей, и сегодня разбираем категорию горных велосипедов с ценой около 80 000 руб. в 2025 году." },
+    { "speaker": "voiceover_male", "start_sec": 60, "end_sec": 140, "text": "Рассматриваем хардтейлы — самый популярный тип. За 80 000 искать спортивные болиды не стоит, но есть зачатки трейловых байков." },
+    { "speaker": "voiceover_male", "start_sec": 120, "end_sec": 160, "text": "Два лагеря: восточные (Китай, Россия) и западные (Европа, США). Разные школы — разные цены и компромиссы." },
+    { "speaker": "voiceover_male", "start_sec": 227, "end_sec": 265, "text": "Первый шаг — бренд. Ищем официальный сайт, сайзчару, геометрия на моделях. Нет сайта или геометрии — сомнительный бренд." },
+    { "speaker": "voiceover_male", "start_sec": 268, "end_sec": 340, "text": "Рама в бюджете 80 000 — алюминий серии 601. Сталь и карбон не рассматриваем. Конусный рулевой стакан — требование, прямой — флаг." },
+    { "speaker": "voiceover_male", "start_sec": 380, "end_sec": 435, "text": "Дропауты: лж или кован — хорошо; из штампа — красный флаг. Тормозная машинка Postmount внутри нормы, IS устаревший." },
+    { "speaker": "voiceover_male", "start_sec": 410, "end_sec": 460, "text": "Вилка: либо низкобюдженый Suntour (надёжный), либо китайская воздушная (функциональная). Ход 100-120 мм, воздух, диаметр ног 32 мм+" },
+    { "speaker": "voiceover_male", "start_sec": 510, "end_sec": 560, "text": "Колеса: размер 27.5 или 29, обода двойные алюминиевые, внутренняя ширина до 21-23. Покрышки не уже 2,25 дюйма." },
+    { "speaker": "voiceover_male", "start_sec": 591, "end_sec": 660, "text": "Покрышки хорошие — Schwalbe/Maxxis; норм — Kenda; Chaoyong — ниже нормы из скептика для выбора." },
+    { "speaker": "voiceover_male", "start_sec": 690, "end_sec": 750, "text": "Трансмиссия: Shimano Cues 9 скоростей — полностью в бюджет. 12 скоростей волшебно, 8/7 — слишком просто. Микроshift Advent X — исключение." },
+    { "speaker": "voiceover_male", "start_sec": 724, "end_sec": 770, "text": "Тормоза: гидравлика Shimano MT200 хорошо, Tektro M275 норм. Механика в 80 000 — красный флаг." },
+    { "speaker": "voiceover_male", "start_sec": 753, "end_sec": 800, "text": "Рулевое: алюминий 31.8, ширина 720/740, вынос короткий. Седло вытянутое, штыи алюминий, фиксатор двухболтовой." },
+    { "speaker": "voiceover_male", "start_sec": 835, "end_sec": 866, "text": "Итого: 80 000 даёт не плохой, а компромиссный байк. Выбор должен ориентироваться на задачу и потребности. С вами была Велострана, Феличев Сергей. Пока!" }
+  ],
+  "audio_matches": [],
+  "celebrity_voice": null
+}

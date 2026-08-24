@@ -25,7 +25,7 @@ function validatePassport(p: unknown): string[] {
 }
 
 describe("PASSPORT_REGISTRY", () => {
-  it("contains exactly the 7 demo passports", () => {
+  it("contains exactly the 10 demo passports", () => {
     expect(PASSPORT_REGISTRY.map((e) => e.id)).toEqual([
       "tech_review",
       "iphone_50k_wylsacom",
@@ -34,6 +34,9 @@ describe("PASSPORT_REGISTRY", () => {
       "cooking_dinner",
       "atomic_heart_review",
       "vietnam_nha_trang",
+      "bike_dont_buy",
+      "bike_top_april",
+      "bike_mtb_80k",
     ]);
   });
 
@@ -51,6 +54,29 @@ describe("PASSPORT_REGISTRY", () => {
   it("tech_review не привязан к конкретному видео (автоподбор по заголовку)", () => {
     const tech = PASSPORT_REGISTRY.find((e) => e.id === "tech_review");
     expect(tech?.boundVideoId).toBeUndefined();
+  });
+
+  it("binds the three bike passports to real RUTUBE video_id", () => {
+    const byId: Record<string, string> = {
+      bike_dont_buy: "1925a43e9479e500654b611eb8009072",
+      bike_top_april: "555c960ce50ecde6170c6560e3ac8888",
+      bike_mtb_80k: "7acf946b872b1f304345c7ca8b249f21",
+    };
+    for (const [id, vid] of Object.entries(byId)) {
+      const entry = PASSPORT_REGISTRY.find((e) => e.id === id);
+      expect(entry?.boundVideoId).toBe(vid);
+    }
+  });
+
+  it("bike passports define ecom monetization for search-offer", () => {
+    const ids = ["bike_dont_buy", "bike_top_april", "bike_mtb_80k"];
+    for (const id of ids) {
+      const pp = PASSPORT_REGISTRY.find((e) => e.id === id)?.passport;
+      const ecoms = (pp?.timeline ?? []).flatMap((s) =>
+        s.monetization.filter((m) => m.type === "ecom_item")
+      );
+      expect(ecoms.length).toBeGreaterThan(0);
+    }
   });
 });
 // = [M-EXTENSION][TEST-REGISTRY][END_BLOCK]

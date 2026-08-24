@@ -13,6 +13,12 @@ import iphone50kWylsacom from './passports/iphone_50k_wylsacom.json'
 import atomicHeartReview from './passports/atomic_heart_review.json'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import vietnamNhaTrang from './passports/vietnam_nha_trang.json'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import bikeDontBuy from './passports/bike_dont_buy.json'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import bikeTopApril from './passports/bike_top_april.json'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import bikeMtb80k from './passports/bike_mtb_80k.json'
 
 export const demoPassports: Record<string, unknown> = {
   diy_frame: diyFrame,
@@ -22,5 +28,8 @@ export const demoPassports: Record<string, unknown> = {
   iphone_50k_wylsacom: iphone50kWylsacom,
   atomic_heart_review: atomicHeartReview,
   vietnam_nha_trang: vietnamNhaTrang,
+  bike_dont_buy: bikeDontBuy,
+  bike_top_april: bikeTopApril,
+  bike_mtb_80k: bikeMtb80k,
 }
 // = [M-UI][DEMO][END_BLOCK]

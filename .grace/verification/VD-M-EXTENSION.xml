@@ -125,6 +125,19 @@
         <assert>SHOP_ORDER = [yandex_market, aliexpress, admitad] с диапазонами комиссий; mockReferralUrl формирует URL по форматам реальных API: ЯМ market.yandex.ru/search?clid=2311987&amp;place_id=421789&amp;vid={videoId}_p{idx}, Ali aliexpress.ru/wholesale?aff_trace_key=..., Admitad ad.admitad.com/g/{seed}/{w_id}/?subid=...&amp;ulp=...; короткие ссылки ya.cc/rz-, s.click.aliexpress.com/rz-, ad.admitad.com/r/rz-; комиссия внутри диапазона магазина; детерминизм (тот же вход → та же ссылка); forecastForOffer: CTR 2.5-7%, conv 0.8-3.2%, views растёт с confidence; buildReferralBundle из iphone_50k_wylsacom даёт ≤6 офферов по 3 ссылки, totals.links=n*3, perShop покрывает все магазины; fallback на ad_targeting_keywords для паспорта без ecom-меток; buildReferralCsv отдаёт экранированный CSV (заголовок «product»;«type»;«confidence» + строка на ссылку); buildReferralDescriptionBlock содержит «Товары из видео:» и прогноз монетизации; панель Studio: таббар «Публикация»/«Монетизация» (по умолчанию публикация, клик по «Монетизация» показывает секцию «Монетизация · Реферальные ссылки»), KPI/магазины/кнопки действий, «Вставить блок в описание» дописывает ссылки в textarea, «вставить ссылку в описание» в карточке использует выбранную вкладку магазина (не лучший оффер), карточка оффера содержит 3 таба магазинов</assert>
       </evidence>
     </Scenario>
+    <Scenario id="S-M-EXT-11" type="success">
+      <description>Продвижение видео в Studio (NFR-7): 3 площадки, лимиты заголовков, детерминизм, рекомендация бюджета, прогноз+UTM, бандл, CSV/JSON + таб «Продвижение»</description>
+      <commands>
+        <command>npx vitest run tests/studio-promotion.test.ts tests/studio-render.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][STUDIO][PROMOTION][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][STUDIO][RENDER][PROMOTION][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-STUDIO-PROMOTION][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-STUDIO-RENDER][START_BLOCK]</marker>
+        <assert>PLATFORM_ORDER = [yandex_direct, vk_ads, mytarget] с лимитами title (33/40/35) и text &gt; title; forecastForPlatform: CTR 2-8%, clicks ≤ reach, cost = budget, CPA ≥ 0, детерминизм; больше бюджет → больше охват; buildUTM содержит utm_source/campaign/content; recommendedBudget clamp 500-7000₽, total = daily*7, детерминизм; buildPromotionBundle: 3 кампании с ≥2 вариантами, таргетингом и видеокреативом, заголовки в лимитах площадок, детерминизм; buildPromotionCsv: заголовок «platform»;«variant» и строка на вариант; buildPromotionJson: 3 записи с api и adGroups[].utm; renderStudioPanel монтирует таббар 3 вкладок, клик «Продвижение» показывает секцию «Продвижение · Реклама»</assert>
+      </evidence>
+    </Scenario>
   </Scenarios>
   <RequiredMarkers>
     <marker>[M-EXTENSION][*][*]</marker>

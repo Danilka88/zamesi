@@ -12,6 +12,7 @@ import { ACCENT, ACCENT_2, GRID, MUTED } from "./render/theme";
 import { box, chip, applyBtn, makeToast } from "./render/ui";
 import { enableDrag, restorePosition, safeGet, safeSet, COL_KEY } from "./render/drag";
 import { renderReferralBlock } from "./render/referral";
+import { renderPromotionBlock } from "./render/promotion";
 
 export interface StudioPanelOpts {
   suggestions: StudioSuggestions;
@@ -84,10 +85,11 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
   header.append(allBtn);
   content.append(header);
 
-  // --- Табы: «Публикация» и «Монетизация» (реферальные ссылки) ---
+  // --- Табы: «Публикация», «Монетизация» и «Продвижение» ---
   const PANES = {
     publish: { id: "publish", label: "📝 Публикация" },
     monetize: { id: "monetize", label: "💰 Монетизация" },
+    promote: { id: "promote", label: "🚀 Продвижение" },
   } as const;
   type PaneId = keyof typeof PANES;
   const tabBar = document.createElement("div");
@@ -95,9 +97,11 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
   const paneBtns = new Map<PaneId, HTMLButtonElement>();
   const publishingPane = document.createElement("div");
   const monetizationPane = document.createElement("div");
+  const promotionPane = document.createElement("div");
   function showPane(id: PaneId): void {
     publishingPane.style.display = id === "publish" ? "" : "none";
     monetizationPane.style.display = id === "monetize" ? "" : "none";
+    promotionPane.style.display = id === "promote" ? "" : "none";
     for (const [pid, b] of paneBtns) {
       const active = pid === id;
       b.style.background = active ? "#2a2038" : "#232838";
@@ -117,7 +121,7 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
     tabBar.append(btn);
     paneBtns.set(id, btn);
   });
-  content.append(tabBar, publishingPane, monetizationPane);
+  content.append(tabBar, publishingPane, monetizationPane, promotionPane);
   showPane("publish");
 
   // --- Название A/B ---
@@ -215,6 +219,9 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
 
   // --- Реферальная монетизация: товары из паспорта → ссылки 3 магазинов + прогноз ---
   monetizationPane.append(renderReferralBlock(s.referral, { form, toast: toastCtl.show, videoId: s.videoId }));
+
+  // --- Продвижение видео: объявления для Я.Директ/VK/MyTarget + прогноз и бюджет ---
+  promotionPane.append(renderPromotionBlock(s.promotion, { form, toast: toastCtl.show, videoId: s.videoId }));
 
   // --- Footer ---
   const note = document.createElement("div");

@@ -74,6 +74,14 @@
     <function name="buildReferralCsv">Экспорт CSV-отчёта по всем ссылкам (product/shop/commission/short_url/forecast)</function>
     <function name="buildReferralDescriptionBlock">Текст-блок «🛒 Товары из видео» для вставки в описание публикации + прогноз монетизации</function>
     <function name="renderReferralBlock">Секция «Монетизация · Реферальные ссылки» в панели Studio: KPI (потенциал/ссылки/CTR/комиссия), donut распределения дохода по магазинам, карточки товаров с табами магазинов (копировать/открыть), кнопки «Копировать все / Вставить блок / CSV»</function>
+    <function name="buildPromotionBundle">Продвижение видео: паспорт → кампании для 3 площадок (Яндекс Директ / VK Реклама / MyTarget): варианты объявлений, таргетинг, бюджет, прогноз (NFR-7)</function>
+    <function name="PLATFORMS/PLATFORM_ORDER">Меты площадок (label/icon/color/apiName/лимиты title/text/utmSource) и порядок отображения</function>
+    <function name="forecastForPlatform">Детерминированный прогноз площадки по дневному бюджету: CTR 2-8%, CPC 5-45₽, CPM 80-350₽, охват/клики/CPA</function>
+    <function name="recommendedBudget">Рекомендация дневного бюджета из паспорта (домен/слоты/длительность, clamp 500-7000₽) + пояснение</function>
+    <function name="buildUTM">UTM-ссылка на видео с меткой площадки и варианта креатива</function>
+    <function name="renderPromotionBlock">Секция «Продвижение · Реклама» в панели Studio: KPI (охват/клики/CTR/бюджет), donut бюджета, превью видеокреатива, варианты, бюджет-слайдер с live-прогнозом, таргетинг-чипы, UTM, копирование/CSV/JSON/«Отправить (демо)»</function>
+    <function name="buildPromotionCsv">CSV-отчёт по кампаниям и вариантам (platform/title/text/budget/forecast/utm)</function>
+    <function name="buildPromotionJson">JSON-экспорт в форме запроса к API площадки (Директ/VK/MyTarget)</function>
     <function name="box">UI-примитив: карточка-секция с заголовком и акцентной полосой</function>
     <function name="chip">UI-примитив: чип-кнопка (вариант/категория/подсказка)</function>
     <function name="applyBtn">UI-примитив: основная градиентная кнопка</function>

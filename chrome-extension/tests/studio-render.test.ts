@@ -71,6 +71,21 @@ describe("studio render: структура панели", () => {
     cleanup();
   });
 
+  it("рендерит 3 таба и показывает «Продвижение» после клика", () => {
+    const { root, cleanup } = mountRoot();
+    const btns = Array.from(root.querySelectorAll("button")).map((b) => b.textContent ?? "");
+    expect(btns.some((t) => t.includes("Публикация"))).toBe(true);
+    expect(btns.some((t) => t.includes("Монетизация"))).toBe(true);
+    expect(btns.some((t) => t.includes("Продвижение"))).toBe(true);
+    const tab = Array.from(root.querySelectorAll("button")).find((b) => b.textContent?.includes("Продвижение")) as HTMLButtonElement;
+    expect(tab).toBeDefined();
+    tab.click();
+    const visible = Array.from(root.querySelectorAll("div")).some((d) =>
+      d.style.display !== "none" && d.textContent?.includes("Продвижение · Реклама"));
+    expect(visible).toBe(true);
+    cleanup();
+  });
+
   it("рендерит реферальный блок монетизации: KPI, магазины, кнопки действий", () => {
     const { root, cleanup } = mountRoot();
     const text = root.textContent ?? "";

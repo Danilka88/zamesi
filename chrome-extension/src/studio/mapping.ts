@@ -10,6 +10,7 @@ import {
   type DescriptionVariant,
 } from "../content/authorTools/generate";
 import { buildReferralBundle, type ReferralBundle } from "./referral";
+import { buildPromotionBundle, type PromotionBundle } from "./promotion";
 
 export interface PlaylistSuggestion {
   /** Исходный id из паспорта (auto_playlists). */
@@ -46,6 +47,8 @@ export interface StudioSuggestions {
   videoId: string;
   /** Реферальный блок монетизации: товары → партнёрские ссылки 3 магазинов + прогноз. */
   referral: ReferralBundle;
+  /** Продвижение видео: объявления для Яндекс Директ/VK/MyTarget + прогноз и бюджет. */
+  promotion: PromotionBundle;
 }
 
 /** domain_type → категория RUTUBE (основные, по демо-паспортам). */
@@ -155,6 +158,7 @@ export function buildStudioSuggestions(
     binding: passport.frontmatter.domain_type || "unknown",
     videoId,
     referral: buildReferralBundle(passport, videoId),
+    promotion: buildPromotionBundle(passport, videoId, `https://rutube.ru/video/${videoId}`),
   };
 }
 // = [M-EXTENSION][STUDIO][MAPPING][END_BLOCK]

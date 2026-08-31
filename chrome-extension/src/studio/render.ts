@@ -11,6 +11,7 @@ import { fmtViews, projectVariantMetrics } from "../content/authorTools/generate
 import { ACCENT, ACCENT_2, GRID, MUTED } from "./render/theme";
 import { box, chip, applyBtn, makeToast } from "./render/ui";
 import { enableDrag, restorePosition, safeGet, safeSet, COL_KEY } from "./render/drag";
+import { renderReferralBlock } from "./render/referral";
 
 export interface StudioPanelOpts {
   suggestions: StudioSuggestions;
@@ -78,10 +79,46 @@ export function renderStudioPanel(
     if (s.playlists[0] && form.playlistSearch) {
       applied += applyValue(form.playlistSearch, s.playlists[0].name) ? 1 : 0;
     }
-    toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Нечего заполнять");
+toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Нечего заполнять");
   });
   header.append(allBtn);
   content.append(header);
+
+  // --- Табы: «Публикация» и «Монетизация» (реферальные ссылки) ---
+  const PANES = {
+    publish: { id: "publish", label: "📝 Публикация" },
+    monetize: { id: "monetize", label: "💰 Монетизация" },
+  } as const;
+  type PaneId = keyof typeof PANES;
+  const tabBar = document.createElement("div");
+  tabBar.style.cssText = "display:flex;gap:6px;margin-bottom:10px;";
+  const paneBtns = new Map<PaneId, HTMLButtonElement>();
+  const publishingPane = document.createElement("div");
+  const monetizationPane = document.createElement("div");
+  function showPane(id: PaneId): void {
+    publishingPane.style.display = id === "publish" ? "" : "none";
+    monetizationPane.style.display = id === "monetize" ? "" : "none";
+    for (const [pid, b] of paneBtns) {
+      const active = pid === id;
+      b.style.background = active ? "#2a2038" : "#232838";
+      b.style.color = active ? ACCENT : "#cfd4e3";
+      b.style.borderColor = active ? ACCENT : GRID;
+      b.style.fontWeight = active ? "700" : "600";
+    }
+  }
+  (Object.keys(PANES) as PaneId[]).forEach((id) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = PANES[id].label;
+    btn.style.cssText = `flex:1;background:#232838;color:#cfd4e3;border:1px solid ${GRID};` +
+      "border-radius:9px;padding:8px 10px;font-size:12.5px;cursor:pointer;font-weight:600;" +
+      "transition:background .15s,color .15s,border-color .15s;";
+    btn.addEventListener("click", () => showPane(id));
+    tabBar.append(btn);
+    paneBtns.set(id, btn);
+  });
+  content.append(tabBar, publishingPane, monetizationPane);
+  showPane("publish");
 
   // --- Название A/B ---
   if (s.title.length) {
@@ -98,7 +135,7 @@ export function renderStudioPanel(
       noteEl.textContent = note;
       block.append(noteEl);
     }
-    content.append(block);
+    publishingPane.append(block);
   }
 
   // --- Описание ---
@@ -116,7 +153,7 @@ export function renderStudioPanel(
       chap.textContent = `Тайм-коды:\n${s.chapters.join("\n")}`;
       block.append(chap);
     }
-    content.append(block);
+    publishingPane.append(block);
   }
 
   // --- Категория ---
@@ -127,7 +164,7 @@ export function renderStudioPanel(
       const ok = applyValue(form.categoryInput, cat.label);
       toastCtl.show(ok ? `Категория вставлена: «${cat.label}» — выберите из списка ✓` : "Поле «Категория» не найдено");
     }, true));
-    content.append(block);
+    publishingPane.append(block);
   }
 
   // --- Плейлисты ---
@@ -152,7 +189,7 @@ export function renderStudioPanel(
         toastCtl.show(ok ? `Ищу плейлист: «${p.name}» — выберите из списка ✓` : "Поле поиска плейлиста не найдено");
       }));
     }
-    content.append(block);
+    publishingPane.append(block);
   }
 
   // --- Время публикации ---
@@ -162,7 +199,7 @@ export function renderStudioPanel(
     const ok = applyChecked(target, true);
     toastCtl.show(ok ? `Время публикации: ${s.publish === "now" ? "сейчас" : "позже"} ✓` : "Переключатель времени не найден");
   }, true));
-  content.append(pubBlock);
+  publishingPane.append(pubBlock);
 
   // --- Модерация ---
   const modBlock = box("🛡 Модерация", s.disclaimerHint ?? "Возрастной рейтинг и комментарии");
@@ -174,7 +211,10 @@ export function renderStudioPanel(
     const ok = applyChecked(form.withComments, s.comments);
     toastCtl.show(ok ? `Комментарии: ${s.comments ? "включены" : "выключены"} ✓` : "Чекбокс комментариев не найден");
   }));
-  content.append(modBlock);
+  publishingPane.append(modBlock);
+
+  // --- Реферальная монетизация: товары из паспорта → ссылки 3 магазинов + прогноз ---
+  monetizationPane.append(renderReferralBlock(s.referral, { form, toast: toastCtl.show, videoId: s.videoId }));
 
   // --- Footer ---
   const note = document.createElement("div");
@@ -256,7 +296,7 @@ export function mountStudioPanel(opts: StudioPanelOpts & { hostMark?: string }):
   style.textContent = CSS;
   const panel = document.createElement("div");
   panel.className = "rz-studio-root";
-  panel.style.cssText = `width:340px;padding:12px 14px;` +
+  panel.style.cssText = `width:520px;padding:12px 14px;` +
     `background:rgba(14,16,24,0.97);border:1px solid ${GRID};border-radius:16px;` +
     `box-shadow:0 12px 40px rgba(0,0,0,0.55);backdrop-filter:blur(8px);`;
   shadow.append(style, panel);

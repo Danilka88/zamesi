@@ -112,6 +112,19 @@
         <assert>isBikeQuery распознаёт «велосипеды/велик/байк/mtb» и отбрасывает наушники/iphone; extractQueryFromUrl вычитывает query из закодированного URL; BIKE_SEARCH_ENTRIES содержит ровно 3 видео с реальными rutube video_id и скриншотами .png; buildBikeSearchCard строит 3 видео-строки (href=rutube/video/{id}/, target=_blank) + секцию «Товары из подборки» (ecom-метки паспортов, сортировка по confidence); степпер BIKE_JOURNEY_STAGES — 3 ступени (Новичок/Продвинутый/Профи) с вопросами и клипами, formatTimecode(303)=05:03, journeyVideoUrl добавляет ?start=; buildBikeJourneyCard рисует 3 ступени + 2 коннектора-стрелки; mountBikeJourneyCard идемпотентен, вставляется после плейлиста, unmount убирает только степпер</assert>
       </evidence>
     </Scenario>
+    <Scenario id="S-M-EXT-10" type="success">
+      <description>Реферальный блок монетизации в Studio (NFR-7): 3 магазина, детерминизм, fallback-товары, CSV, блок описания + рендер секции и «Вставить блок в описание»</description>
+      <commands>
+        <command>npx vitest run tests/studio-referral.test.ts tests/studio-render.test.ts</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-EXTENSION][STUDIO][REFERRAL][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][STUDIO][RENDER][REFERRAL][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-STUDIO-REFERRAL][START_BLOCK]</marker>
+        <marker required="true">[M-EXTENSION][TEST-STUDIO-RENDER][START_BLOCK]</marker>
+        <assert>SHOP_ORDER = [yandex_market, aliexpress, admitad] с диапазонами комиссий; mockReferralUrl формирует URL по форматам реальных API: ЯМ market.yandex.ru/search?clid=2311987&amp;place_id=421789&amp;vid={videoId}_p{idx}, Ali aliexpress.ru/wholesale?aff_trace_key=..., Admitad ad.admitad.com/g/{seed}/{w_id}/?subid=...&amp;ulp=...; короткие ссылки ya.cc/rz-, s.click.aliexpress.com/rz-, ad.admitad.com/r/rz-; комиссия внутри диапазона магазина; детерминизм (тот же вход → та же ссылка); forecastForOffer: CTR 2.5-7%, conv 0.8-3.2%, views растёт с confidence; buildReferralBundle из iphone_50k_wylsacom даёт ≤6 офферов по 3 ссылки, totals.links=n*3, perShop покрывает все магазины; fallback на ad_targeting_keywords для паспорта без ecom-меток; buildReferralCsv отдаёт экранированный CSV (заголовок «product»;«type»;«confidence» + строка на ссылку); buildReferralDescriptionBlock содержит «Товары из видео:» и прогноз монетизации; панель Studio: таббар «Публикация»/«Монетизация» (по умолчанию публикация, клик по «Монетизация» показывает секцию «Монетизация · Реферальные ссылки»), KPI/магазины/кнопки действий, «Вставить блок в описание» дописывает ссылки в textarea, «вставить ссылку в описание» в карточке использует выбранную вкладку магазина (не лучший оффер), карточка оффера содержит 3 таба магазинов</assert>
+      </evidence>
+    </Scenario>
   </Scenarios>
   <RequiredMarkers>
     <marker>[M-EXTENSION][*][*]</marker>

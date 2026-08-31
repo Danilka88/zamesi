@@ -9,6 +9,7 @@ import {
   type TitleVariant,
   type DescriptionVariant,
 } from "../content/authorTools/generate";
+import { buildReferralBundle, type ReferralBundle } from "./referral";
 
 export interface PlaylistSuggestion {
   /** Исходный id из паспорта (auto_playlists). */
@@ -41,6 +42,10 @@ export interface StudioSuggestions {
   chapters: string[];
   /** Как паспорт привязан (для UI). */
   binding: string;
+  /** Реальный videoId видео — ключ детерминированных демо-ссылок/прогнозов (NFR-7). */
+  videoId: string;
+  /** Реферальный блок монетизации: товары → партнёрские ссылки 3 магазинов + прогноз. */
+  referral: ReferralBundle;
 }
 
 /** domain_type → категория RUTUBE (основные, по демо-паспортам). */
@@ -148,6 +153,8 @@ export function buildStudioSuggestions(
     disclaimerHint: disclaimerHint(passport),
     chapters,
     binding: passport.frontmatter.domain_type || "unknown",
+    videoId,
+    referral: buildReferralBundle(passport, videoId),
   };
 }
 // = [M-EXTENSION][STUDIO][MAPPING][END_BLOCK]

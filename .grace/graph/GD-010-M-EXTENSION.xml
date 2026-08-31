@@ -68,6 +68,12 @@
     <function name="resolveStudioPassport">Автоподбор паспорта по video_id/заголовку, fallback на дефолтный паспорт</function>
     <function name="mountForModal">Монтаж/перерисовка панели с выбранным паспортом для текущей модалки</function>
     <function name="observeStudio">Поллинг (500 мс) на появление модалки: монтирует панель, убирает при закрытии. Лёгкий — не нагружает SPA в отличие от MutationObserver</function>
+    <function name="buildReferralBundle">Реферальная монетизация: товары паспорта (ecom_item/artist_merch) → партнёрские ссылки 3 магазинов (Яндекс Маркет / AliExpress / Admitad) + детерминированный прогноз дохода (NFR-7, avgOrder 12k₽)</function>
+    <function name="mockReferralUrl">Мок партнёрской ссылки по форме реальных API: ЯМ /partner/link/create (clid/place_id/vid), Ali aliexpress.affiliate.link.generate (aff_trace_key), Admitad /deeplink/{w_id}/{c_id}/ (subid/ulp); короткая ссылка ya.cc / s.click / ad.admitad.com</function>
+    <function name="forecastForOffer">Детерминированный прогноз оффера: CTR 2.5-7%, конверсия 0.8-3.2%, охват из confidence, доход по комиссии магазина (NFR-7)</function>
+    <function name="buildReferralCsv">Экспорт CSV-отчёта по всем ссылкам (product/shop/commission/short_url/forecast)</function>
+    <function name="buildReferralDescriptionBlock">Текст-блок «🛒 Товары из видео» для вставки в описание публикации + прогноз монетизации</function>
+    <function name="renderReferralBlock">Секция «Монетизация · Реферальные ссылки» в панели Studio: KPI (потенциал/ссылки/CTR/комиссия), donut распределения дохода по магазинам, карточки товаров с табами магазинов (копировать/открыть), кнопки «Копировать все / Вставить блок / CSV»</function>
     <function name="box">UI-примитив: карточка-секция с заголовком и акцентной полосой</function>
     <function name="chip">UI-примитив: чип-кнопка (вариант/категория/подсказка)</function>
     <function name="applyBtn">UI-примитив: основная градиентная кнопка</function>

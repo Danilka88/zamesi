@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-STUDIO" name="RUTUBE Studio" type="PROCESSOR" status="built">
+  <Purpose>RUTUBE Studio — тренды Wordstat, реферальные bundles, продвижение, валидация автозаполнения</Purpose>
+  <Source path="src/studio/"/>
+  <Test path="tests/studio/"/>
+  <Exports>
+    <function name="build_trends_bundle">query+video_id → TrendsBundle (CURATED_TRENDS + hash fallback)</function>
+    <function name="build_referral_bundle">video_id → ReferralBundle (3 магазина ya.cc/aliexpress/admitad)</function>
+    <function name="build_promotion_bundle">platform+budget → PromotionBundle</function>
+    <function name="validate_autofill">payload → {ok, warnings}</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-OFFERS" relation="extends"/>
+    <Link target="M-API" relation="exposed-via"/>
+  </CrossLinks>
+  <Verification ref="V-M-STUDIO"/>
+</module-graph>

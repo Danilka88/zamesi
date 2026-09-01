@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-OFFERS" module="M-OFFERS" priority="high">
+  <description>Офферы монетизации: детект, merch/travel/game cover, bike-search — детерминизм без сети</description>
+  <Scenarios>
+    <Scenario id="S-M-OFFERS-1" type="success">
+      <description>collect_merch_offers: dedup+srot по confidence ≤6</description>
+      <commands>
+        <command>pytest tests/offers/test_collector.py -v -k "test_collect_merch"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-OFFERS][COLLECTOR][MERCH]</marker>
+        <assert>3 сцены ecom_item → 3 Offer sorted по confidence</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-OFFERS-2" type="success">
+      <description>detect_travel/game — домен и title ключи</description>
+      <commands>
+        <command>pytest tests/offers/test_collector.py -v -k "test_detect_travel or test_detect_game"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-OFFERS][COLLECTOR][TRAVEL_DETECT]</marker>
+        <assert>travel_vlog → true, game_review → true, иначе false</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-OFFERS-3" type="success">
+      <description>cover src — Нячанг null, Atomic Heart yandex url</description>
+      <commands>
+        <command>pytest tests/offers/test_collector.py -v -k "test_cover"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-OFFERS][COLLECTOR][TRAVEL_COVER]</marker>
+        <assert>travel Нячанг → null, game Atomic → avatars.mds.yandex.net</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-OFFERS-4" type="success">
+      <description>bike_search_entries — bike query 3 видео + товары</description>
+      <commands>
+        <command>pytest tests/offers/test_collector.py -v -k "test_bike"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-OFFERS][COLLECTOR][BIKE_ENTRIES]</marker>
+        <assert>велосипед → 3 videos, иначе 0</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-OFFERS-5" type="success">
+      <description>API routes /api/v1/offers/*</description>
+      <commands>
+        <command>pytest tests/offers/test_routes_offers.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-OFFERS][ROUTES][DETECT]</marker>
+        <assert>POST /detect 200, GET /travel|/game|/bike-search 200</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-OFFERS][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

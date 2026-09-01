@@ -43,6 +43,12 @@
     <Entry id="V-M-UI" routed="VD-M-UI.xml" module="M-UI" priority="high" scenarios="5">
       <description>React SPA: API-Proxy (demo/real), DemoApiClient (офлайн NFR-7), демо-данные, страницы Dashboard/Search/Passport/Mix, i18n, семантические маркеры [M-UI]. Тесты: vitest в ui/</description>
     </Entry>
+    <Entry id="V-M-OFFERS" routed="VD-M-OFFERS.xml" module="M-OFFERS" priority="high" scenarios="5">
+      <description>Офферы монетизации: детект, merch/travel/game cover, bike-search — детерминизм без сети</description>
+    </Entry>
+    <Entry id="V-M-STUDIO" routed="VD-M-STUDIO.xml" module="M-STUDIO" priority="high" scenarios="5">
+      <description>RUTUBE Studio — тренды Wordstat, рефералка 3 магазина, промо 3 площадки, валидация автозаполнения</description>
+    </Entry>
   </Entries>
   <Gates>
     <Gate level="module">

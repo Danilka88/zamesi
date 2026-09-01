@@ -35,8 +35,14 @@
     <Module id="M-UI" routed="GD-011-M-UI.xml" name="React Dashboard (UI)" type="INTERFACE" status="built">
       <Purpose>React SPA: дашборд job queue, поиск сцен, просмотр паспорта, миксы. Demo/Real API-клиенты.</Purpose>
     </Module>
+    <Module id="M-OFFERS" routed="GD-012-M-OFFERS.xml" name="Offers (Monetization)" type="PROCESSOR" status="built">
+      <Purpose>Офферы монетизации: merch/travel/game/bike-search — детерминированная генерация, аддитивно к паспорту</Purpose>
+    </Module>
+    <Module id="M-STUDIO" routed="GD-013-M-STUDIO.xml" name="RUTUBE Studio" type="PROCESSOR" status="built">
+      <Purpose>RUTUBE Studio — тренды Wordstat, реферальные bundles, продвижение, валидация автозаполнения</Purpose>
+    </Module>
   </Modules>
-  <CrossLinks summary="24 cross-module dependencies">
+  <CrossLinks summary="28 cross-module dependencies">
     <Link from="M-CORE" to="M-AUDIO" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-VISION" relation="defines-types-for"/>
     <Link from="M-CORE" to="M-SEMANTIC" relation="defines-types-for"/>
@@ -61,6 +67,12 @@
     <Link from="M-UI" to="M-PASSPORT" relation="renders-output-of"/>
     <Link from="M-UI" to="M-SEARCH" relation="consumes"/>
     <Link from="M-UI" to="M-MIXER" relation="consumes"/>
+    <Link from="M-OFFERS" to="M-CORE" relation="uses-types"/>
+    <Link from="M-OFFERS" to="M-PASSPORT" relation="receives-passports-from"/>
+    <Link from="M-STUDIO" to="M-CORE" relation="uses-types"/>
+    <Link from="M-STUDIO" to="M-OFFERS" relation="extends"/>
+    <Link from="M-API" to="M-OFFERS" relation="orchestrates"/>
+    <Link from="M-API" to="M-STUDIO" relation="orchestrates"/>
   </CrossLinks>
   <DataFlows>
     <Flow id="DF-001" name="Audio-First Pipeline">
@@ -94,6 +106,14 @@
     <Flow id="DF-008" name="Extension Analyst Flow">
       <description>Паспорт → панели монетизации/модерации/аудио/метрики в сайдбаре</description>
       <steps>M-EXTENSION.getPassport → M-EXTENSION.computeMetrics → M-EXTENSION.renderAnalyst → M-EXTENSION.renderCta</steps>
+    </Flow>
+    <Flow id="DF-009" name="Offers Flow">
+      <description>Паспорт → detect_offers → offers API (merch/travel/game/bike-search)</description>
+      <steps>M-OFFERS.detect_offers → M-API.GET /api/v1/offers/* → M-EXTENSION.mountMerchOffer|mountTravelOffer|mountGameOffer</steps>
+    </Flow>
+    <Flow id="DF-010" name="Studio Flow">
+      <description>Запрос → trends/referral/promotion bundles → studio API → RUTUBE Studio panel</description>
+      <steps>M-STUDIO.build_trends_bundle → M-STUDIO.build_referral_bundle → M-API.GET /api/v1/studio/* → M-EXTENSION.mountStudioPanel</steps>
     </Flow>
   </DataFlows>
 </graph-index>

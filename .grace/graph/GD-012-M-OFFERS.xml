@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module-graph id="M-OFFERS" name="Offers (Monetization)" type="PROCESSOR" status="built">
+  <Purpose>Офферы монетизации: merch/travel/game/bike-search — детерминированная генерация, аддитивно</Purpose>
+  <Source path="src/offers/"/>
+  <Test path="tests/offers/"/>
+  <Exports>
+    <function name="collect_merch_offers">Паспорт → сортировка ecom_item/artist_merch по confidence, dedup, ≤6</function>
+    <function name="detect_travel_offer">domain_type==travel_vlog или title-ключи → bool</function>
+    <function name="detect_game_offer">domain_type==game_review или meta → bool</function>
+    <function name="travel_cover_src">Нячанг → null (заглушка как в extension)</function>
+    <function name="game_cover_src">Atomic Heart → yandex cover url else null</function>
+    <function name="bike_search_entries">q → BikeSearchEntries (3 видео + 2 товара)</function>
+    <function name="detect_offers">video_id+passport → OfferDetectResult</function>
+  </Exports>
+  <CrossLinks>
+    <Link target="M-CORE" relation="uses-types"/>
+    <Link target="M-PASSPORT" relation="receives-passports-from"/>
+    <Link target="M-API" relation="exposed-via"/>
+  </CrossLinks>
+  <Verification ref="V-M-OFFERS"/>
+</module-graph>

@@ -41,6 +41,12 @@ models:
     embedding_model:
       - { provider: ollama,   model: qwen3-embedding:0.6b }
       - { provider: yandex,   model: yandex-embed }
+    offers_model:
+      - { provider: ollama,   model: gemma4:e4b }
+      - { provider: yandex,   model: yandexgpt }
+    studio_model:
+      - { provider: ollama,   model: gemma4:e4b }
+      - { provider: yandex,   model: yandexgpt }
 
   whisper:
     binary: "~/bin/whisper-cli"

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-entry id="V-M-STUDIO" module="M-STUDIO" priority="high">
+  <description>RUTUBE Studio — тренды Wordstat, рефералка 3 магазина, промо 3 площадки, валидация автозаполнения</description>
+  <Scenarios>
+    <Scenario id="S-M-STUDIO-1" type="success">
+      <description>build_trends_bundle — курируемые + fallback hash</description>
+      <commands>
+        <command>pytest tests/studio/test_bundles.py -v -k "test_trends"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-STUDIO][BUNDLES][TRENDS]</marker>
+        <assert>bike_dont_buy → 2 тренда, иначе deterministic fallback</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-STUDIO-2" type="success">
+      <description>build_referral_bundle — 3 магазина ya.cc/aliexpress/admitad</description>
+      <commands>
+        <command>pytest tests/studio/test_bundles.py -v -k "test_referral"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-STUDIO][BUNDLES][REFERRAL]</marker>
+        <assert>ya.cc/rz- + s.click.aliexpress + ad.admitad, commission_bps</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-STUDIO-3" type="success">
+      <description>build_promotion_bundle — platform+budget forecast</description>
+      <commands>
+        <command>pytest tests/studio/test_bundles.py -v -k "test_promotion"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-STUDIO][BUNDLES][PROMOTION]</marker>
+        <assert>yandex_direct budget 5000 → forecast_views ~5000</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-STUDIO-4" type="success">
+      <description>validate_autofill — ok/warnings</description>
+      <commands>
+        <command>pytest tests/studio/test_bundles.py -v -k "test_autofill"</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-STUDIO][BUNDLES][AUTOFILL_VALIDATE]</marker>
+        <assert>пустой title → warnings, полный → ok</assert>
+      </evidence>
+    </Scenario>
+    <Scenario id="S-M-STUDIO-5" type="success">
+      <description>API routes /api/v1/studio/*</description>
+      <commands>
+        <command>pytest tests/studio/test_routes_studio.py -v</command>
+      </commands>
+      <evidence>
+        <marker required="true">[M-STUDIO][ROUTES][TRENDS]</marker>
+        <assert>GET /trends, POST /referral/bundle, POST /promotion/bundle, POST /autofill/validate 200</assert>
+      </evidence>
+    </Scenario>
+  </Scenarios>
+  <RequiredMarkers>
+    <marker>[M-STUDIO][*][*]</marker>
+  </RequiredMarkers>
+</verification-entry>

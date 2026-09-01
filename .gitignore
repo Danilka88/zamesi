@@ -16,4 +16,5 @@ build/
 *.db
 /data/
 output/
+.vite/
 node_modules/

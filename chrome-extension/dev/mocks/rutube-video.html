@@ -42,6 +42,82 @@
     </main>
   </main>
 
+  <section aria-label="информация о видео" class="meta-row"></section>
+
+  <!-- Блок комментариев (структура реальной страницы RUTUBE, Woodpecker classes).
+       Нужен для smoke-теста «умных комментариев» вне сети. -->
+  <section aria-label="комментарии" class="wdp-comments-module__wrapper">
+    <div class="wdp-comments-module__comments-header-container">
+      <div class="wdp-comments-module__desktop-container">
+        <h2 class="wdp-comments-module__title">5 комментариев</h2>
+      </div>
+    </div>
+    <div class="wdp-comments-module__input-container">
+      <div class="wdp-comment-first-level-input-module__commentForm">
+        <textarea class="wdp-comment-first-level-input-module__commentTextarea" placeholder="Ваш комментарий"></textarea>
+      </div>
+    </div>
+    <ul aria-label="список оставленных комментариев" class="wdp-comments-module__list">
+      <li role="region" aria-label="Где взять царское стекло на 16e?" class="wdp-comment-item-module__comment-item">
+        <div class="wdp-comment-item-module__author-row">
+          <div class="wdp-comment-author-module__author-name">
+            <span class="wdp-comment-author-module__author-name-inner">Nurlan Abaskuliev</span>
+          </div>
+          <span class="wdp-comment-author-module__publish-date">5 дней назад</span>
+        </div>
+        <div class="wdp-comment-item-module__description-container">
+          <p class="wdp-comment-item-module__description">Где взять царское стекло на 16e?</p>
+        </div>
+        <div class="wdp-comment-reactions-module__buttons-row">
+          <span class="wdp-comment-reactions-module__counter">12</span>
+        </div>
+      </li>
+      <li role="region" aria-label="17e стоит брать или 16 лучше?" class="wdp-comment-item-module__comment-item">
+        <div class="wdp-comment-item-module__author-row">
+          <div class="wdp-comment-author-module__author-name">
+            <span class="wdp-comment-author-module__author-name-inner">Пельмень</span>
+          </div>
+        </div>
+        <div class="wdp-comment-item-module__description-container">
+          <p class="wdp-comment-item-module__description">17e стоит брать или 16 лучше?</p>
+        </div>
+        <div class="wdp-comment-reactions-module__buttons-row">
+          <span class="wdp-comment-reactions-module__counter">2</span>
+        </div>
+      </li>
+      <li role="region" aria-label="Автор матерится, ублюдочное решение ахаха" class="wdp-comment-item-module__comment-item">
+        <div class="wdp-comment-item-module__author-row">
+          <div class="wdp-comment-author-module__author-name">
+            <span class="wdp-comment-author-module__author-name-inner">Сус</span>
+          </div>
+        </div>
+        <div class="wdp-comment-item-module__description-container">
+          <p class="wdp-comment-item-module__description">Автор матерится, ублюдочное решение ахаха</p>
+        </div>
+      </li>
+      <li role="region" aria-label="Отличное видео, спасибо!" class="wdp-comment-item-module__comment-item">
+        <div class="wdp-comment-item-module__author-row">
+          <div class="wdp-comment-author-module__author-name">
+            <span class="wdp-comment-author-module__author-name-inner">Константин</span>
+          </div>
+        </div>
+        <div class="wdp-comment-item-module__description-container">
+          <p class="wdp-comment-item-module__description">Отличное видео, спасибо!</p>
+        </div>
+      </li>
+      <li role="region" aria-label="Это развод, на авито кидают на 26к" class="wdp-comment-item-module__comment-item">
+        <div class="wdp-comment-item-module__author-row">
+          <div class="wdp-comment-author-module__author-name">
+            <span class="wdp-comment-author-module__author-name-inner">channel792</span>
+          </div>
+        </div>
+        <div class="wdp-comment-item-module__description-container">
+          <p class="wdp-comment-item-module__description">Это развод, на авито кидают на 26к</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
   <script>
     // Поддержка <video> для мока (в реальном Chrome-расширении не требуется).
     console.log("RUTUBE dev-mock loaded");

@@ -107,6 +107,37 @@ export function waitForPlayer(timeoutMs = 8000): Promise<PlayerHandle> {
 // Строка мета-данных («информация о видео») — якорь для игрового оффер-блока.
 export const META_ROW_SELECTOR = 'section[aria-label="информация о видео"]';
 
+// Селекторы блока комментариев (главная колонка, ниже meta-row). CSS-классы
+// хэшируются Woodpecker (wdp-...-v1-39-0), поэтому каскад фолбэков как у плеера.
+export const COMMENTS_WRAPPER_SELECTOR = ".wdp-comments-module__wrapper";
+export const COMMENTS_LIST_SELECTOR = ".wdp-comments-module__list";
+export const COMMENTS_ITEM_SELECTOR = ".wdp-comment-item-module__comment-item";
+export const COMMENTS_TEXT_SELECTOR = ".wdp-comment-item-module__description";
+/** Контейнер счётчика/заголовка блока. */
+export const COMMENTS_HEADER_SELECTOR =
+  ".wdp-comments-module__desktop-container, .wdp-comments-module__title";
+
+/**
+ * Найти блок комментариев: wrapper → список → fallback по aria-testid
+ * (Woodpecker может переименовать CSS-классы между релизами).
+ */
+export function findCommentsBlock(): HTMLElement | null {
+  for (const sel of [COMMENTS_LIST_SELECTOR, COMMENTS_WRAPPER_SELECTOR, '[class*="comments-module"]']) {
+    try {
+      const el = document.querySelector<HTMLElement>(sel);
+      if (el) return el;
+    } catch {
+      /* невалидный селектор — пропускаем */
+    }
+  }
+  return null;
+}
+
+/** Ждать появления блока комментариев (React SPA монтирует его клиентски). */
+export function waitForComments(timeoutMs = 10000): Promise<HTMLElement | null> {
+  return waitFor(() => findCommentsBlock(), timeoutMs);
+}
+
 /** Найти правый сайдбар под панель расширения (или null). */
 export function findSidebar(): HTMLElement | null {
   return first(SIDEBAR_SELECTORS);

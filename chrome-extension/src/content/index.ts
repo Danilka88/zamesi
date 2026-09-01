@@ -14,6 +14,7 @@ import { mountGameOffer } from "./gameOffer";
 import { mountTravelOffer } from "./travelOffer";
 import { mountMerchOffer } from "./merchOffer";
 import { mountBikeSearch } from "./bikeSearch";
+import { mountComments } from "./comments";
 
 export function parseVideoId(url: string): string | null {
   const m = url.match(/rutube\.ru\/video\/([a-f0-9]+)\/?/);
@@ -84,6 +85,9 @@ async function main(): Promise<void> {
       if (await mount(passport, title)) break;
     }
   })();
+
+  // Умные комментарии: ИИ-бейджи/сводка/ответы по паспорту (демо, без сети).
+  void mountComments(passport, title, playerRef, videoId);
 
   // :: Метаданные хоста для E2E/смоук
   hostRef.host.dataset.rzVideoId = videoId;

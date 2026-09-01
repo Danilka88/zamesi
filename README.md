@@ -21,9 +21,9 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Audio-first архитектура** — в отличие от конкурентов, которые гонят 100% кадров через VLM, пайплайн стартует с аудиодорожки. Whisper large-v3 (WER 4.2% на русском, 0.3× real-time через Metal) + SpeechBrain ECAPA-TDNN + Silero VAD (CPU, 0.05× RT) → TimelineMerger → Gemma4:e4b текстовый анализ покрывает 94% сцен. Vision-модель Qwen3.5:9b вызывается только для ≤6% неопределённых сцен.
 
-- **Локальность и приватность** — Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё работает на машине клиента. Никакие данные (видео, аудио, текст) не отправляются во внешние API. Метки монетизации извлекаются из контента, а не из профилей пользователей — полное соответствие ФЗ-152. structlog не содержит PII.
+- **Локальность и приватность + проверенный гибрид** — по умолчанию Whisper.cpp, Ollama (Gemma4:e4b, Qwen3.5:0.8b/9b, qwen3-embedding), SpeechBrain ECAPA-TDNN, RapidOCR v4 (ONNX), ChromaDB 1.5+ — всё open-source, всё локально, ФЗ-152, structlog без PII. При этом **для генерации паспортов протестированы и облачные Яндекс AI Studio модели — DeepSeek V4 Flash и Alisa AI LMM** через тот же LLMRouter (замеры 10 паспортов, `my/Расчет…xlsx`): локальный пайплайн остаётся primary, Yandex — fallback/альтернатива без CAPEX (см. Экономика: ~5.73 ₽/паспорт).
 
-- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. **205 pytest + ~295 vitest (M-EXTENSION, 33 файла) + 14 vitest (M-UI) ≈ 514 тестов** (было 222/26 файлов до трендов+комментариев; +6 файлов: `studio-trends*` ×2, `comments-*` ×4), с изоляцией внешних вызовов (monkeypatch, AsyncMock, jsdom). 11 независимых модулей (9 Python + Chrome-расширение M-EXTENSION + Web UI M-UI), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения и UI — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
+- **Воспроизводимость** — весь стек open-source (Apache 2.0 / MIT), фиксированные версии Ollama-моделей → идентичный результат на любой инсталляции. **221 pytest + 286 vitest (M-EXTENSION, 32 файла) + 14 vitest (M-UI) ≈ 521 тест** (13 GRACE-модулей, 36 .grace-артефактов, 72+ пар START/END semantic-блоков, 60+ verification-сценариев, 3 gate level), с изоляцией внешних вызовов (monkeypatch, AsyncMock, jsdom). 13 независимых модулей (9 Python + M-OFFERS + M-STUDIO + Chrome-расширение M-EXTENSION + Web UI M-UI), каждый с MODULE_CONTRACT и отдельным набором тестов (для расширения и UI — Vitest). Pytest-asyncio, tmp_path для файлового I/O.
 
 - **Production-готовность** — FastAPI + Pydantic v2 (async-native, OpenAPI spec автоматически). TimeoutManager с Circuit Breaker (10 failures → OPEN → 60s recovery → HALF-OPEN → CLOSED). Exponential backoff retry (1→2→4 с, 3 попытки). Fallback chain: shorten_prompt → skip_vision. Prometheus-метрики (latency, VLM calls, сцены, jobs, timeouts, fallbacks), structlog с 81 log-маркером и correlation_id. Lazy imports — сервер стартует <1 с.
 
@@ -31,7 +31,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Масштабируемость P&L** — при росте объёмов стоимость за час видео **падает**, а не растёт. GPU-акселерация (Metal/CUDA) ускоряет Whisper до 0.3× RT, SLM/VLM в 5-10×. В отличие от моделей, зависящих от платных данных (стоимость привлечения лида), ценность извлекается из самого контента — дешёвая аудитория не нужна.
 
-- **API-first архитектура для интеграции** — 3 группы эндпоинтов: анализ (`POST /analyze` → статус → passport + markdown), семантический поиск (`GET /search`, `POST /search/reindex`), подборки (`POST /mix` → `GET /mix/{id}/markdown`). Search и Mixer — опциональные модули, подключаемые через config.yaml. OpenAPI spec — интеграторам не нужна отдельная документация.
+- **API-first архитектура для интеграции** — 5 групп эндпоинтов: анализ (`POST /analyze` → статус → passport + markdown), семантический поиск (`GET /search`, `POST /search/reindex`), подборки (`POST /mix` → `GET /mix/{id}/markdown`), офферы монетизации (`/api/v1/offers/*` — мерч/тревел/игры/вело-поиск) и RUTUBE Studio (`/api/v1/studio/*` — тренды/рефералка/продвижение/валидация). Search, Mixer, Offers и Studio — опциональные модули, подключаемые через config.yaml. OpenAPI spec — интеграторам не нужна отдельная документация.
 
 ---
 
@@ -39,9 +39,9 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 Фичи, которые есть в коде, но не бросаются в глаза при первом знакомстве:
 
-- **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:30`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Более того, каждая роль задаётся **списком провайдеров с приоритетом** — при отказе первого LLMRouter автоматически переключается на следующий (per-provider Circuit Breaker + отслеживание latency), так что локальный Ollama работает как primary, а облачные API — как автоматический fallback при недоступности. Каждая из 6 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне.
+- **Мультипровайдерный LLMRouter** (`src/core/llm_router.py:30`) — единый интерфейс для Ollama и OpenAI-совместимых API. В `config.yaml` уже прописаны YandexGPT, Cloud.ru, OpenRouter. Переключение `text_model` с локальной Gemma4 на облачную YandexGPT — одна правка конфига. Более того, каждая роль задаётся **списком провайдеров с приоритетом** — при отказе первого LLMRouter автоматически переключается на следующий (per-provider Circuit Breaker + отслеживание latency), так что локальный Ollama работает как primary, а облачные API — как автоматический fallback при недоступности. Каждая из 8 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`, `offers_model`, `studio_model`) настраивается независимо: можно комбинировать локальные и облачные модели в одном пайплайне (например, `offers_model` на YandexGPT, остальное локально).
 
-- **GRACE 4 — формальная верификация** (`.grace/`, 32 артефакта) — проект управляется через GRACE 4: 11 MODULE_CONTRACT (9 Python-модулей + M-EXTENSION — Chrome-расширение + M-UI — React-дашборд), 72 пары семантических блоков `START_BLOCK`/`END_BLOCK`, 60 verification-сценариев с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
+- **GRACE 4 — формальная верификация** (`.grace/`, 36 артефактов) — проект управляется через GRACE 4: 13 MODULE_CONTRACT (9 Python-модулей + M-OFFERS + M-STUDIO + M-EXTENSION — Chrome-расширение + M-UI — React-дашборд), 72+ пар семантических блоков `START_BLOCK`/`END_BLOCK`, 60+ verification-сценариев с 3 gate levels (module → phase → release). Это не ad-hoc код, а инженерная система с контрактами и assertion gates. Каждый модуль изолирован, тестирован и верифицирован — воспроизводимость гарантирована не на словах, а через формальные gates.
 
 - **VLM Ratio Gate — CI-проверка** (`scripts/check_vlm_ratio.py`) — скрипт, анализирующий JSON-логи пайплайна и проверяющий, что VLM-вызовы ≤6% (exit code 0/1). Может использоваться как gate в CI/CD: `python scripts/check_vlm_ratio.py < pipeline.log`. Без этого automation утверждение «≤6% VLM» остаётся на совести разработчика.
 
@@ -67,7 +67,7 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 
 - **Степпер «Путь зрителя: новичок → профи»** (`bikeSearch/`, NFR-7) — вторая карточка под блоком подборки: **3 ступени** («Новичок», «Продвинутый», «Профи»), каждая отвечает на вопрос пользователя (например «Какой класс велосипеда мне подходит?») и собирает **кликабельные тайм-коды** из разных видео подборки (`journeyVideoUrl` → `rutube.ru/video/{id}/?start={sec}`). Ступени выстроены в одну горизонтальную линию с соединительными стрелками и градиентными номерами (зелёный→оранжевый→фиолетовый) — пользователь считывает блок как единый маршрут. Восстанавливается при перерисовке SPA вместе с плейлистом.
 
-- **Chrome-расширение «RUTUBE Замеси»** (`chrome-extension/`, MV3 + Shadow DOM + Vanilla TS + Vitest) — монетизация прямо на странице видео `rutube.ru/video/*`: кликабельные маркеры `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` на прогресс-баре (клик → seek), панель текущей сцены поверх плеера и сайдбар аналитика. **4 режима**: «Зритель», «Аналитик», «Симуляция» и «Автор». Shadow DOM-изоляция — ноль конфликтов с CSS RUTUBE и ноль layout-shift (NFR-6). Привязка паспорта к видео: вручную в попапе / автоподбор по keywords заголовка / по `video_id` в реестре; при отсутствии совпадений автоматически применяется паспорт по умолчанию (`getDefaultPassport()`). Контракт `DataProvider` готов под реальный FastAPI `/analyze` (`RealDataProvider` — stub). 222 vitest-теста (26 файлов), GRACE-модуль M-EXTENSION (change C-003).
+- **Chrome-расширение «RUTUBE Замеси»** (`chrome-extension/`, MV3 + Shadow DOM + Vanilla TS + Vitest) — монетизация прямо на странице видео `rutube.ru/video/*`: кликабельные маркеры `AD_SLOT`/`ECOM_ITEM`/`CLIP_CANDIDATE` на прогресс-баре (клик → seek), панель текущей сцены поверх плеера и сайдбар аналитика. **4 режима**: «Зритель», «Аналитик», «Симуляция» и «Автор». Shadow DOM-изоляция — ноль конфликтов с CSS RUTUBE и ноль layout-shift (NFR-6). Привязка паспорта к видео: вручную в попапе / автоподбор по keywords заголовка / по `video_id` в реестре; при отсутствии совпадений автоматически применяется паспорт по умолчанию (`getDefaultPassport()`). Контракт `DataProvider` готов под реальный FastAPI `/analyze` (`RealDataProvider` — stub). 286 vitest-тестов (32 файла), GRACE-модуль M-EXTENSION (change C-003).
 
 - **AI-ассистент для редактора RUTUBE Studio** (`chrome-extension/src/studio/`, M-EXTENSION) — второй content-script расширения на `studio.rutube.ru/*`: поллинг-детект модалки video-editor (`[data-testid="video-editor-layout"]`), автоподбор паспорта по video_id/заголовку и монтаж Shadow DOM-панели «AI для редактора». Панель **заполняет все поля публикации одним кликом**: заголовок (A/B-варианты), описание с тайм-кодами сцен, категория (domain_type → раздел RUTUBE), плейлисты, время публикации (сейчас/позже — delayed при rejected-модерации), чекбоксы 18+ (из `age_rating`) и комментариев. Запись в React-поля через нативный setter прототипа + `input`/`change` события — без хаков. Панель сворачивается в пилюлю, перетаскивается (позиция в localStorage), toast-фидбек. 41 новый vitest-тест (5 файлов: studio-autofill/mapping/render/selectors/referral). **Реферальный блок монетизации** (`studio/referral.ts` + `studio/render/referral.ts`, NFR-7) — отдельная вкладка «💰 Монетизация» (таббар «Публикация»/«Монетизация», панель 520 px): товары из паспорта → партнёрские ссылки на 3 магазина (Яндекс Маркет `/partner/link/create`, AliExpress `affiliate.link.generate`, Admitad `/deeplink/`), 4 KPI (потенциал ₽/ссылки/CTR/комиссия), donut распределения дохода, карточки товаров с табами магазинов и прогнозом (CTR/конверсия/EPC/доход, детерминировано), кнопки «Копировать все», «Вставить блок в описание» и «Экспорт CSV». Замыкает цикл «паспорт → публикация → монетизация»: паспорт превращается в готовый черновик публикации в Studio.
 
@@ -88,6 +88,10 @@ AI-пайплайн: **MP4 → .md passport** с метками монетиза
 - **Строгий режим валидации паспорта** (`src/passport_builder/validator.py:9`) — `validate(passport, strict=True)` вместо логирования ошибок выбрасывает `PipelineValidationError`, обрывая пайплайн. Проверяет: наличие `video_id`, хронологический порядок таймкодов, обязательность `search_query` для `ECOM_ITEM`. Для отладки: временно включить strict mode и пройти E2E-тест.
 
 - **FingerprintDB — персистентное хранилище аудиоотпечатков** (`src/audio_engine/audio_fingerprinter.py:22`) — `FingerprintDB` сохраняет CQT-хэши и метаданные треков в `data/fingerprint_db.json`. Функция `index_track()` позволяет программно добавить любой аудиофайл в базу отпечатков с метаданными (artist, track_name, album, year, afisha/merch/events URLs). Скрипт `scripts/index_test_tracks.py` демонстрирует пакетную индексацию. ChromaDB (`data/chroma/`) и fingerprint DB — два независимых персистентных хранилища с разными схемами данных.
+
+- **M-OFFERS — бэкенд офферов монетизации** (`src/offers/collector.py`, `src/api/routes_offers.py`, M-OFFERS) — детерминированный бэкенд без LLM: `collect_merch_offers()` (дедупликация + сортировка по confidence, до 6 товаров), `detect_travel_offer`/`detect_game_offer` (по `domain_type` + keywords), `bike_search_entries` (вело-поиск: 3 видео + 2 товара), `game_cover_src`/`travel_cover_src`. API `/api/v1/offers/*`: `POST /detect` (паспорт → monetizable/has_merch/has_travel/has_game), `GET /travel`, `GET /game`, `GET /merch`, `GET /bike-search`. Расширение может работать без паспорта — офферы генерируются из заголовка/жанра. 5 pytest + 4 API-теста, 100% детерминизм без сети.
+
+- **M-STUDIO — бэкенд RUTUBE Studio** (`src/studio/bundles.py`, `src/api/routes_studio.py`, M-STUDIO) — 4 bundle-генератора для панели «AI для редактора»: `build_trends_bundle` (Wordstat-фикстуры CURATED_TRENDS по 5 ключам паспортов + hashSeed+mulberry32 фолбэк, seasonality 12 точек, коллаборации с overlap-баром, плейлист-идеи), `build_referral_bundle` (партнёрские ссылки 3 магазинов: Яндекс Маркет/ AliExpress/ Admitad + детерминированный прогноз дохода), `build_promotion_bundle` (яндекс.директ/VK/myTarget кампании с бюджет-слайдером и forecast_views), `validate_autofill` (валидация полей публикации). API `/api/v1/studio/*`: `GET /trends`, `POST /referral/bundle`, `POST /promotion/bundle`, `POST /autofill/validate`, `GET /health`. Детерминизм через FNV-hash + mulberry32 — один `videoId` → один результат без LLM. 4 pytest + 4 API-теста.
 
 ---
 
@@ -174,7 +178,7 @@ VLM Gatekeeper (трёхуровневая фильтрация перед вы�
 | **Семантический поиск** | ChromaDB + qwen3-embedding (VideoRAG) | Нет | Ограничен (key-based) |
 | **Mixer (подборки)** | LLM → поиск → matching → Markdown | Часы ручной работы | Нет |
 | **Open Source** | Apache 2.0 / MIT, весь стек | Нет | Проприетарные API |
-| **Модульность** | 11 модулей (9 Python + Chrome-расширение MV3 + Web UI), GRACE-верификация | Нет | Чёрный ящик |
+| **Модульность** | 13 модулей (9 Python + M-OFFERS + M-STUDIO + Chrome-расширение MV3 + Web UI), GRACE-верификация (36 артефактов) | Нет | Чёрный ящик |
 | **Русский язык** | WER 4.2% (Whisper large-v3), кириллический OCR | Любой | WER >10% на русском |
 | **GPU не обязателен** | Да (CPU $0.015/ч), GPU как ускорение | Нет | Нет |
 
@@ -482,20 +486,34 @@ models:
       - { provider: "yandex", model: "yandex-embed" }
 ```
 
-Каждая роль (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`) настраивается независимо — можно комбинировать локальные и внешние модели в одном пайплайне.
+Каждая из 8 ролей (`text_model`, `vision_model`, `classifier_model`, `mixer_model`, `moderation_model`, `embedding_model`, `offers_model`, `studio_model`) настраивается независимо — можно комбинировать локальные и внешние модели в одном пайплайне (например, `offers_model`/`studio_model` на YandexGPT, остальное на Ollama). **Фактически для генерации паспортов использовались обе группы: локальные Gemma4/Qwen3.5 + облачные Яндекс AI Studio DeepSeek V4 Flash и Alisa AI LMM** (10 замеров, см. Экономика, `my/Расчет…xlsx`).
+
+---
+
+#### M-OFFERS — детерминированный бэкенд офферов
+
+- **Почему:** мерч/тревел/игры/вело — монетизация, не требующая LLM: детект по `domain_type` + заголовку + паспорту. Детерминизм = 0 сети, 0 токенов, <1 ms.
+- **Реализация:** `src/offers/collector.py` — `collect_merch_offers()` (дедупликация по title, сортировка по confidence, до 6), `detect_travel_offer`/`detect_game_offer`, `bike_search_entries` (фильтр по вело-ключевым словам), `game_cover_src`/`travel_cover_src`. Схемы в `src/offers/schemas.py` (Pydantic: Offer, OfferDetectResult, BikeSearchEntries, Travel/GameOfferResponse).
+- **API:** `src/api/routes_offers.py` → `/api/v1/offers/*` (5 эндпоинтов). 9 pytest.
+
+#### M-STUDIO — бэкенд RUTUBE Studio
+
+- **Почему:** редактор Studio нуждается в трендах, рефералках и продвижении без ожидания LLM — детерминированные bundle'ы через FNV-hash + mulberry32 дают один `videoId` → один результат.
+- **Реализация:** `src/studio/bundles.py` — `build_trends_bundle` (CURATED_TRENDS по 5 ключам паспортов + hash-фолбэк, seasonality 12 точек), `build_referral_bundle` (3 магазина: ya.cc/rz-, aliexpress, admitad), `build_promotion_bundle` (яндекс.директ/vk_ads/mytarget), `validate_autofill` (title ≤100, category required). Схемы в `src/studio/schemas.py`.
+- **API:** `src/api/routes_studio.py` → `/api/v1/studio/*` (5 эндпоинтов). 8 pytest.
 
 ---
 
 ## Архитектура (GRACE)
 
-Девять изолированных Python-модулей (ниже на схеме) плюс M-EXTENSION (Chrome-расширение) и M-UI (React-дашборд) — всего 11 GRACE-модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
+Девять изолированных Python-модулей + M-OFFERS + M-STUDIO + M-EXTENSION (Chrome-расширение) + M-UI (React-дашборд) — всего 13 GRACE-модулей, каждый со своим MODULE_CONTRACT и semantic-блоками START/END. Модули коммуницируют через Pydantic-модели из `M-CORE`.
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  M-API (FastAPI) — 7 файлов, 10 тестов                          │
-│  analyze + search + mix + metrics + health + pipeline           │
-└──┬───────────────┬────────────────────────┬─────────────────────┘
-   │               │                        │
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  M-API (FastAPI) — 9 файлов, 10 тестов                                         │
+│  analyze + search + mix + offers + studio + metrics + health + pipeline        │
+└──┬───────────────┬────────────────────────┬────────────────────┬────────────────┘
+   │               │                        │                    │
 ┌──▼───────────┐ ┌─────────────────┐ ┌─▼───────────────┐  ┌─────▼────────────────┐
 │ M-PASSPORT   │ │  M-MODERATOR    │ │ M-SEARCH        │  │  M-MIXER             │
 │ 4 файла      │ │  3 файла        │ │ 3 файла         │  │  4 файла             │
@@ -512,25 +530,25 @@ models:
 │  VLM Gatekeeper: ≤6% сегментов                                │
 └──────┬───────────┬───────────────────────────────────────────┘
        │           │
-┌──────▼────┐ ┌────▼──────────┐
-│ M-AUDIO   │ │ M-VISION      │
-│ 6 файлов  │ │ 4 файла       │
-│ 60 тестов │ │ 28 тестов     │
-│ Whisper   │ │ OCR, Genre,   │
-│ SpeechBrain│ │ DomainRouter  │
-│ ffmpeg    │ │ OCRBuffer     │
-│ Fingerprint│ │               │
-└───────────┘ └───────────────┘
+┌──────▼────┐ ┌────▼──────────┐  ┌─────────────┐  ┌─────────────┐
+│ M-AUDIO   │ │ M-VISION      │  │  M-OFFERS   │  │  M-STUDIO   │
+│ 6 файлов  │ │ 4 файла       │  │ 2 файла     │  │ 2 файла     │
+│ 60 тестов │ │ 28 тестов     │  │ 9 тестов    │  │ 8 тестов    │
+│ Whisper   │ │ OCR, Genre,   │  │ merch/travel│  │ trends/     │
+│ SpeechBrain│ │ DomainRouter  │  │ game/bike   │  │ referral/   │
+│ ffmpeg    │ │ OCRBuffer     │  │ детект      │  │ promotion   │
+│ Fingerprint│ │               │  │             │  │ autofill    │
+└───────────┘ └───────────────┘  └─────────────┘  └─────────────┘
        │
 ┌──────▼──────────────────────────────────────────────────────┐
 │  M-CORE — 13 файлов, 51 тест                               │
 │  Pydantic-схемы, Config, TimeoutManager, MemoryStore,        │
-│  LLMRouter, Exceptions, logging_config, json_utils,          │
+│  LLMRouter (8 ролей), Exceptions, logging_config, json_utils,│
 │  time_utils, Moderation schemas, embedding, метрики           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Всего: 49 source-файлов, 41 test-файл, 90 файлов Python, 32 .grace артефакта, 45 UI-файлов (React + TypeScript), Chrome-расширение (MV3): 41 TS source + 21 test-файл.
+Всего: 53 source-файла, 43 test-файла, 96 файлов Python, 36 .grace артефактов, 45 UI-файлов (React + TypeScript), Chrome-расширение (MV3): 41+ TS source + 32 test-файла (286 тестов).
 
 ---
 
@@ -600,9 +618,9 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ## Тестирование
 
-### Test suite: 205 pytest + 222 vitest, 0 failures
+### Test suite: 221 pytest + 286 vitest (M-EXTENSION) + 14 vitest (M-UI) ≈ 521 тест
 
-Покрытие тестов по модулям:
+Покрытие тестов по модулям (актуально на 2026-09-02, `pytest --collect-only` = 222, `vitest` в расширении = 286):
 
 | Модуль | Тестов | Файлы |
 |---|---|---|
@@ -615,9 +633,11 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 | M-MIXER | 8 | `test_stage_planner.py` (3), `test_mix_composer.py` (3), `test_mix_to_md.py` (2) |
 | M-API | 10 | `test_endpoints.py` (4), `test_routes_search.py` (3), `test_routes_mix.py` (3) |
 | M-MODERATOR | 4 | `test_moderator.py` (parse, invalid, empty, flag) |
-| M-EXTENSION | 222 (vitest) | `chrome-extension/tests/`: `registry.test.ts`, `bindings.test.ts`, `data.test.ts`, `layout.test.ts`, `markers.test.ts`, `modes.test.ts`, `rutube.test.ts`, `scene-overlay.test.ts`, `game-offer.test.ts`, `game-offer-detect.test.ts`, `travel-offer.test.ts`, `travel-offer-detect.test.ts`, `merch-offer.test.ts`, `merch-offer-detect.test.ts`, `author-tools-generate.test.ts`, `author-tools-render.test.ts`, `author-tools-charts.test.ts`, `studio-autofill.test.ts`, `studio-mapping.test.ts`, `studio-render.test.ts`, `studio-selectors.test.ts`, `studio-referral.test.ts`, `studio-promotion.test.ts` |
-| M-UI | 14 (vitest) | `ui/tests/api.test.ts` (9), `ui/tests/proxy.test.ts` (5) |
-| Интеграция | 1 | `test_integration.py` |
+| M-OFFERS | 9 | `test_collector.py` (5: merch/travel/game/cover/bike), `test_routes_offers.py` (4: detect/travel/game/bike-search) |
+| M-STUDIO | 8 | `test_bundles.py` (4: trends/referral/promotion/autofill), `test_routes_studio.py` (4: trends/referral/promotion/autofill) |
+| M-EXTENSION | 286 (vitest, 32 файла) | `chrome-extension/tests/`: `registry`, `bindings`, `data`, `layout`, `markers`, `modes`, `rutube`, `scene-overlay`, `game-offer`×2, `travel-offer`×2, `merch-offer`×2, `bike-search`×3, `author-tools`×3, `studio-*`×6 (`autofill/mapping/render/selectors/referral/promotion` + `fixture`), `studio-trends`×2, `comments-*`×4, `bike-search-journey`, `studio-render` и др. |
+| M-UI | 14 (vitest, 2 файла) | `ui/tests/api.test.ts` (9), `ui/tests/proxy.test.ts` (5) |
+| Интеграция | 1 | `test_integration.py` (E2E на `diy_with_text.mp4`, требует Whisper/Ollama) |
 
 ### Методология
 
@@ -628,7 +648,7 @@ async def _run_ffmpeg(cmd, timeout_sec, log):
 
 ### GRACE Verification
 
-60 verification scenarios, 3 gate levels:
+60+ verification scenarios (13 модулей: V-M-CORE … V-M-STUDIO), 3 gate levels:
 
 - **Module gate:** `ruff check src/ tests/` + `mypy src/` + `pytest tests/ --timeout=30`
 - **Phase gate:** `pytest tests/ --timeout=60` + integration test (3600 с)
@@ -885,13 +905,15 @@ models:
     yandex:                # type: openai → YandexGPT (YANDEX_API_KEY)
     cloudru:               # Cloud.ru (CLOUDRU_API_KEY)
     openrouter:            # OpenRouter (OPENROUTER_API_KEY)
-  routing:                 # каждая роль = список провайдеров с приоритетом
+  routing:                 # каждая роль = список провайдеров с приоритетом (8 ролей)
     text_model:       [{ provider: ollama,   model: gemma4:e4b }, { provider: yandex, model: yandexgpt }]
     vision_model:     [{ provider: ollama,   model: qwen3.5:9b }, { provider: openrouter, model: openai/gpt-4o-mini }]
     classifier_model: [{ provider: ollama,   model: qwen3.5:0.8b }]
     mixer_model:      [{ provider: ollama,   model: gemma4:e4b }]
     moderation_model: [{ provider: ollama,   model: gemma4:e4b }]
     embedding_model:  [{ provider: ollama,   model: qwen3-embedding:0.6b }]
+    offers_model:     [{ provider: ollama,   model: gemma4:e4b }, { provider: yandex, model: yandexgpt }]
+    studio_model:     [{ provider: ollama,   model: gemma4:e4b }, { provider: yandex, model: yandexgpt }]
 ```
 
 > Виртуальные параметры VLM (`vision_max_tokens: 8192`, `vision_max_image_bytes: 2097152`, `classifier_max_tokens: 8192`) считываются из `models.ollama.*` и имеют разумные дефолты в `src/core/config.py`, если блок не задан явно.
@@ -955,8 +977,24 @@ cd ui && npm install && npm run dev
 
 Chrome-расширение «RUTUBE Замеси» (независимо от бэкенда):
 ```bash
-cd chrome-extension && npm install && npm test   # vitest: 222 теста
+cd chrome-extension && npm install && npm test   # vitest: 286 тестов, 32 файла
 npm run build    # dist/ → «Загрузить распакованное» в chrome://extensions
+```
+
+Офферы монетизации (без видео — по паспорту/заголовку):
+```bash
+curl -X POST http://localhost:8000/api/v1/offers/detect -H "Content-Type: application/json" -d '{"video_id":"test","passport":{"timeline":[],"frontmatter":{"domain_type":"game_review"}}}'
+curl "http://localhost:8000/api/v1/offers/travel?destination=Нячанг"
+curl "http://localhost:8000/api/v1/offers/game?title=Atomic%20Heart"
+curl "http://localhost:8000/api/v1/offers/bike-search?q=велосипед"
+```
+
+RUTUBE Studio — тренды/рефералка/продвижение:
+```bash
+curl "http://localhost:8000/api/v1/studio/trends?query=велосипед&video_id=bike_dont_buy"
+curl -X POST http://localhost:8000/api/v1/studio/referral/bundle -H "Content-Type: application/json" -d '{"video_id":"test","offers_count":3}'
+curl -X POST http://localhost:8000/api/v1/studio/promotion/bundle -H "Content-Type: application/json" -d '{"platform":"yandex_direct","budget_rub":5000}'
+curl -X POST http://localhost:8000/api/v1/studio/autofill/validate -H "Content-Type: application/json" -d '{"title":"Тест","category":"Путешествия"}'
 ```
 
 ---
@@ -1092,6 +1130,43 @@ Prometheus endpoint. Content-Type: `text/plain; version=0.0.4`.
 ### `GET /mix/{mix_id}/markdown`
 
 Markdown-текст подборки. Content-Type: `text/markdown`.
+
+---
+
+### Offers — монетизационные офферы (`/api/v1/offers/*`)
+
+Детерминированный бэкенд без LLM (ответ <10 ms). Используется расширением для мерч/тревел/игровых блоков и вело-поиска.
+
+| Endpoint | Метод | Параметры | Ответ |
+|---|---|---|---|
+| `/api/v1/offers/detect` | POST | `{"video_id": "str", "passport": {...}|null}` | `OfferDetectResult` (`monetizable`, `has_merch`, `has_travel`, `has_game`, `offers[]`) |
+| `/api/v1/offers/merch` | GET | `?brand=wylsacom&video_id=...` | `Offer[]` (до 6, dedup + сортировка по confidence) |
+| `/api/v1/offers/travel` | GET | `?destination=Нячанг` | `TravelOfferResponse` (`destination`, `actions[4]`, `cover_src`) |
+| `/api/v1/offers/game` | GET | `?title=Atomic Heart` | `GameOfferResponse` (`title`, `actions[4]`, `cover_src` — Yandex CDN для Atomic Heart) |
+| `/api/v1/offers/bike-search` | GET | `?q=велосипед` | `BikeSearchEntries` (`videos[3]`, `products[2]`) — фильтр по вело-ключевым словам |
+
+```bash
+curl -X POST http://localhost:8000/api/v1/offers/detect -H "Content-Type: application/json" \
+  -d '{"video_id":"test","passport":{"timeline":[{"monetization":[{"type":"ecom_item","search_query":"товар","confidence":0.9}]}]}}'
+# → {"video_id":"test","monetizable":true,"has_merch":true,"has_travel":false,"has_game":false,"offers":[...]}
+```
+
+### Studio — RUTUBE Studio (`/api/v1/studio/*`)
+
+Детерминированные bundle'ы через FNV-hash + mulberry32 — один `videoId` → один результат, без LLM.
+
+| Endpoint | Метод | Параметры | Ответ |
+|---|---|---|---|
+| `/api/v1/studio/trends` | GET | `?query=велосипед&video_id=bike_dont_buy` | `TrendsBundle` (`trends[]`, `collabs[]`, `playlist[]` — seasonality 12 точек) |
+| `/api/v1/studio/referral/bundle` | POST | `{"video_id":"str","offers_count":3}` | `ReferralBundle` (`offers[shop,url,commission_bps]`, `total_potential_rub`, `links_count`) — ya.cc/rz-, aliexpress, admitad |
+| `/api/v1/studio/promotion/bundle` | POST | `{"platform":"yandex_direct","budget_rub":5000}` | `PromotionBundle` (`platform`, `budget_rub`, `forecast_views`, `campaign{}`) |
+| `/api/v1/studio/autofill/validate` | POST | `{"title":"...","category":"..."}` | `AutofillValidateResponse` (`ok`, `warnings[]` — title ≤100, category required) |
+| `/api/v1/studio/health` | GET | — | `{"status":"ok","module":"studio"}` |
+
+```bash
+curl "http://localhost:8000/api/v1/studio/trends?query=велосипед&video_id=bike_dont_buy"
+# → {"query":"велосипед","trends":[{"term":"велосипед горный","volume":82000,"growth":0.34,...}],"collabs":[...],"playlist":[...]}
+```
 
 ---
 
@@ -1412,6 +1487,10 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
                     Mixer (Замеси) → готовые плейлисты → рекомендации RUTUBE
                                   ↓
                     Moderation (LLM-as-Judge) → age_rating + content flags
+                                  ↓
+                    Offers (M-OFFERS) → мерч/тревел/игры/вело → /api/v1/offers/* → расширение
+                                  ↓
+                    Studio (M-STUDIO) → тренды/referral/promotion → /api/v1/studio/* → RUTUBE Studio
 ```
 
 Каждый выходной паспорт содержит `ad_targeting_keywords`, `seo_title`, `trending_cluster`, `brand_safety_score` — поля, готовые для передачи в RUTUBE API без дополнительной обработки.
@@ -1426,8 +1505,8 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 2. ✅ **Mixer (Замеси)** — multi-video подборки через LLM (реализовано)
 3. ✅ **Audio Fingerprinting** — музыкaльные треки + celebrity recognition (реализовано)
 4. ✅ **LLM-as-Judge модерация** — 9 категорий флагов, age rating 0+–18+ (реализовано)
-5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter (реализовано)
-6. ✅ **205 pytest + 222 vitest**, 60 verification scenarios, GRACE-верификация (реализовано)
+5. ✅ **Мультипровайдерный LLMRouter** — Ollama + YandexGPT + Cloud.ru + OpenRouter, 8 ролей (text/vision/classifier/mixer/moderation/embedding/offers/studio), per-provider Circuit Breaker (реализовано)
+6. ✅ **221 pytest + 286 vitest (M-EXTENSION) + 14 vitest (M-UI) ≈ 521 тест**, 60+ verification scenarios, 13 GRACE-модулей, 36 артефактов, 3 gate level (реализовано)
 7. ✅ **Web UI (React + Vite + TailwindCSS)** — панель управления, паспорт, поиск, миксы (реализовано)
 8. ✅ **Demo Mode** — полная offline-демонстрация без бэкенда (реализовано)
 9. ✅ **SSE / EventSource** — live-уведомления об изменении статуса (реализовано)
@@ -1435,17 +1514,21 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 11. ✅ **Автоиндексация в ChromaDB** — паспорт индексируется сразу после сборки (реализовано)
 12. ✅ **Строгий режим валидации** — `strict=True` для CI-гейтов (реализовано)
 13. ✅ **FingerprintDB + index_track()** — персистентное хранилище аудиоотпечатков, CLI-индексация (реализовано)
-14. ✅ **Chrome-расширение «RUTUBE Замеси»** — MV3 + Shadow DOM + Vitest (222 теста, 26 файлов, 10 демо-паспортов), GRACE-модуль M-EXTENSION, change C-003 (реализовано)
+14. ✅ **Chrome-расширение «RUTUBE Замеси»** — MV3 + Shadow DOM + Vitest (286 тестов, 32 файла, 10 демо-паспортов), GRACE-модуль M-EXTENSION, change C-003 (реализовано)
 15. ✅ **LLM fallback chain** — приоритетный список провайдеров на каждую роль, автоматический fallback при отказе primary (реализовано)
 16. ✅ **Инструменты автора (A/B-тестирование контента)** — 4-й режим расширения: генератор вариантов заголовков/описаний + прогнозные метрики + SVG-графики, полноширинная модалка (реализовано)
 17. ✅ **Vitest-тесты M-UI** — 14 тестов для Web UI (DemoApiClient + HTTP-прокси), GRACE-верификация V-M-UI (реализовано)
 18. ✅ **AI-ассистент для редактора RUTUBE Studio** — второй content-script расширения: автоподбор паспорта и автозаполнение всех полей публикации (заголовок A/B, описание с тайм-кодами, категория, плейлисты, время, 18+, комментарии) React-safe, 41 vitest-тест (реализовано)
 19. ✅ **Реферальный блок монетизации в Studio** — товары из паспорта → партнёрские ссылки на Яндекс Маркет / AliExpress / Admitad (формат реальных API из ТЗ) + детерминированный прогноз дохода: 4 KPI, donut распределения, карточки товаров с табами магазинов, «Копировать все» / «Вставить блок в описание» / «Экспорт CSV» (12 vitest-тестов, реализовано)
 20. ✅ **Продвижение видео в Studio** — вкладка «🚀 Продвижение»: из паспорта генерируются объявления для Яндекс Директ / VK Реклама / MyTarget (в формате их API), превью видеокреатива, варианты креативов, бюджет-слайдер с рекомендацией из паспорта и live-прогнозом, таргетинг-чипы, UTM, «Копировать все» / CSV / JSON / «Отправить (демо)» (12 vitest-тестов, реализовано)
+21. ✅ **M-OFFERS — бэкенд офферов** (`src/offers/`, `src/api/routes_offers.py`) — 5 эндпоинтов `/api/v1/offers/*`, детерминированный детект мерч/тревел/игры/вело, 9 pytest (реализовано)
+22. ✅ **M-STUDIO — бэкенд Studio** (`src/studio/`, `src/api/routes_studio.py`) — 5 эндпоинтов `/api/v1/studio/*`, тренды/referral/promotion/autofill, FNV+mulberry32 детерминизм, 8 pytest (реализовано)
+23. ✅ **Умные комментарии + Тренды и плейлисты** — `comments/` (8 тегов, Jaccard + стемминг, 4 vitest-файла) + `trends` (KPI+donut+карточки трендов Wordstat, 2 vitest-файла) в расширении (реализовано)
+24. ✅ **8 ролей LLMRouter** — `offers_model` и `studio_model` добавлены в `config.yaml` (каждая — список провайдеров с fallback), всего 8 независимых ролей (реализовано)
 
 ### В разработке
 
-21. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200`
+25. **Интеграционное тестирование** — видео уже в `tests/fixtures/videos/` (diy_with_text, 46 с), запустить `pytest tests/test_integration.py --timeout=7200` (сейчас 1/2 падает без моделей, 221/221 без e2e — OK)
 22. **GPU-акселерация** — Ollama через CUDA/Metal снижает стоимость до <$0.0025/ч (NFR-2)
 23. **MLOps pipeline** — дообучение genre classifier на размеченных данных RUTUBE, CI/CD для тестов и развёртывания
 24. **Событийные метрики** — интеграция с clickstream для A/B-теста влияния AD_SLOT/ECOM_ITEM на ARPU
@@ -1468,6 +1551,6 @@ Video Upload → [Analyzer] → .md passport (метрики монетизац�
 
 ---
 
-*GRACE 4-governed project: 32 `.grace` артефакта, 11 MODULE_CONTRACT, 72 semantic block pairs, 60 verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `chrome-extension/` (M-EXTENSION), `ui/` (M-UI). GRACE-артефакты: `.grace/context/`, `.grace/graph/`, `.grace/verification/`, `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
+*GRACE 4-governed project: 36 `.grace` артефактов, 13 MODULE_CONTRACT (9 Python + M-OFFERS + M-STUDIO + M-EXTENSION + M-UI), 72+ semantic block pairs, 60+ verification scenarios, 3 gate levels (module → phase → release). Код: `src/core/`, `src/api/`, `src/audio_engine/`, `src/vision_scanner/`, `src/semantic_analyzer/`, `src/passport_builder/`, `src/search/`, `src/mixer/`, `src/moderator/`, `src/offers/` (M-OFFERS), `src/studio/` (M-STUDIO), `chrome-extension/` (M-EXTENSION), `ui/` (M-UI). GRACE-артефакты: `.grace/context/`, `.grace/graph/` (13 GD-*), `.grace/verification/` (13 VD-*), `.grace/changes/`. Результаты: `output/diy_with_text.md`, `mix_passport.md`, `scripts/generate_test_videos.sh`.*
 
-*Обновлено: 205 pytest + 222 vitest (M-EXTENSION) + 14 vitest (M-UI) = 441 тест, 10 демо-паспортов, режим «Автор» с A/B-тестированием контента, оффер-блоки (игры/тревел/мерч), AI-ассистент для редактора RUTUBE Studio, микс-блок «Велосипеды» на странице поиска + степпер «Путь зрителя», 3 вело-паспорта и промты для Яндекс AI Studio, сценарий Яндекс AI Studio в юнит-экономике (~$0.18/ч, ~0.26 ₽/мин).*
+*Обновлено: 2026-09-02 — 221 pytest + 286 vitest (M-EXTENSION, 32 файла) + 14 vitest (M-UI) ≈ 521 тест, 13 GRACE-модулей, 36 .grace-артефактов, 10 демо-паспортов, режим «Автор» с A/B-тестированием, оффер-блоки (игры/тревел/мерч), микс-блок «Велосипеды» + степпер «Путь зрителя», умные комментарии (8 тегов), AI-ассистент RUTUBE Studio (тренды/рефералка/продвижение) + бэкенды M-OFFERS/M-STUDIO (`/api/v1/offers/*` и `/api/v1/studio/*`, 17 pytest), 8 ролей LLMRouter (`offers_model`/`studio_model`), 3 вело-паспорта и промты для Яндекс AI Studio, юнит-экономика ~$0.18/ч (~0.26 ₽/мин).*

@@ -65,6 +65,12 @@
     <embedding name="qwen3-embedding:0.6b" provider="Ollama" endpoint="http://localhost:11434" purpose="Embedding для семантического поиска (multilingual, 1024-dim)">
       <params MTEB="64.33"/>
     </embedding>
+    <cloud-llm name="DeepSeek V4 Flash" provider="Yandex AI Studio" endpoint="https://llm.api.cloud.yandex.net/foundationModels/v1" purpose="Облачная генерация паспорта — замерами 7 паспортов (0.30 ₽/1k in, 0.50 ₽/1k out, средн. 5.59 ₽)">
+      <params in_price="0.30" out_price="0.50" unit="RUB/1k tokens" avg_cost="5.59 RUB/passport"/>
+    </cloud-llm>
+    <cloud-llm name="Alisa AI LMM" provider="Yandex AI Studio" endpoint="https://llm.api.cloud.yandex.net/foundationModels/v1" purpose="Облачная генерация паспорта — замерами 3 паспортов (0.50 ₽/1k in, 1.20 ₽/1k out, средн. 6.04 ₽)">
+      <params in_price="0.50" out_price="1.20" unit="RUB/1k tokens" avg_cost="6.04 RUB/passport"/>
+    </cloud-llm>
 
     <llm-router>
       <description>Multi-provider fallback chain. Primary → fallback → fallback при ошибке. Per-provider circuit breaker + latency tracking.</description>

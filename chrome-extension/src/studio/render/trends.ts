@@ -218,7 +218,7 @@ function playlistThumb(screenshot: string | null): HTMLElement {
     `background:${BIKE_GRADIENT};display:flex;align-items:center;justify-content:center;font-size:16px;`);
   if (screenshot && typeof chrome !== "undefined" && chrome.runtime?.getURL) {
     const img = document.createElement("img");
-    img.src = chrome.runtime.getURL(screenshot);
+    img.src = chrome.runtime.getURL(`bike/${screenshot}`);
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     thumb.append(img);
   } else {

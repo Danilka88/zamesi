@@ -11,6 +11,7 @@ import {
 } from "../content/authorTools/generate";
 import { buildReferralBundle, type ReferralBundle } from "./referral";
 import { buildPromotionBundle, type PromotionBundle } from "./promotion";
+import { buildTrendsBundle, type TrendsBundle } from "./trends";
 
 export interface PlaylistSuggestion {
   /** Исходный id из паспорта (auto_playlists). */
@@ -49,6 +50,8 @@ export interface StudioSuggestions {
   referral: ReferralBundle;
   /** Продвижение видео: объявления для Яндекс Директ/VK/MyTarget + прогноз и бюджет. */
   promotion: PromotionBundle;
+  /** Тренды и плейлисты: Wordstat-идеи, подборки, коллаборации. */
+  trends: TrendsBundle;
 }
 
 /** domain_type → категория RUTUBE (основные, по демо-паспортам). */
@@ -159,6 +162,7 @@ export function buildStudioSuggestions(
     videoId,
     referral: buildReferralBundle(passport, videoId),
     promotion: buildPromotionBundle(passport, videoId, `https://rutube.ru/video/${videoId}`),
+    trends: buildTrendsBundle(passport, videoId),
   };
 }
 // = [M-EXTENSION][STUDIO][MAPPING][END_BLOCK]

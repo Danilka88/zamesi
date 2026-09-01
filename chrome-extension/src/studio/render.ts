@@ -13,6 +13,7 @@ import { box, chip, applyBtn, makeToast } from "./render/ui";
 import { enableDrag, restorePosition, safeGet, safeSet, COL_KEY } from "./render/drag";
 import { renderReferralBlock } from "./render/referral";
 import { renderPromotionBlock } from "./render/promotion";
+import { renderTrendsBlock } from "./render/trends";
 
 export interface StudioPanelOpts {
   suggestions: StudioSuggestions;
@@ -85,23 +86,26 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
   header.append(allBtn);
   content.append(header);
 
-  // --- Табы: «Публикация», «Монетизация» и «Продвижение» ---
+  // --- Табы: «Публикация», «Монетизация», «Продвижение» и «Тренды» ---
   const PANES = {
     publish: { id: "publish", label: "📝 Публикация" },
     monetize: { id: "monetize", label: "💰 Монетизация" },
     promote: { id: "promote", label: "🚀 Продвижение" },
+    trends: { id: "trends", label: "🔥 Тренды" },
   } as const;
   type PaneId = keyof typeof PANES;
   const tabBar = document.createElement("div");
-  tabBar.style.cssText = "display:flex;gap:6px;margin-bottom:10px;";
+  tabBar.style.cssText = "display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;";
   const paneBtns = new Map<PaneId, HTMLButtonElement>();
   const publishingPane = document.createElement("div");
   const monetizationPane = document.createElement("div");
   const promotionPane = document.createElement("div");
+  const trendsPane = document.createElement("div");
   function showPane(id: PaneId): void {
     publishingPane.style.display = id === "publish" ? "" : "none";
     monetizationPane.style.display = id === "monetize" ? "" : "none";
     promotionPane.style.display = id === "promote" ? "" : "none";
+    trendsPane.style.display = id === "trends" ? "" : "none";
     for (const [pid, b] of paneBtns) {
       const active = pid === id;
       b.style.background = active ? "#2a2038" : "#232838";
@@ -114,14 +118,14 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = PANES[id].label;
-    btn.style.cssText = `flex:1;background:#232838;color:#cfd4e3;border:1px solid ${GRID};` +
+    btn.style.cssText = `flex:1 1 0;min-width:92px;background:#232838;color:#cfd4e3;border:1px solid ${GRID};` +
       "border-radius:9px;padding:8px 10px;font-size:12.5px;cursor:pointer;font-weight:600;" +
       "transition:background .15s,color .15s,border-color .15s;";
     btn.addEventListener("click", () => showPane(id));
     tabBar.append(btn);
     paneBtns.set(id, btn);
   });
-  content.append(tabBar, publishingPane, monetizationPane, promotionPane);
+  content.append(tabBar, publishingPane, monetizationPane, promotionPane, trendsPane);
   showPane("publish");
 
   // --- Название A/B ---
@@ -222,6 +226,9 @@ toastCtl.show(applied ? `Применено полей: ${applied} ✓` : "Не�
 
   // --- Продвижение видео: объявления для Я.Директ/VK/MyTarget + прогноз и бюджет ---
   promotionPane.append(renderPromotionBlock(s.promotion, { form, toast: toastCtl.show, videoId: s.videoId }));
+
+  // --- Тренды и плейлисты: Wordstat-идеи, подборки, коллаборации ---
+  trendsPane.append(renderTrendsBlock(s.trends, { form, toast: toastCtl.show, videoId: s.videoId }));
 
   // --- Footer ---
   const note = document.createElement("div");

@@ -7,7 +7,7 @@ import { hashSeed, mulberry32 } from "../content/authorTools/charts";
 import { resolvePassportKey } from "../content/authorTools/generate";
 import { sceneStarts, videoDuration } from "../content/render/layout";
 
-export type PromoPlatform = "yandex_direct" | "vk_ads" | "mytarget";
+export type PromoPlatform = "rutube" | "yandex_direct" | "vk_ads" | "mytarget";
 
 export interface PlatformMeta {
   label: string;
@@ -20,6 +20,15 @@ export interface PlatformMeta {
 }
 
 export const PLATFORMS: Record<PromoPlatform, PlatformMeta> = {
+  rutube: {
+    label: "RUTUBE",
+    icon: "▶️",
+    color: "#E32636",
+    apiName: "POST /pangolin/api/studio/promo",
+    titleMax: 50,
+    textMax: 120,
+    utmSource: "rutube",
+  },
   yandex_direct: {
     label: "Яндекс Директ",
     icon: "🟡",
@@ -49,7 +58,7 @@ export const PLATFORMS: Record<PromoPlatform, PlatformMeta> = {
   },
 };
 
-export const PLATFORM_ORDER: PromoPlatform[] = ["yandex_direct", "vk_ads", "mytarget"];
+export const PLATFORM_ORDER: PromoPlatform[] = ["rutube", "yandex_direct", "vk_ads", "mytarget"];
 
 export const DEFAULT_BUDGET = 1000;
 export const BUDGET_MIN = 500;
@@ -142,42 +151,49 @@ function fitTitle(title: string, max: number): string {
 const PROMO_TITLES: Record<string, Record<string, string>> = {
   tech_review: {
     default: "Обзор техники: что выбрать в 2026",
+    rutube: "Топ техники 2026 — смотрите на RUTUBE",
     yandex_direct: "Топ техники 2026: честный обзор",
     vk_ads: "Смотрите свежий обзор техники",
     mytarget: "Обзор гаджетов 2026 за минуту",
   },
   iphone_50k_wylsacom: {
     default: "Какой iPhone купить за 50 000",
+    rutube: "iPhone за 50 000 — честное сравнение на RUTUBE",
     yandex_direct: "iPhone за 50 000: какой выбрать",
     vk_ads: "Сравнение iPhone за 50 тысяч",
     mytarget: "Лучший iPhone до 60 000",
   },
   diy_frame: {
     default: "Поделка своими руками за 29 секунд",
+    rutube: "Фоторамка за 29 сек — смотрите на RUTUBE",
     yandex_direct: "DIY: фоторамка за 29 секунд",
     vk_ads: "Мастер-класс: сделайте сами",
     mytarget: "Простая поделка для дома",
   },
   movie_review: {
     default: "Разбор фильма без спойлеров",
+    rutube: "Эхо Будущего — разбор на RUTUBE",
     yandex_direct: "Стоит ли смотреть: разбор фильма",
     vk_ads: "Кинокритик о новинке — вердикт",
     mytarget: "Кино, которое обсуждают",
   },
   cooking_dinner: {
     default: "Ужин за 15 минут: простой рецепт",
+    rutube: "Ужин за 15 минут — рецепт на RUTUBE",
     yandex_direct: "Ужин за 15 минут на каждый день",
     vk_ads: "Быстрый ужин из простых продуктов",
     mytarget: "Рецепт ужина за четверть часа",
   },
   atomic_heart_review: {
     default: "Atomic Heart в 2026: стоит ли играть",
+    rutube: "Atomic Heart — честный разбор на RUTUBE",
     yandex_direct: "Atomic Heart: разбор в 2026",
     vk_ads: "Игра года? Полный обзор",
     mytarget: "Atomic Heart — что говорят",
   },
   vietnam_nha_trang: {
     default: "Жизнь в Нячанге: реальные цены",
+    rutube: "Жизнь в Нячанге — честно на RUTUBE",
     yandex_direct: "Нячанг: сколько стоит жить",
     vk_ads: "Вьетнам 2026: цены из первых рук",
     mytarget: "Переезд в Азию — честные цифры",
@@ -287,6 +303,17 @@ export function forecastForPlatform(
   dailyBudget: number,
 ): PlatformForecast {
   const rnd = mulberry32(hashSeed(`promo:${videoId}:${platform}`));
+  if (platform === "rutube") {
+    const ctr = round1(3 + rnd() * 7); // 3..10% (нативный выше)
+    const cpc = round1(3 + rnd() * 12); // 3..15 RUB
+    const cpm = round1(40 + rnd() * 140); // 40..180 RUB (дешевле внешних)
+    const convRate = round2(1 + rnd() * 4); // 1..5%
+    const reach = Math.round((dailyBudget / cpm) * 1000);
+    const clicks = Math.round(reach * (ctr / 100));
+    const cost = dailyBudget;
+    const cpa = clicks > 0 ? Math.round(dailyBudget / (clicks * (convRate / 100))) : 0;
+    return { ctr, cpc, cpm, convRate, reach, clicks, cost, cpa };
+  }
   const ctr = round1(2 + rnd() * 6); // 2..8%
   const cpc = round1(5 + rnd() * 40); // 5..45 RUB
   const cpm = round1(80 + rnd() * 270); // 80..350 RUB

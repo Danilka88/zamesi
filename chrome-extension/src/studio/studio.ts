@@ -9,6 +9,7 @@ import { mountStudioPanel } from "./render";
 import { resolveBindingDetailed } from "../content/data/bindings";
 import { getDefaultPassport, getPassportById } from "../data/registry";
 import type { Passport } from "../data/types";
+import { observeVideoList } from "./videoList";
 
 const VIDEO_ID_RE = /rutube\.ru\/video\/(?:private\/)?([a-f0-9]{20,})\/?/i;
 
@@ -87,6 +88,14 @@ function observeStudio(): void {
     return;
   }
   console.log("[M-EXTENSION][STUDIO] content-script загружен, pathname:", location.pathname);
+  // Видео-список: заметная кнопка «Продвижение» на каждой карточке (Variant A, NFR-7)
+  if (/\/videos/.test(location.pathname)) {
+    try {
+      observeVideoList();
+    } catch (e) {
+      console.warn("[M-EXTENSION][STUDIO][VIDEOLIST][ERROR]", e);
+    }
+  }
   const tryMount = (): void => {
     const modal = findStudioModal();
     if (modal) {
@@ -114,6 +123,11 @@ chrome.runtime.onMessage?.addListener((msg: unknown) => {
     if (modal && passport) {
       console.log("[M-EXTENSION][STUDIO] binding: manual", m.id);
       mountForModal(modal, passport, "manual");
+      return;
+    }
+    // Список видео: перемонтировать кнопки (демо-паспорт сменится при следующем клике по «Продвижение» — резолв идёт по заголовку, не глобально)
+    if (/\/videos/.test(location.pathname)) {
+      console.log("[M-EXTENSION][STUDIO][VIDEOLIST] manual binding on list:", m.id);
     }
   }
 });

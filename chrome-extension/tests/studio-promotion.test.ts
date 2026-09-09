@@ -21,8 +21,9 @@ function passportOf(id: string): Passport {
 }
 
 describe("promotion: платформы и лимиты", () => {
-  it("3 площадки с лимитами заголовков и текста", () => {
-    expect(PLATFORM_ORDER).toEqual(["yandex_direct", "vk_ads", "mytarget"]);
+  it("4 площадки с лимитами заголовков и текста (RUTUBE первым)", () => {
+    expect(PLATFORM_ORDER).toEqual(["rutube", "yandex_direct", "vk_ads", "mytarget"]);
+    expect(PLATFORMS.rutube.titleMax).toBe(50);
     expect(PLATFORMS.yandex_direct.titleMax).toBe(33);
     expect(PLATFORMS.vk_ads.titleMax).toBe(40);
     expect(PLATFORMS.mytarget.titleMax).toBe(35);
@@ -34,7 +35,7 @@ describe("promotion: платформы и лимиты", () => {
 });
 
 describe("promotion: forecastForPlatform", () => {
-  it("CTR 2-8%, клики не больше охвата, CPA >= 0", () => {
+  it("CTR 2-8% (RUTUBE 3-10%), клики не больше охвата, CPA >= 0", () => {
     for (let i = 0; i < 20; i++) {
       const f = forecastForPlatform("yandex_direct", "Rv_x", 1000);
       expect(f.ctr).toBeGreaterThanOrEqual(2);
@@ -42,6 +43,12 @@ describe("promotion: forecastForPlatform", () => {
       expect(f.clicks).toBeLessThanOrEqual(f.reach);
       expect(f.cost).toBe(1000);
       expect(f.cpa).toBeGreaterThanOrEqual(0);
+    }
+    for (let i = 0; i < 10; i++) {
+      const fr = forecastForPlatform("rutube", "Rv_x", 1000);
+      expect(fr.ctr).toBeGreaterThanOrEqual(3);
+      expect(fr.ctr).toBeLessThanOrEqual(10);
+      expect(fr.clicks).toBeLessThanOrEqual(fr.reach);
     }
   });
 
@@ -84,9 +91,10 @@ describe("promotion: recommendedBudget", () => {
 });
 
 describe("promotion: buildPromotionBundle", () => {
-  it("собирает по 3 кампании с 2+ вариантами и таргетингом", () => {
+  it("собирает по 4 кампании (RUTUBE первым) с 2+ вариантами и таргетингом", () => {
     const b = buildPromotionBundle(passportOf("tech_review"), "Rv_t_1", "https://rutube.ru/video/Rv_t_1");
-    expect(b.campaigns.length).toBe(3);
+    expect(b.campaigns.length).toBe(4);
+    expect(b.campaigns[0].platform).toBe("rutube");
     for (const c of b.campaigns) {
       expect(c.variants.length).toBeGreaterThanOrEqual(2);
       expect(c.targeting.age.length).toBeGreaterThan(0);
@@ -124,10 +132,11 @@ describe("promotion: CSV/JSON экспорт", () => {
     expect(csv.split("\n").length).toBe(variants + 1);
   });
 
-  it("JSON содержит платформы, api, бюджет и adGroups с UTM", () => {
+  it("JSON содержит платформы, api, бюджет и adGroups с UTM (4 платформы)", () => {
     const b = buildPromotionBundle(passportOf("iphone_50k_wylsacom"), "Rv_i_2", "u");
     const j = JSON.parse(buildPromotionJson(b)) as Array<{ platform: string; api: string; adGroups: Array<{ utm: string }> }>;
-    expect(j.length).toBe(3);
+    expect(j.length).toBe(4);
+    expect(j[0].platform).toBe("rutube");
     expect(j[0].adGroups[0].utm).toContain("utm_campaign=rz_Rv_i_2");
   });
 });

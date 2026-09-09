@@ -349,7 +349,11 @@ export function renderPromotionBlock(
   const { form, toast, videoId } = opts;
   const t = bundle.totals;
 
-  const block = box("🚀 Продвижение · Реклама", "Готовые объявления из паспорта: Яндекс Директ, VK Реклама, MyTarget. Демо-режим (NFR-7).", true);
+  const block = box(
+    "🚀 Продвижение · Реклама",
+    "Готовые объявления из паспорта: RUTUBE (нативно) + Яндекс Директ, VK Реклама, MyTarget. Демо-режим (NFR-7).",
+    true,
+  );
 
   // KPI-ряд
   const kpis: [string, string, string][] = [
@@ -400,16 +404,39 @@ export function renderPromotionBlock(
   actions.append(btnAllCopy, btnCsv, btnJson, btnSend);
   block.append(actions);
 
-  // Кампании
-  for (const c of bundle.campaigns) {
-    block.append(campaignCard({ bundle, campaign: c, form, toast }));
+  // Кампании — группировка: нативное RUTUBE отдельно, внешние каналы ниже
+  const rutubeCampaign = bundle.campaigns.find((c) => c.platform === "rutube");
+  const externalCampaigns = bundle.campaigns.filter((c) => c.platform !== "rutube");
+
+  if (rutubeCampaign) {
+    const headerNative = el(
+      "div",
+      `margin-top:8px;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px;` +
+        `color:#fff;background:linear-gradient(135deg,#E32636,#7a0a14);border:1px solid #E32636;`,
+      "▶️ ВНУТРЕННЕЕ ПРОДВИЖЕНИЕ — RUTUBE · платный буст в рекомендациях и на главной",
+    );
+    block.append(headerNative);
+    block.append(campaignCard({ bundle, campaign: rutubeCampaign, form, toast }));
+  }
+
+  if (externalCampaigns.length) {
+    const headerExt = el(
+      "div",
+      `margin-top:10px;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px;` +
+        `color:${MUTED};background:#1a2030;border:1px dashed ${GRID};`,
+      "🌐 ВНЕШНИЕ КАНАЛЫ — Яндекс Директ · VK Реклама · MyTarget",
+    );
+    block.append(headerExt);
+    for (const c of externalCampaigns) {
+      block.append(campaignCard({ bundle, campaign: c, form, toast }));
+    }
   }
 
   // Подпись
   const note = el("div", `margin-top:10px;font-size:10px;color:${MUTED};border:1px dashed ${GRID};border-radius:10px;padding:8px 10px;line-height:1.5;`);
   note.textContent = "Демо-режим: объявления, прогноз и бюджет сгенерированы локально из паспорта (NFR-7). " +
-    "Реальная отправка появится после подключения OAuth-ключей: Директ POST /json/v5/campaigns, " +
-    "VK ads.create, MyTarget /api/v2/campaigns.json.";
+    "Реальная отправка: RUTUBE POST /pangolin/api/studio/promo (OAuth Studio) + " +
+    "Директ POST /json/v5/campaigns, VK ads.create, MyTarget /api/v2/campaigns.json.";
   block.append(note);
 
   return block;

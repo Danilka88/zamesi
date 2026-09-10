@@ -1,7 +1,14 @@
 # RUTUBE Video Analyzer
 
-> **🎬 Видео-обзор проекта «Замеси» с ИИ — Финал**
-> **https://disk.yandex.ru/i/dKU1_4NvoYb41Q** ← смотреть 2-минутный питч (RUTUBE + ИИ-монетизация)
+<div align="center" style="background:linear-gradient(135deg,#0f1220,#1a1030); border:2px solid #E32636; border-radius:14px; padding:18px 20px; margin:14px 0;">
+
+### 🎬 Видео-обзор проекта «Замеси» с ИИ — Финал
+
+<a href="https://disk.yandex.ru/i/dKU1_4NvoYb41Q" style="display:inline-block; background:linear-gradient(135deg,#E32636,#a855f7); color:#fff; text-decoration:none; padding:14px 28px; border-radius:999px; font-size:20px; font-weight:800; box-shadow:0 6px 20px rgba(227,38,54,.45);">▶️ Смотреть на Яндекс.Диске — 7 минут</a>
+
+<div style="margin-top:8px; font-size:13px; color:#9aa1b5;">https://disk.yandex.ru/i/dKU1_4NvoYb41Q</div>
+
+</div>
 
 AI-пайплайн: **MP4 → .md passport** с метками монетизации `AD_SLOT`, `ECOM_ITEM`, `CLIP_CANDIDATE`.
 
